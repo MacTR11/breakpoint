@@ -221,7 +221,8 @@ export function parseList(repr: string): ListItem[] | null {
 }
 
 /** Names that usually hold a position in a list: i, j, low, mid, high, and the like. */
-const INDEX_NAME = /^(i|j|k|idx|index|pos|position|lo|low|hi|high|mid|middle|left|right|start|end|first|last|current|cur|ptr|top|front|rear|head|tail|pivot\w*|min\w*|max\w*|smallest|largest|\w+_(?:i|idx|index|pos))$/i;
+const INDEX_NAME =
+  /^(i|j|k|idx|index|pos|position|lo|low|hi|high|mid|middle|left|right|start|end|first|last|current|cur|ptr|top|front|rear|head|tail|pivot\w*|min\w*|max\w*|smallest|largest|\w+_(?:i|idx|index|pos))$/i;
 const LOW_END = /^(lo|low|left|start|first)$/i;
 const HIGH_END = /^(hi|high|right|end|last)$/i;
 

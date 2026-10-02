@@ -365,8 +365,7 @@ export function DebugPanel({
       {!run && (
         <p className={muted}>
           Click beside a line number to put a breakpoint (a red dot) on it, or press F9. Start runs the call and stops at the first breakpoint, or at the beginning if there is none. Then step forwards
-          and backwards and watch the variables change, the calls build up and the trace table fill in. The numbers beside the lines say how many times each one ran. Nothing here is
-          marked.
+          and backwards and watch the variables change, the calls build up and the trace table fill in. The numbers beside the lines say how many times each one ran. Nothing here is marked.
         </p>
       )}
 
@@ -423,13 +422,7 @@ export function DebugPanel({
           </p>
 
           <div className="flex gap-1" role="group" aria-label="Show">
-            {(
-              [
-                ["variables", "Variables"],
-                ...(calls.size > 1 ? [["calls", `Calls (${calls.size})`] as const] : []),
-                ["table", "Trace table"],
-              ] as const
-            ).map(([id, label]) => (
+            {([["variables", "Variables"], ...(calls.size > 1 ? [["calls", `Calls (${calls.size})`] as const] : []), ["table", "Trace table"]] as const).map(([id, label]) => (
               <button key={id} type="button" aria-pressed={view === id} onClick={() => setView(id)} className={`${small} !bg-transparent aria-pressed:!bg-[#3a3f4a] !font-medium`}>
                 {label}
               </button>
