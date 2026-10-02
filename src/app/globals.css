@@ -967,6 +967,123 @@ html:not(.dark) .when-dark {
   outline-offset: -2px;
 }
 
+/* How many times each line ran, beside its number; the busiest in amber. */
+.cm-editor .cm-runs-gutter .cm-gutterElement {
+  padding: 0 6px 0 2px;
+}
+.cm-run-count {
+  font-size: 10.5px;
+  color: #6e7681;
+}
+.cm-run-count.cm-run-busiest {
+  color: #e5a50a;
+}
+
+/* A list drawn as it is: bars for numbers, boxes for anything else, positions and index variables underneath. */
+.list-view {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  overflow-x: auto;
+  padding: 0.25rem 0 0.15rem;
+}
+.list-cell {
+  display: flex;
+  flex: 1 0 1.9rem;
+  max-width: 3.25rem;
+  flex-direction: column;
+  align-items: center;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.list-bar-area {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 4.5rem;
+}
+.list-bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  background: #5c6370;
+}
+.list-box {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #3a3f4a;
+  padding: 0.2rem 0.25rem;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list-value {
+  color: #c9d1d9;
+}
+.list-index {
+  color: #6e7681;
+}
+.list-marker {
+  min-height: 1.35em;
+  color: #79c0ff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.list-cell[data-marked] .list-bar,
+.list-cell[data-marked] .list-box {
+  background: #388bfd;
+}
+.list-cell[data-changed] .list-bar,
+.list-cell[data-changed] .list-box {
+  background: #e5a50a;
+  color: #1c1f24;
+}
+.list-cell[data-outside] {
+  opacity: 0.3;
+}
+
+/* A recursion tree: each call under the call that made it. */
+.call-node {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #2c313a;
+  padding: 0.2rem 0.5rem;
+  color: #c9d1d9;
+  font-size: 12px;
+  line-height: 1.3;
+  text-align: center;
+  cursor: pointer;
+}
+.call-node:hover {
+  background: #3a3f4a;
+}
+.call-node:focus-visible {
+  outline: 2px solid #58a6ff;
+  outline-offset: 1px;
+}
+.call-node[data-state="waiting"] {
+  background: #3a3f4a;
+  color: #f6f8fa;
+}
+.call-node[data-state="running"] {
+  background: #e5a50a;
+  color: #1c1f24;
+}
+.call-outcome {
+  font-size: 11px;
+  color: #9198a1;
+}
+.call-node[data-state="done"] .call-outcome {
+  color: #3fb950;
+}
+.call-node[data-raised] .call-outcome {
+  color: #ff7b72;
+}
+.call-node[data-state="running"] .call-outcome {
+  color: #1c1f24;
+}
+
 /* A trace table, the way one is written by hand in an exam. */
 .trace-table {
   border-collapse: collapse;

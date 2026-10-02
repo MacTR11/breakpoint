@@ -19,8 +19,8 @@ class _Tracer:
         r = reprlib.Repr()
         r.maxstring = 60
         r.maxother = 60
-        r.maxlist = 12
-        r.maxtuple = 12
+        r.maxlist = 24
+        r.maxtuple = 24
         r.maxset = 10
         r.maxdict = 8
         r.maxlevel = 3

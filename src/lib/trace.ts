@@ -59,6 +59,9 @@ function before(steps: TraceStep[], index: number, frameId: number) {
   return null;
 }
 
+/** What one call's variables were when it was last seen before step `index`, if it was. */
+export const previousLocals = (steps: TraceStep[], index: number, frameId: number) => before(steps, index, frameId)?.locals ?? null;
+
 /** The variables of one call that changed since that call was last seen. */
 export function changed(steps: TraceStep[], index: number, frameId: number) {
   const now = steps[index]?.stack.find((f) => f.id === frameId);
@@ -125,4 +128,136 @@ export function stepOut(steps: TraceStep[], index: number) {
 export function nextBreakpoint(steps: TraceStep[], index: number, breakpoints: number[]) {
   for (let i = index + 1; i < steps.length; i++) if (steps[i].event === "line" && breakpoints.includes(steps[i].line)) return i;
   return steps.length - 1;
+}
+
+/** How many times each line ran over the whole run. */
+export function lineCounts(steps: TraceStep[]) {
+  const counts = new Map<number, number>();
+  for (const step of steps) if (step.event === "line") counts.set(step.line, (counts.get(step.line) ?? 0) + 1);
+  return counts;
+}
+
+export type CallNode = {
+  id: number;
+  fn: string;
+  /** The values it was called with, such as `3` or `[5, 1], 0`. */
+  args: string;
+  /** The call that made it, or null for a call from the student's own line. */
+  parent: number | null;
+  children: number[];
+  /** The steps where it was called, and where it returned or passed an error up (null if the run stopped first). */
+  start: number;
+  end: number | null;
+  value: string | null;
+  raised: boolean;
+};
+
+/** Every call in a run as a tree: which call made which, and what each one returned. */
+export function callTree(steps: TraceStep[]) {
+  const nodes = new Map<number, CallNode>();
+  const roots: number[] = [];
+  steps.forEach((step, index) => {
+    const frame = step.stack[0];
+    if (!frame) return;
+    if (step.event === "call" && !nodes.has(frame.id)) {
+      const parent = step.stack[1]?.id ?? null;
+      nodes.set(frame.id, { id: frame.id, fn: frame.fn, args: frame.locals.map(([, value]) => value).join(", "), parent, children: [], start: index, end: null, value: null, raised: false });
+      const caller = parent === null ? undefined : nodes.get(parent);
+      if (caller) caller.children.push(frame.id);
+      else roots.push(frame.id);
+    } else if ((step.event === "return" || step.event === "unwind") && nodes.has(frame.id)) {
+      const node = nodes.get(frame.id)!;
+      node.end = index;
+      node.raised = step.event === "unwind";
+      node.value = node.raised ? null : (step.value ?? "None");
+    }
+  });
+  return { nodes, roots };
+}
+
+/**
+ * Where to draw each call, in slots and levels: calls with no calls of their
+ * own side by side in the order they were made, and each call centred over
+ * the calls it made. Worked out for the whole run, so nothing moves as the
+ * tree fills in.
+ */
+export function treeLayout({ nodes, roots }: ReturnType<typeof callTree>) {
+  const place = new Map<number, { x: number; y: number }>();
+  let next = 0;
+  let levels = 0;
+  const visit = (id: number, y: number): number => {
+    const node = nodes.get(id)!;
+    levels = Math.max(levels, y + 1);
+    const xs = node.children.map((child) => visit(child, y + 1));
+    const x = xs.length === 0 ? next++ : (xs[0] + xs[xs.length - 1]) / 2;
+    place.set(id, { x, y });
+    return x;
+  };
+  for (const root of roots) visit(root, 0);
+  return { place, slots: next, levels };
+}
+
+export type ListItem = { text: string; number: number | null };
+
+/**
+ * A list of plain values as Python shows it, such as `[5, 3, 'a', None]`, split
+ * into its items. Null for anything else: nested lists, objects, or a list
+ * shortened with "...".
+ */
+export function parseList(repr: string): ListItem[] | null {
+  if (!repr.startsWith("[") || !repr.endsWith("]")) return null;
+  const inner = repr.slice(1, -1).trim();
+  if (!inner) return [];
+  const token = /('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|-?\d+(?:\.\d+)?(?:e[+-]?\d+)?|True|False|None)\s*(?:,\s*|$)/y;
+  const items: ListItem[] = [];
+  for (let at = 0; at < inner.length; ) {
+    token.lastIndex = at;
+    const match = token.exec(inner);
+    if (!match) return null;
+    items.push({ text: match[1], number: /^-?\d/.test(match[1]) ? Number(match[1]) : null });
+    at = token.lastIndex;
+  }
+  return items;
+}
+
+/** Names that usually hold a position in a list: i, j, low, mid, high, and the like. */
+const INDEX_NAME = /^(i|j|k|idx|index|pos|position|lo|low|hi|high|mid|middle|left|right|start|end|first|last|current|cur|ptr|top|front|rear|head|tail|pivot\w*|min\w*|max\w*|smallest|largest|\w+_(?:i|idx|index|pos))$/i;
+const LOW_END = /^(lo|low|left|start|first)$/i;
+const HIGH_END = /^(hi|high|right|end|last)$/i;
+
+export type ListView = {
+  name: string;
+  items: ListItem[];
+  /** Every item is a number, so it can be drawn as a bar. */
+  numeric: boolean;
+  /** Items that changed since this call was last seen. */
+  changedAt: boolean[];
+  /** Variables that look like positions in the list, and where they point. */
+  markers: { name: string; at: number }[];
+  /** With both ends of a search range (low and high, say), the part still being searched. */
+  range: [number, number] | null;
+};
+
+/** The lists of plain values in one call's variables, ready to draw, with any index variables pointing into them. */
+export function listViews(locals: [string, string][], previous: [string, string][] | null): ListView[] {
+  const positions = locals.filter(([name, value]) => INDEX_NAME.test(name) && /^-?\d+$/.test(value)).map(([name, value]) => ({ name, at: Number(value) }));
+  const old = new Map(previous ?? []);
+  return locals.flatMap(([name, value]) => {
+    const items = parseList(value);
+    if (!items || items.length < 2 || items.length > 24 || items.some((item) => item.text.length > 14)) return [];
+    const before = old.has(name) ? parseList(old.get(name)!) : null;
+    const markers = positions.filter((p) => p.at >= 0 && p.at < items.length);
+    const low = markers.find((m) => LOW_END.test(m.name));
+    const high = markers.find((m) => HIGH_END.test(m.name));
+    return [
+      {
+        name,
+        items,
+        numeric: items.every((item) => item.number !== null && Number.isFinite(item.number)),
+        changedAt: items.map((item, i) => before !== null && before.length === items.length && before[i].text !== item.text),
+        markers,
+        range: low && high && low.at <= high.at ? [low.at, high.at] : null,
+      },
+    ];
+  });
 }

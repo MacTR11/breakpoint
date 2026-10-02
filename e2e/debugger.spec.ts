@@ -36,6 +36,19 @@ test("breakpoints, stepping through a recursive call, and the trace table", asyn
   await page.locator(".timeline input").focus();
   await page.keyboard.press("End");
   await expect(page.locator("#panel-debugger")).toContainText("Result: 120");
+
+  // How many times each line ran, beside the line numbers.
+  await expect(page.locator(".cm-run-count")).toHaveText(["6×", "1×", "5×"]);
+
+  // The recursion tree: six calls, each returning to the one that made it.
+  await page.getByRole("button", { name: "Calls (6)" }).click();
+  await expect(page.locator(".call-node")).toHaveCount(6);
+  await expect(page.locator(".call-node", { hasText: "factorial(0)" })).toContainText("→ 1");
+  await expect(page.locator(".call-node", { hasText: "factorial(5)" })).toHaveAttribute("data-state", "running");
+  await page.locator(".call-node", { hasText: "factorial(2)" }).click();
+  await expect(status).toContainText("Calling factorial(n=2)");
+
+  await page.getByRole("button", { name: "Trace table" }).click();
   await expect(page.locator(".trace-table")).toBeVisible();
 
   // Changing the code makes the run out of date.
@@ -44,6 +57,40 @@ test("breakpoints, stepping through a recursive call, and the trace table", asyn
   await page.keyboard.type(" ");
   await expect(page.getByText("You have changed the code since this run")).toBeVisible();
   await expect(page.locator(".cm-debug-line")).toHaveCount(0);
+});
+
+test("a list is drawn as bars, with the index variables pointing into it", async ({ page }) => {
+  await signIn(page, STUDENTS.fay);
+  await page.goto("/problems/binary-search");
+  await typeCode(
+    page,
+    [
+      "def binary_search(items, target):",
+      "    low = 0",
+      "    high = len(items) - 1",
+      "    while low <= high:",
+      "        mid = (low + high) // 2",
+      "        if items[mid] == target:",
+      "            return mid",
+      "        if items[mid] < target:",
+      "            low = mid + 1",
+      "        else:",
+      "            high = mid - 1",
+      "    return -1",
+    ].join("\n"),
+  );
+  await page.locator(".cm-lineNumbers .cm-gutterElement", { hasText: /^6$/ }).click();
+  await page.getByRole("tab", { name: "Debugger" }).click();
+  await page.locator("#debug-call").fill("binary_search([2, 5, 8, 12, 16, 23, 38, 56, 72, 91], 23)");
+  await page.getByRole("button", { name: "Start", exact: true }).click();
+  // First time round: the whole list is still in the search.
+  await expect(page.locator(".list-cell")).toHaveCount(10, { timeout: 60_000 });
+  await expect(page.locator(".list-cell[data-outside]")).toHaveCount(0);
+  // Second time round: only the top half is left, between low and high.
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.locator(".list-cell[data-outside]")).toHaveCount(5);
+  await expect(page.locator(".list-marker").filter({ hasText: /\S/ })).toHaveText(["low", "mid", "high"]);
+  await expect(page.getByRole("img", { name: /items: 2, 5, 8/ })).toBeVisible();
 });
 
 test("the console calls the code with any input, and keeps what is made in it", async ({ page }) => {

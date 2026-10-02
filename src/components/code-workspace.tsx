@@ -12,7 +12,7 @@ import { DebugPanel } from "@/components/debug-panel";
 import { RewardLines } from "@/components/rewards";
 import { TestResults } from "@/components/test-results";
 import { celebrate } from "@/lib/celebrate";
-import { debuggerExtensions, reachLine } from "@/lib/debugger";
+import { countRuns, debuggerExtensions, reachLine } from "@/lib/debugger";
 import { readDraft, subscribeToDrafts, writeDraft } from "@/lib/drafts";
 import { ANTIGRAVITY_EVENT, usesAntigravity } from "@/lib/eggs";
 import { runInBrowser, warmUp } from "@/lib/py-runner";
@@ -116,6 +116,9 @@ export function CodeWorkspace({
   const editor = useRef<EditorView | null>(null);
   const showLine = useCallback((line: number | null) => {
     if (editor.current) reachLine(editor.current, line);
+  }, []);
+  const showCounts = useCallback((counts: Map<number, number> | null) => {
+    if (editor.current) countRuns(editor.current, counts);
   }, []);
   const toolBusy = useCallback((on: boolean) => setBusy(on ? "tool" : null), []);
   const examples = useMemo(() => visibleTests.map((test) => callText(functionName, test)), [visibleTests, functionName]);
@@ -287,7 +290,7 @@ export function CodeWorkspace({
             <ConsolePanel code={code} examples={examples} disabled={busy !== null} onBusy={toolBusy} />
           </div>
           <div id="panel-debugger" role="tabpanel" aria-labelledby="tab-debugger" hidden={tab !== "debugger"}>
-            <DebugPanel code={code} examples={examples} breakpoints={breakpoints} active={tab === "debugger"} disabled={busy !== null} onBusy={toolBusy} onLine={showLine} />
+            <DebugPanel code={code} examples={examples} breakpoints={breakpoints} active={tab === "debugger"} disabled={busy !== null} onBusy={toolBusy} onLine={showLine} onCounts={showCounts} />
           </div>
         </div>
       </section>

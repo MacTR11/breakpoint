@@ -1,8 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { traceInBrowser } from "@/lib/py-runner";
-import { callsIn, changed, describe, nextBreakpoint, stepOut, stepOver, traceTable, type TraceResult, type TraceStep } from "@/lib/trace";
+import {
+  callsIn,
+  callTree,
+  changed,
+  describe,
+  lineCounts,
+  listViews,
+  nextBreakpoint,
+  previousLocals,
+  stepOut,
+  stepOver,
+  traceTable,
+  treeLayout,
+  type ListView,
+  type TraceResult,
+  type TraceStep,
+} from "@/lib/trace";
 
 // Step through a call to the student's own code, forwards and backwards, in the
 // editor's dark colours. The whole run is recorded first (public/judge/tracer.mjs),
@@ -80,13 +96,126 @@ function Variables({ locals, fresh }: { locals: [string, string][]; fresh: Set<s
   );
 }
 
+/**
+ * A list drawn as it is: numbers as bars, anything else as boxes, each with its
+ * position underneath, the variables pointing into it (i, j, low, mid, high...)
+ * under those, items that just changed in amber, and outside a search range dimmed.
+ */
+function ListBars({ view }: { view: ListView }) {
+  const values = view.items.map((item) => item.number ?? 0);
+  const low = Math.min(0, ...values);
+  const high = Math.max(...values);
+  const height = (value: number) => (high === low ? 60 : 12 + (88 * (value - low)) / (high - low));
+  const summary = `${view.name}: ${view.items.map((item) => item.text).join(", ")}${view.markers.length ? `. ${view.markers.map((m) => `${m.name} is ${m.at}`).join(", ")}` : ""}`;
+  return (
+    <div>
+      <p className="text-[#d2a8ff]">{view.name}</p>
+      <div className="list-view" role="img" aria-label={summary}>
+        {view.items.map((item, i) => {
+          const here = view.markers.filter((m) => m.at === i).map((m) => m.name);
+          return (
+            <div
+              key={i}
+              className="list-cell"
+              data-changed={view.changedAt[i] || undefined}
+              data-marked={here.length > 0 || undefined}
+              data-outside={(view.range && (i < view.range[0] || i > view.range[1])) || undefined}
+            >
+              {view.numeric ? (
+                <>
+                  <span className="list-bar-area">
+                    <span className="list-bar" style={{ height: `${height(values[i])}%` }} />
+                  </span>
+                  <span className="list-value">{item.text}</span>
+                </>
+              ) : (
+                <span className="list-box">{item.text}</span>
+              )}
+              <span className="list-index">{i}</span>
+              <span className="list-marker">{here.join(" ")}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const SLOT = 112;
+const LEVEL = 60;
+const NODE = { width: 100, height: 40 };
+
+/**
+ * Every call made so far as a tree, the way recursion is drawn on a board:
+ * each call under the call that made it, with what it returned. It grows as
+ * you step. The call running now is amber; calls waiting on it are grey.
+ * Pick a call to jump to the moment it was made.
+ */
+function CallTree({ steps, index, onPick }: { steps: TraceStep[]; index: number; onPick: (step: number) => void }) {
+  const tree = useMemo(() => callTree(steps), [steps]);
+  const layout = useMemo(() => treeLayout(tree), [tree]);
+  const box = useRef<HTMLDivElement>(null);
+  const step = steps[index];
+  const running = step?.stack[0]?.id;
+  const waiting = new Set(step?.stack.map((frame) => frame.id));
+  const shown = [...tree.nodes.values()].filter((node) => node.start <= index);
+
+  // Keep the running call in view as the tree grows sideways.
+  useEffect(() => {
+    const spot = running === undefined ? undefined : layout.place.get(running);
+    if (box.current && spot) box.current.scrollLeft = Math.max(0, spot.x * SLOT + SLOT / 2 - box.current.clientWidth / 2);
+  }, [running, layout]);
+
+  if (tree.nodes.size > 80) return <p className={muted}>That run made {tree.nodes.size} calls, too many to draw. Try a smaller example.</p>;
+  return (
+    <div ref={box} className="overflow-x-auto pb-1">
+      <div className="relative" style={{ width: Math.max(layout.slots, 1) * SLOT, height: layout.levels * LEVEL }}>
+        <svg className="absolute inset-0" width={layout.slots * SLOT} height={layout.levels * LEVEL} aria-hidden="true">
+          {shown.map((node) => {
+            const from = node.parent === null ? undefined : layout.place.get(node.parent);
+            const to = layout.place.get(node.id)!;
+            if (!from) return null;
+            const [x1, y1, x2, y2] = [from.x * SLOT + SLOT / 2, from.y * LEVEL + NODE.height, to.x * SLOT + SLOT / 2, to.y * LEVEL];
+            return <path key={node.id} d={`M${x1} ${y1} C${x1} ${(y1 + y2) / 2} ${x2} ${(y1 + y2) / 2} ${x2} ${y2}`} fill="none" stroke="#4b5263" strokeWidth="1.5" />;
+          })}
+        </svg>
+        <ol aria-label="Calls made so far">
+          {shown.map((node) => {
+            const spot = layout.place.get(node.id)!;
+            const state = node.id === running ? "running" : waiting.has(node.id) || node.end === null || node.end > index ? "waiting" : "done";
+            const outcome = state === "done" ? (node.raised ? "error" : `→ ${node.value}`) : state;
+            return (
+              <li key={node.id}>
+                <button
+                  type="button"
+                  onClick={() => onPick(node.start)}
+                  className="call-node"
+                  data-state={state}
+                  data-raised={node.raised || undefined}
+                  style={{ left: spot.x * SLOT + (SLOT - NODE.width) / 2, top: spot.y * LEVEL, width: NODE.width, height: NODE.height }}
+                  title={`${node.fn}(${node.args})${state === "done" ? (node.raised ? ": passed an error up" : ` returned ${node.value}`) : ""}`}
+                >
+                  <span className="block truncate">
+                    {node.fn}({node.args})
+                  </span>
+                  <span className="call-outcome block truncate">{outcome}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
 /** A trace table as one is written by hand, filling in as the run goes on. */
 function TraceTable({ steps, stdout, frameId, index, title }: { steps: TraceStep[]; stdout: string; frameId: number; index: number; title: string }) {
   const { columns, rows } = useMemo(() => traceTable(steps, stdout, frameId, index), [steps, stdout, frameId, index]);
   const printed = rows.some((row) => row.printed || row.error);
   if (rows.length === 0) return null;
   return (
-    <div className="mt-4">
+    <div>
       <p className={`mb-1.5 truncate ${muted}`}>Trace table for {title}</p>
       <div className="overflow-x-auto">
         <table className="trace-table">
@@ -129,6 +258,7 @@ export function DebugPanel({
   disabled,
   onBusy,
   onLine,
+  onCounts,
 }: {
   code: string;
   /** The calls from the question's visible examples. */
@@ -140,12 +270,15 @@ export function DebugPanel({
   onBusy: (busy: boolean) => void;
   /** Mark a line in the editor, or none. */
   onLine: (line: number | null) => void;
+  /** Show beside each line how many times it ran, or nothing. */
+  onCounts: (counts: Map<number, number> | null) => void;
 }) {
   const [source, setSource] = useState(examples[0] ?? "");
   const [run, setRun] = useState<Run | null>(null);
   const [index, setIndex] = useState(0);
   const [chosen, setChosen] = useState<number | null>(null);
   const [starting, setStarting] = useState(false);
+  const [view, setView] = useState<"variables" | "calls" | "table">("variables");
 
   const steps = useMemo(() => run?.result.steps ?? [], [run]);
   const calls = useMemo(() => callsIn(steps), [steps]);
@@ -157,6 +290,11 @@ export function DebugPanel({
   useEffect(() => {
     onLine(active && step && !stale ? step.line : null);
   }, [active, step, stale, onLine]);
+
+  const counts = useMemo(() => (steps.length ? lineCounts(steps) : null), [steps]);
+  useEffect(() => {
+    onCounts(active && !stale ? counts : null);
+  }, [active, stale, counts, onCounts]);
 
   const start = async () => {
     if (!source.trim()) return;
@@ -227,7 +365,8 @@ export function DebugPanel({
       {!run && (
         <p className={muted}>
           Click beside a line number to put a breakpoint (a red dot) on it, or press F9. Start runs the call and stops at the first breakpoint, or at the beginning if there is none. Then step forwards
-          and backwards and watch the variables change. Nothing here is marked.
+          and backwards and watch the variables change, the calls build up and the trace table fill in. The numbers beside the lines say how many times each one ran. Nothing here is
+          marked.
         </p>
       )}
 
@@ -283,15 +422,36 @@ export function DebugPanel({
             {words}
           </p>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <p className={`mb-1.5 truncate ${muted}`}>Variables in {calls.get(frame.id) ?? frame.fn}</p>
-              <Variables locals={frame.locals} fresh={changed(steps, index, frame.id)} />
-            </div>
-            <CallStack step={step} calls={calls} source={run.source} selected={frame.id} onSelect={setChosen} />
+          <div className="flex gap-1" role="group" aria-label="Show">
+            {(
+              [
+                ["variables", "Variables"],
+                ...(calls.size > 1 ? [["calls", `Calls (${calls.size})`] as const] : []),
+                ["table", "Trace table"],
+              ] as const
+            ).map(([id, label]) => (
+              <button key={id} type="button" aria-pressed={view === id} onClick={() => setView(id)} className={`${small} !bg-transparent aria-pressed:!bg-[#3a3f4a] !font-medium`}>
+                {label}
+              </button>
+            ))}
           </div>
 
-          <TraceTable steps={steps} stdout={run.result.stdout} frameId={frame.id} index={index} title={calls.get(frame.id) ?? frame.fn} />
+          {view === "variables" && (
+            <>
+              {listViews(frame.locals, previousLocals(steps, index, frame.id)).map((list) => (
+                <ListBars key={list.name} view={list} />
+              ))}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <p className={`mb-1.5 truncate ${muted}`}>Variables in {calls.get(frame.id) ?? frame.fn}</p>
+                  <Variables locals={frame.locals} fresh={changed(steps, index, frame.id)} />
+                </div>
+                <CallStack step={step} calls={calls} source={run.source} selected={frame.id} onSelect={setChosen} />
+              </div>
+            </>
+          )}
+          {view === "calls" && calls.size > 1 && <CallTree steps={steps} index={index} onPick={go} />}
+          {view === "table" && <TraceTable steps={steps} stdout={run.result.stdout} frameId={frame.id} index={index} title={calls.get(frame.id) ?? frame.fn} />}
 
           {step.out > 0 && (
             <div>

@@ -10,7 +10,7 @@ import { marksOf } from "../src/lib/mock";
 import { matchScore, search, type PaletteItem } from "../src/lib/palette";
 import { expectedPoints, marksIn } from "../src/lib/points";
 import { specialDay } from "../src/lib/special-days";
-import { callsIn, changed, describe, nextBreakpoint, stepOut, stepOver, traceTable, type TraceStep } from "../src/lib/trace";
+import { callsIn, callTree, changed, describe, lineCounts, listViews, nextBreakpoint, parseList, stepOut, stepOver, traceTable, treeLayout, type TraceStep } from "../src/lib/trace";
 
 const checks: [string, () => void][] = [];
 const check = (name: string, run: () => void) => checks.push([name, run]);
@@ -33,7 +33,17 @@ check("homework: a challenge students cannot open counts only once open or solve
   const before = day("2026-10-08T12:00:00Z");
   const after = day("2026-10-10T12:00:00Z");
   // The open one is solved and the held one is not: done, and not overdue after the due date.
-  assert.equal(homeworkState(due, [{ solvedAt: before, counts: true }, { solvedAt: undefined, counts: false }], after), "done");
+  assert.equal(
+    homeworkState(
+      due,
+      [
+        { solvedAt: before, counts: true },
+        { solvedAt: undefined, counts: false },
+      ],
+      after,
+    ),
+    "done",
+  );
   // Everything held and nothing solved: still to do, never overdue.
   assert.equal(homeworkState(due, [{ solvedAt: undefined, counts: false }], after), "open");
   // Held until after the due date, then solved: it counts, but is not late.
@@ -67,18 +77,54 @@ check("homework: a past result does not change when a competition starts or a pa
   const x = { published: true, contests: [{ createdAt: day("2026-10-01T09:00:00Z"), contest: { startsAt: day("2026-10-20T09:00:00Z"), endsAt: day("2026-10-20T10:00:00Z") } }] };
   const counts = (at: Date) => openToStudents(x, at < due ? at : due);
   assert.equal(counts(during), false, "held at the due date, so it never counts unless solved");
-  assert.equal(homeworkState(due, [{ solvedAt: solved, counts: true }, { solvedAt: undefined, counts: counts(during) }], during), "done");
-  assert.equal(homeworkState(due, [{ solvedAt: solved, counts: true }, { solvedAt: during, counts: counts(during) }], during), "done");
+  assert.equal(
+    homeworkState(
+      due,
+      [
+        { solvedAt: solved, counts: true },
+        { solvedAt: undefined, counts: counts(during) },
+      ],
+      during,
+    ),
+    "done",
+  );
+  assert.equal(
+    homeworkState(
+      due,
+      [
+        { solvedAt: solved, counts: true },
+        { solvedAt: during, counts: counts(during) },
+      ],
+      during,
+    ),
+    "done",
+  );
   // Y was open until the due date and never done; a pack made after the due date does not excuse it.
   const y = { published: true, contests: [{ createdAt: day("2026-10-12T09:00:00Z"), contest: { startsAt: null, endsAt: null } }] };
   assert.equal(openToStudents(y, due), true);
-  assert.equal(homeworkState(due, [{ solvedAt: solved, counts: true }, { solvedAt: undefined, counts: openToStudents(y, due) }], during), "overdue");
+  assert.equal(
+    homeworkState(
+      due,
+      [
+        { solvedAt: solved, counts: true },
+        { solvedAt: undefined, counts: openToStudents(y, due) },
+      ],
+      during,
+    ),
+    "overdue",
+  );
 });
 
 check("homework: Home shows what is not yet due and recent overdue work", () => {
   const now = day("2026-10-02T12:00:00Z");
   const set = (dueAt: string, state: StudentHomework["state"]) => ({ dueAt: day(dueAt), state }) as StudentHomework;
-  const sets = [set("2026-10-09T08:30:00Z", "open"), set("2026-10-09T08:30:00Z", "done"), set("2026-09-25T08:30:00Z", "overdue"), set("2026-09-01T08:30:00Z", "overdue"), set("2026-09-25T08:30:00Z", "done")];
+  const sets = [
+    set("2026-10-09T08:30:00Z", "open"),
+    set("2026-10-09T08:30:00Z", "done"),
+    set("2026-09-25T08:30:00Z", "overdue"),
+    set("2026-09-01T08:30:00Z", "overdue"),
+    set("2026-09-25T08:30:00Z", "done"),
+  ];
   assert.deepEqual(
     current(sets, now).map((h) => `${h.dueAt.toISOString().slice(0, 10)} ${h.state}`),
     ["2026-10-09 open", "2026-10-09 done", "2026-09-25 overdue"],
@@ -149,7 +195,10 @@ check("fix diff: lines out and in, the changed part marked, long runs folded", (
   assert.deepEqual(rows[2].change, [23, 23], "nothing was taken out of the old line, only added");
   // A line rewritten completely is not marked within.
   assert.equal(diffLines("x = 1", "print('hello')")[1].change, undefined);
-  assert.deepEqual(diffLines("a\nb", "a\nb").map((r) => r.kind), ["same", "same"]);
+  assert.deepEqual(
+    diffLines("a\nb", "a\nb").map((r) => r.kind),
+    ["same", "same"],
+  );
   const long = Array.from({ length: 20 }, (_, i) => `line ${i}`);
   const view = folded(diffLines(long.join("\n"), [...long.slice(0, 10), "new", ...long.slice(10)].join("\n")));
   assert.deepEqual(
@@ -189,7 +238,16 @@ check("command palette: whole words first, then initials, in group order", () =>
 check("debugger: step over, out, to a breakpoint, and the trace table", () => {
   // factorial(2): two calls, as the tracer records them.
   const frame = (id: number, line: number, locals: [string, string][]) => ({ id, fn: "factorial", line, locals });
-  const step = (event: TraceStep["event"], line: number, stack: ReturnType<typeof frame>[], value?: string, out = 0): TraceStep => ({ event, line, fn: "factorial", depth: stack.length, hidden: 0, stack, out, value });
+  const step = (event: TraceStep["event"], line: number, stack: ReturnType<typeof frame>[], value?: string, out = 0): TraceStep => ({
+    event,
+    line,
+    fn: "factorial",
+    depth: stack.length,
+    hidden: 0,
+    stack,
+    out,
+    value,
+  });
   const outer = (line: number, extra: [string, string][] = []) => frame(1, line, [["n", "2"], ...extra]);
   const inner = (line: number) => frame(2, line, [["n", "1"]]);
   const steps = [
@@ -224,6 +282,78 @@ check("debugger: step over, out, to a breakpoint, and the trace table", () => {
     ],
   );
   assert.equal(traceTable(steps, "", 1, 3).rows.length, 2, "only lines finished by the step reached");
+  assert.deepEqual(
+    [...lineCounts(steps)],
+    [
+      [2, 2],
+      [4, 1],
+      [3, 1],
+      [5, 1],
+    ],
+  );
+});
+
+check("debugger: the recursion tree and where each call is drawn", () => {
+  // fib(2) calls fib(1) then fib(0): a parent centred over two children.
+  const frame = (id: number, n: number) => ({ id, fn: "fib", line: 1, locals: [["n", String(n)]] as [string, string][] });
+  const at = (event: TraceStep["event"], stack: ReturnType<typeof frame>[], value?: string): TraceStep => ({ event, line: 1, fn: "fib", depth: stack.length, hidden: 0, stack, out: 0, value });
+  const [top, one, zero] = [frame(1, 2), frame(2, 1), frame(3, 0)];
+  const steps = [at("call", [top]), at("call", [one, top]), at("return", [one, top], "1"), at("call", [zero, top]), at("return", [zero, top], "0"), at("return", [top], "1")];
+  const tree = callTree(steps);
+  assert.deepEqual(tree.roots, [1]);
+  assert.deepEqual(tree.nodes.get(1)!.children, [2, 3]);
+  assert.equal(tree.nodes.get(2)!.value, "1");
+  assert.equal(tree.nodes.get(1)!.args, "2");
+  const layout = treeLayout(tree);
+  assert.deepEqual([layout.slots, layout.levels], [2, 2]);
+  assert.deepEqual(
+    [layout.place.get(2), layout.place.get(3), layout.place.get(1)],
+    [
+      { x: 0, y: 1 },
+      { x: 1, y: 1 },
+      { x: 0.5, y: 0 },
+    ],
+  );
+});
+
+check("debugger: lists drawn as bars, with i, j, low and high pointing into them", () => {
+  assert.deepEqual(
+    parseList("[5, -2, 3.5, 1e-05]")!.map((i) => i.number),
+    [5, -2, 3.5, 1e-5],
+  );
+  assert.deepEqual(
+    parseList("['a, b', \"c\", None, True]")!.map((i) => i.text),
+    ["'a, b'", '"c"', "None", "True"],
+  );
+  assert.equal(parseList("[[1, 2], [3]]"), null, "nested lists are left as text");
+  assert.equal(parseList("[1, 2, ...]"), null, "a shortened list is left as text");
+  assert.deepEqual(parseList("[]"), []);
+  const [bars] = listViews(
+    [
+      ["items", "[3, 1, 2]"],
+      ["j", "1"],
+      ["total", "7"],
+      ["swapped", "True"],
+    ],
+    [
+      ["items", "[3, 2, 1]"],
+      ["j", "0"],
+    ],
+  );
+  assert.equal(bars.numeric, true);
+  assert.deepEqual(bars.changedAt, [false, true, true]);
+  assert.deepEqual(bars.markers, [{ name: "j", at: 1 }], "only names that look like positions");
+  const [search] = listViews(
+    [
+      ["items", "[1, 3, 5, 7, 9]"],
+      ["low", "1"],
+      ["mid", "2"],
+      ["high", "3"],
+    ],
+    null,
+  );
+  assert.deepEqual(search.range, [1, 3]);
+  assert.equal(listViews([["names", "['Ada', 'Alan']"]], null)[0].numeric, false);
 });
 
 let failed = 0;
