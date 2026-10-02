@@ -3,9 +3,11 @@ import { AwardTile } from "@/components/award-tile";
 import { ChallengeList } from "@/components/challenge-list";
 import { Countdown } from "@/components/countdown";
 import { SolveCalendar } from "@/components/solve-calendar";
-import { Page, Tag, TopicTile, kindLabel, levelLabel, link, signed, tone } from "@/components/ui";
+import { Page, Tag, TopicTile, kindLabel, levelLabel, link, ordinal, signed, tone } from "@/components/ui";
+import { YourClass } from "@/components/your-class";
 import { activity } from "@/lib/activity";
 import { awardsFor } from "@/lib/awards";
+import { classStandings } from "@/lib/classes";
 import { dailyChallenge } from "@/lib/daily";
 import { db } from "@/lib/db";
 import { hintWallet } from "@/lib/hints";
@@ -20,7 +22,7 @@ export default async function HomePage() {
   const user = await requireUser();
   const now = new Date();
 
-  const [problems, statusOf, points, wallet, board, history, daily, awards, liveContests, upcoming] = await Promise.all([
+  const [problems, statusOf, points, wallet, board, history, daily, awards, liveContests, upcoming, classes] = await Promise.all([
     db.problem.findMany({
       where: practiceFilter(),
       orderBy: [{ sortOrder: "asc" }],
@@ -35,6 +37,7 @@ export default async function HomePage() {
     awardsFor(user.id),
     db.contest.findMany({ where: { startsAt: { lte: now }, endsAt: { gt: now } }, orderBy: { endsAt: "asc" } }),
     db.contest.findFirst({ where: { startsAt: { gt: now } }, orderBy: { startsAt: "asc" } }),
+    user.classId ? classStandings() : Promise.resolve([]),
   ]);
 
   const rank = board.find((row) => row.userId === user.id)?.rank;
@@ -113,7 +116,7 @@ export default async function HomePage() {
           <div>
             <p className="cap">Points</p>
             <p className="figure text-[2.1rem]">{signed(points)}</p>
-            <p className="text-[13px] text-muted">{user.role === "TEACHER" ? "teachers are not ranked" : rank ? `${rank}${ordinal(rank)} of ${board.length}` : "solve one to be ranked"}</p>
+            <p className="text-[13px] text-muted">{user.role === "TEACHER" ? "teachers are not ranked" : rank ? `${ordinal(rank)} of ${board.length}` : "solve one to be ranked"}</p>
           </div>
           <div>
             <p className="cap">Solved</p>
@@ -149,6 +152,8 @@ export default async function HomePage() {
         </section>
 
         <div className="flex flex-col gap-4">
+          {user.classId && classes.length > 1 && <YourClass standings={classes} classId={user.classId} />}
+
           {(liveContests.length > 0 || upcoming) && (
             <section className="card">
               <h2 className="cap">Competitions</h2>
@@ -224,10 +229,4 @@ export default async function HomePage() {
       </section>
     </Page>
   );
-}
-
-function ordinal(n: number) {
-  const tens = n % 100;
-  if (tens >= 11 && tens <= 13) return "th";
-  return ["th", "st", "nd", "rd"][n % 10] ?? "th";
 }

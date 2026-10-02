@@ -1,10 +1,12 @@
 import { AddStudent, ImportStudents } from "@/components/student-forms";
 import { PageHeader } from "@/components/ui";
 import { MAX_IMPORT, MIN_PASSWORD } from "@/lib/accounts";
+import { allClasses } from "@/lib/classes";
 
 export const metadata = { title: "Add students" };
 
-export default function NewStudentsPage() {
+export default async function NewStudentsPage() {
+  const classes = await allClasses();
   return (
     <>
       <PageHeader
@@ -18,7 +20,11 @@ export default function NewStudentsPage() {
         <div className="mt-2 mb-5 max-w-2xl space-y-2 text-sm text-muted">
           <p>
             One student per row, with a heading row naming the columns: <code className="font-mono text-ink">name</code> (or <code className="font-mono text-ink">first name</code> and{" "}
-            <code className="font-mono text-ink">surname</code>), and optionally <code className="font-mono text-ink">username</code> and <code className="font-mono text-ink">password</code>.
+            <code className="font-mono text-ink">surname</code>), and optionally <code className="font-mono text-ink">class</code>, <code className="font-mono text-ink">username</code> and{" "}
+            <code className="font-mono text-ink">password</code>.
+          </p>
+          <p>
+            A class that does not exist yet is made for you: names with 13 or U6 in them go in the upper sixth, the rest in the lower sixth (you can change that on the Classes page).
           </p>
           <p>
             A missing username is made from the name (Ada Lovelace becomes <code className="font-mono text-ink">alovelace</code>). A missing password is made up for you. Passwords need at least{" "}
@@ -34,7 +40,7 @@ export default function NewStudentsPage() {
 
       <section className="mt-12 border-t border-line pt-8">
         <h2 className="mb-4 text-lg font-semibold">Add one student</h2>
-        <AddStudent />
+        <AddStudent classes={classes} />
       </section>
     </>
   );

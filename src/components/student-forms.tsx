@@ -3,12 +3,15 @@
 import { useActionState } from "react";
 import { addStudent, deleteStudent, importStudents, updateStudent, type Login } from "@/app/(app)/teacher/students/actions";
 import { FormErrors, field, hint, label as labelStyle } from "@/components/form-bits";
+import { HoldButton } from "@/components/hold-button";
+
+type ClassOption = { id: string; name: string };
 
 // Quote every cell, and neutralise values a spreadsheet would run as a formula.
 const cell = (value: string) => `"${(/^[=+\-@]/.test(value) ? `'${value}` : value).replace(/"/g, '""')}"`;
 
 function download(logins: Login[]) {
-  const rows = [["Name", "Username", "Password"], ...logins.map((l) => [l.name, l.username, l.password ?? "(unchanged)"])];
+  const rows = [["Name", "Class", "Username", "Password"], ...logins.map((l) => [l.name, l.group, l.username, l.password ?? "(unchanged)"])];
   const url = URL.createObjectURL(new Blob([rows.map((row) => row.map(cell).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" }));
   const anchor = document.createElement("a");
   anchor.href = url;
@@ -18,8 +21,9 @@ function download(logins: Login[]) {
 }
 
 /** The usernames and passwords just set. This is the only time the passwords can be read. */
-function SignInSheet({ logins }: { logins: Login[] }) {
+export function SignInSheet({ logins }: { logins: Login[] }) {
   if (logins.length === 0) return null;
+  const classes = logins.some((l) => l.group);
   const added = logins.filter((l) => l.change === "added").length;
   const updated = logins.length - added;
   return (
@@ -45,6 +49,7 @@ function SignInSheet({ logins }: { logins: Login[] }) {
           <thead>
             <tr>
               <th>Name</th>
+              {classes && <th>Class</th>}
               <th>Username</th>
               <th>Password</th>
             </tr>
@@ -53,6 +58,7 @@ function SignInSheet({ logins }: { logins: Login[] }) {
             {logins.map((login) => (
               <tr key={login.username}>
                 <td>{login.name}</td>
+                {classes && <td>{login.group}</td>}
                 <td className="font-mono text-sm">{login.username}</td>
                 <td className="font-mono text-sm">{login.password ?? <span className="font-sans text-muted">unchanged</span>}</td>
               </tr>
@@ -76,7 +82,7 @@ export function ImportStudents() {
         <label className={labelStyle}>
           Or paste the rows
           <span className={hint}>Copying cells straight out of a spreadsheet works.</span>
-          <textarea name="rows" rows={6} defaultValue={state?.values.rows ?? ""} placeholder={"name,username,password\nAda Lovelace,alovelace,\nAlan Turing,,"} className={`${field} font-mono text-sm`} />
+          <textarea name="rows" rows={6} defaultValue={state?.values.rows ?? ""} placeholder={"name,class,username,password\nAda Lovelace,12A,alovelace,\nAlan Turing,12B,,"} className={`${field} font-mono text-sm`} />
         </label>
         <FormErrors state={state} />
         <button disabled={pending} className="btn btn-primary">
@@ -88,13 +94,13 @@ export function ImportStudents() {
   );
 }
 
-export function AddStudent() {
+export function AddStudent({ classes }: { classes: ClassOption[] }) {
   const [state, action, pending] = useActionState(addStudent, null);
   const values = state?.values ?? {};
   return (
     <>
-      <form action={action} className="max-w-2xl space-y-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <form action={action} className="max-w-3xl space-y-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
           <label className={labelStyle}>
             Name
             <input name="name" required defaultValue={values.name} autoComplete="off" className={field} />
@@ -107,6 +113,17 @@ export function AddStudent() {
             Password
             <input name="password" defaultValue={values.password} placeholder="Made for you" autoComplete="off" className={field} />
           </label>
+          <label className={labelStyle}>
+            Class
+            <select name="group" defaultValue={values.group ?? ""} className={field}>
+              <option value="">No class</option>
+              {classes.map((c) => (
+                <option key={c.id} value={c.name}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
         <FormErrors state={state} />
         <button disabled={pending} className="btn btn-secondary">
@@ -118,7 +135,7 @@ export function AddStudent() {
   );
 }
 
-export function EditStudent({ student }: { student: { id: string; name: string; username: string } }) {
+export function EditStudent({ student, classes }: { student: { id: string; name: string; username: string; classId: string }; classes: ClassOption[] }) {
   const [state, action, pending] = useActionState(updateStudent, null);
   const values = state?.values ?? student;
   return (
@@ -132,6 +149,17 @@ export function EditStudent({ student }: { student: { id: string; name: string; 
         <label className={labelStyle}>
           Username
           <input name="username" required defaultValue={values.username} autoComplete="off" autoCapitalize="none" className={`${field} font-mono text-sm`} />
+        </label>
+        <label className={labelStyle}>
+          Class
+          <select name="classId" defaultValue={values.classId ?? ""} className={field}>
+            <option value="">No class</option>
+            {classes.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
         </label>
         <label className={labelStyle}>
           New password
@@ -150,15 +178,10 @@ export function EditStudent({ student }: { student: { id: string; name: string; 
           )}
         </div>
       </form>
-      <form
-        action={deleteStudent}
-        className="mt-6 border-t border-line pt-4"
-        onSubmit={(event) => {
-          if (!window.confirm(`Delete ${student.name} and everything they have submitted? This cannot be undone.`)) event.preventDefault();
-        }}
-      >
+      <form action={deleteStudent} className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-4">
         <input type="hidden" name="id" value={student.id} />
-        <button className="cursor-pointer text-sm text-fail hover:underline">Delete this student</button>
+        <HoldButton>Hold to delete this student</HoldButton>
+        <span className="text-sm text-muted">Removes {student.name.split(" ")[0]} and everything they have submitted. This cannot be undone.</span>
       </form>
     </div>
   );

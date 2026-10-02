@@ -26,3 +26,10 @@ export async function requireTeacher() {
   if (user.role !== "TEACHER") redirect("/");
   return user;
 }
+
+/** For server actions and route handlers: stops anyone but the teacher. */
+export async function assertTeacher() {
+  const user = await getCurrentUser();
+  if (user?.role !== "TEACHER") throw new Error("Teachers only");
+  return user;
+}

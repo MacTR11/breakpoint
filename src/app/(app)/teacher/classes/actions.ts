@@ -6,16 +6,11 @@ import { generatePassword } from "@/lib/accounts";
 import { YEARS } from "@/lib/classes";
 import { db } from "@/lib/db";
 import { hashPassword } from "@/lib/passwords";
-import { getCurrentUser } from "@/lib/session";
+import { assertTeacher } from "@/lib/session";
 import { setSetting } from "@/lib/settings";
 import type { EnrolState } from "../students/actions";
 
 export type ClassFormState = { errors: string[]; saved: boolean; values: Record<string, string> } | null;
-
-async function assertTeacher() {
-  const user = await getCurrentUser();
-  if (user?.role !== "TEACHER") throw new Error("Teachers only");
-}
 
 const text = (formData: FormData, key: string) => String(formData.get(key) ?? "").trim();
 

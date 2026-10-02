@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EditStudent } from "@/components/student-forms";
-import { PageHeader, formatDateTime, link, signed } from "@/components/ui";
+import { PageHeader, Tag, buttonStyle, formatDateTime, link, signed } from "@/components/ui";
+import { allClasses } from "@/lib/classes";
 import { db } from "@/lib/db";
+import { duration, pasteFlag } from "@/lib/integrity";
 import { MAX_PUZZLE_ATTEMPTS, parseOptions } from "@/lib/problems";
 import { resetAttempts } from "../../actions";
 
@@ -16,9 +18,12 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
       solves: { include: { problem: true }, orderBy: { solvedAt: "desc" } },
       submissions: { include: { problem: true }, orderBy: { createdAt: "desc" } },
       _count: { select: { hintUnlocks: true } },
+      class: true,
     },
   });
   if (!student || student.role !== "STUDENT") notFound();
+  const classes = await allClasses();
+  const flags = student.submissions.filter((s) => s.problem.kind === "CODE" && pasteFlag(s)).length;
 
   const penalties = student.submissions.reduce((sum, s) => sum + s.penalty, 0);
   const points = student.solves.reduce((sum, s) => sum + s.points, 0) - penalties;
@@ -35,9 +40,25 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
 
   return (
     <>
-      <PageHeader path={[{ label: "teacher" }, { label: "students", href: "/teacher" }, { label: student.username }]} title={student.name} />
+      <PageHeader
+        path={[{ label: "teacher" }, { label: "students", href: "/teacher" }, ...(student.class ? [{ label: student.class.name, href: `/teacher/classes/${student.class.id}` }] : []), { label: student.username }]}
+        title={student.name}
+      >
+        <Link href={`/teacher/students/${student.id}/report`} className={buttonStyle.secondary}>
+          Printable report
+        </Link>
+      </PageHeader>
       <p className="-mt-3 mb-9 text-sm text-muted">
+        {student.class ? `${student.class.name} · ` : "No class · "}
         {signed(points)} pts · {student.solves.length} solved · {penalties} lost to wrong puzzle answers · {student._count.hintUnlocks} hints used
+        {flags > 0 && (
+          <>
+            {" · "}
+            <span className="font-semibold text-warn">
+              {flags} paste flag{flags === 1 ? "" : "s"}
+            </span>
+          </>
+        )}
       </p>
 
       <div className="grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
@@ -63,7 +84,7 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
 
           <section>
             <h2 className="mb-3 text-lg font-semibold">Account</h2>
-            <EditStudent student={{ id: student.id, name: student.name, username: student.username }} />
+            <EditStudent student={{ id: student.id, name: student.name, username: student.username, classId: student.classId ?? "" }} classes={classes} />
             <p className="mt-3 text-sm text-muted">Last signed in: {student.lastSeenAt ? formatDateTime(student.lastSeenAt) : "never"}.</p>
           </section>
 
@@ -98,6 +119,7 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
                 const isPuzzle = submission.problem.kind === "PUZZLE";
                 const options = isPuzzle ? parseOptions(submission.problem) : [];
                 const [word, color] = statusWord[submission.status] ?? [submission.status, "text-muted"];
+                const flag = isPuzzle ? null : pasteFlag(submission);
                 return (
                   <li key={submission.id}>
                     <details>
@@ -108,8 +130,15 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
                           {!isPuzzle && `${submission.passed}/${submission.total}`}
                           {submission.penalty > 0 && ` −${submission.penalty} pts`}
                         </span>
+                        {flag && <Tag color="var(--warn)">Large paste</Tag>}
                         <span className="ml-auto text-sm text-muted">{formatDateTime(submission.createdAt)}</span>
                       </summary>
+                      {!isPuzzle && (submission.typedChars > 0 || submission.pastedChars > 0) && (
+                        <p className={`pb-2 text-sm ${flag ? "text-warn" : "text-muted"}`}>
+                          {flag ? `${flag}. ` : ""}Typed {submission.typedChars} characters, pasted {submission.pastedChars}
+                          {submission.seconds > 0 && `, editor open ${duration(submission.seconds)}`}.
+                        </p>
+                      )}
                       {isPuzzle ? (
                         <p className="pb-3 text-sm">Answered: {options[Number(submission.code)] ?? submission.code}</p>
                       ) : (

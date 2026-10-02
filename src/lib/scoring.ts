@@ -4,6 +4,7 @@ export type LeaderboardRow = {
   rank: number;
   userId: string;
   name: string;
+  className: string;
   points: number;
   solved: number;
   lastSolvedAt: Date | null;
@@ -35,7 +36,7 @@ export async function leaderboard(scope: Scope = {}): Promise<LeaderboardRow[]> 
   ]);
   const users = await db.user.findMany({
     where: { id: { in: groups.map((g) => g.userId) } },
-    select: { id: true, name: true },
+    select: { id: true, name: true, class: { select: { name: true } } },
   });
   const byId = new Map(users.map((u) => [u.id, u]));
   const lost = new Map(penalties.map((p) => [p.userId, p._sum.penalty ?? 0]));
@@ -44,6 +45,7 @@ export async function leaderboard(scope: Scope = {}): Promise<LeaderboardRow[]> 
     .map((g) => ({
       userId: g.userId,
       name: byId.get(g.userId)?.name ?? "Unknown",
+      className: byId.get(g.userId)?.class?.name ?? "",
       points: (g._sum.points ?? 0) - (lost.get(g.userId) ?? 0),
       solved: g._count._all,
       lastSolvedAt: g._max.solvedAt,
