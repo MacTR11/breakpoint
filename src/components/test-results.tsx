@@ -2,68 +2,76 @@ import type { RunState } from "@/components/code-workspace";
 import type { TestCase, TestResult, TestStatus } from "@/lib/types";
 import { callText, toPy } from "../../public/judge/harness.mjs";
 
-const label: Record<TestStatus, string> = { PASS: "Passed", FAIL: "Wrong answer", ERROR: "Error", TIMEOUT: "Too slow", SKIPPED: "Not run" };
-const tone: Record<TestStatus, string> = {
-  PASS: "text-[#30d158]",
-  FAIL: "text-[#ff6961]",
-  ERROR: "text-[#ff6961]",
-  TIMEOUT: "text-[#ffd60a]",
-  SKIPPED: "text-[#6e6e73]",
+// One line per test, in plain words with a tick or a cross, in the editor's
+// own colours. Each result arrives a beat after the one before, then the verdict.
+const STEP_MS = 70;
+
+const word: Record<TestStatus, [string, string]> = {
+  PASS: ["✓ Passed", "text-[#3fb950]"],
+  FAIL: ["✗ Failed", "text-[#ff7b72]"],
+  ERROR: ["✗ Error", "text-[#ff7b72]"],
+  TIMEOUT: ["✗ Too slow", "text-[#e5a50a]"],
+  SKIPPED: ["– Not run", "text-[#9198a1]"],
 };
 
 function headline(state: NonNullable<RunState>) {
   const { outcome, source } = state;
   const passed = outcome.results.filter((r) => r.status === "PASS").length;
   const total = outcome.results.length;
-  if (outcome.loadError) return { text: "Your code could not be run", good: false };
+  if (outcome.loadError) return { text: "Could not run your code.", good: false };
   if (outcome.status === "ACCEPTED") {
-    return source === "submit"
-      ? { text: `Accepted. All ${total} tests passed`, good: true }
-      : { text: `All ${total} examples passed. Submit to check the hidden tests.`, good: true };
+    return source === "submit" ? { text: `All ${total} tests passed.`, good: true } : { text: `All ${total} examples passed. Submit to run the hidden tests.`, good: true };
   }
-  if (outcome.status === "TIMEOUT") return { text: `Time limit exceeded. ${passed} of ${total} tests passed`, good: false };
-  return { text: `${passed} of ${total} tests passed`, good: false };
+  if (outcome.status === "TIMEOUT") return { text: `Ran out of time. ${passed} of ${total} passed.`, good: false };
+  return { text: `${passed} of ${total} passed.`, good: false };
 }
 
-function Row({ result, test, functionName, number }: { result: TestResult; test?: TestCase; functionName: string; number: number }) {
+function Row({ result, test, functionName, number, delay }: { result: TestResult; test?: TestCase; functionName: string; number: number; delay: number }) {
   const detail = test && !result.hidden ? test : null;
+  const [label, color] = word[result.status];
+  // A test that never ran has nothing to compare, so it gets no detail.
+  const failed = result.status !== "PASS" && result.status !== "SKIPPED";
   return (
-    <li className="rounded-xl bg-white/5 px-4 py-3">
-      <div className="flex items-center justify-between gap-3 text-sm">
-        <span className="font-medium">{result.hidden ? `Hidden test ${number}` : `Example ${number}`}</span>
-        <span className={`font-medium ${tone[result.status]}`}>
-          {result.status === "PASS" ? "✓ " : ""}
-          {label[result.status]}
-        </span>
-      </div>
-      {detail && (
-        <dl className="mt-3 grid grid-cols-[5.5rem_1fr] gap-x-3 gap-y-1.5 font-mono text-[13px]">
-          <dt className="text-[#a1a1a6]">{detail.steps ? "Calls" : "Call"}</dt>
-          <dd className="whitespace-pre-wrap break-all">{callText(functionName, detail)}</dd>
-          <dt className="text-[#a1a1a6]">Expected</dt>
-          <dd className="break-all">{toPy(detail.expected)}</dd>
-          {result.actual !== undefined && (
+    <li className="rise" style={{ animationDelay: `${delay}ms` }}>
+      <p>
+        <span className={`inline-block w-[5.75rem] font-semibold ${color}`}>{label}</span>
+        {result.hidden ? `hidden ${number}` : `example ${number}`}
+        {detail && !detail.steps && <span className="text-[#9198a1]"> {callText(functionName, detail)}</span>}
+      </p>
+      {detail && result.status !== "SKIPPED" && (failed || detail.steps) && (
+        <dl className="mb-2 grid grid-cols-[4.5rem_1fr] gap-x-2 pl-[5.75rem] text-[#9198a1]">
+          {detail.steps && (
             <>
-              <dt className="text-[#a1a1a6]">Returned</dt>
-              <dd className={`break-all ${result.status === "PASS" ? "text-[#30d158]" : "text-[#ff6961]"}`}>{result.actual}</dd>
+              <dt>calls</dt>
+              <dd className="whitespace-pre-wrap break-all text-[#f6f8fa]">{callText(functionName, detail)}</dd>
+            </>
+          )}
+          {failed && (
+            <>
+              <dt>expected</dt>
+              <dd className="break-all text-[#f6f8fa]">{toPy(detail.expected)}</dd>
+            </>
+          )}
+          {failed && result.actual !== undefined && (
+            <>
+              <dt>returned</dt>
+              <dd className="break-all text-[#ff7b72]">{result.actual}</dd>
             </>
           )}
           {result.stdout && (
             <>
-              <dt className="text-[#a1a1a6]">Printed</dt>
-              <dd className="whitespace-pre-wrap break-all text-[#d1d1d6]">{result.stdout}</dd>
+              <dt>printed</dt>
+              <dd className="whitespace-pre-wrap break-all text-[#f6f8fa]">{result.stdout}</dd>
             </>
           )}
         </dl>
       )}
-      {detail?.steps && result.status === "FAIL" && (
-        <p className="mt-3 text-sm text-[#ffd60a]">Expected and Returned list what each method call gave back, in order, after the object was created.</p>
+      {detail && result.status === "FAIL" && !detail.steps && result.actual === "None" && detail.expected !== null && (
+        <p className="mb-2 pl-[5.75rem] text-[#e5a50a]">Your function returned None. Did you forget a return statement, or print the answer instead of returning it?</p>
       )}
-      {detail && !detail.steps && result.status === "FAIL" && result.actual === "None" && detail.expected !== null && (
-        <p className="mt-3 text-sm text-[#ffd60a]">Your function returned None. Did you forget a return statement, or print the answer instead of returning it?</p>
-      )}
-      {detail && result.status === "TIMEOUT" && <p className="mt-3 text-sm text-[#ffd60a]">Your code ran for too long on this test. Look for a loop that never ends.</p>}
-      {detail && result.error && <pre className="mt-3 whitespace-pre-wrap break-words font-mono text-[13px] text-[#ff6961]">{result.error}</pre>}
+      {detail?.steps && result.status === "FAIL" && <p className="mb-2 pl-[5.75rem] text-[#e5a50a]">expected and returned list what each method call gave back, in order.</p>}
+      {detail && result.status === "TIMEOUT" && <p className="mb-2 pl-[5.75rem] text-[#e5a50a]">The code ran for too long on this test. Look for a loop that never ends.</p>}
+      {detail && result.error && <pre className="mb-2 whitespace-pre-wrap break-words pl-[5.75rem] text-[#ff7b72]">{result.error}</pre>}
     </li>
   );
 }
@@ -81,13 +89,15 @@ export function TestResults({ state, tests, functionName }: { state: NonNullable
   });
   return (
     <div>
-      <p className={`font-medium ${good ? "text-[#30d158]" : "text-[#ff6961]"}`}>{text}</p>
-      {outcome.loadError && <pre className="mt-3 whitespace-pre-wrap break-words font-mono text-[13px] text-[#ff6961]">{outcome.loadError}</pre>}
-      <ul className="mt-3 space-y-2">
-        {rows.map(({ result, number, test }) => (
-          <Row key={result.index} result={result} test={test} functionName={functionName} number={number} />
+      {outcome.loadError && <pre className="mt-1 whitespace-pre-wrap break-words text-[#ff7b72]">{outcome.loadError}</pre>}
+      <ul className="mt-1">
+        {rows.map(({ result, number, test }, index) => (
+          <Row key={result.index} result={result} test={test} functionName={functionName} number={number} delay={index * STEP_MS} />
         ))}
       </ul>
+      <p className={`rise ${good ? "text-[#3fb950]" : "text-[#ff7b72]"}`} style={{ animationDelay: `${rows.length * STEP_MS}ms` }}>
+        {text}
+      </p>
     </div>
   );
 }

@@ -6,10 +6,12 @@ import CodeMirror from "@uiw/react-codemirror";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore, useTransition } from "react";
 import { submitCode } from "@/app/actions";
-import { HintCoin } from "@/components/brand";
+import { RewardLines } from "@/components/rewards";
 import { TestResults } from "@/components/test-results";
+import { celebrate } from "@/lib/celebrate";
 import { readDraft, subscribeToDrafts, writeDraft } from "@/lib/drafts";
 import { runInBrowser, warmUp } from "@/lib/py-runner";
+import type { Rewards } from "@/lib/solve";
 import { bannedUse, type JudgeOutcome, type TestCase } from "@/lib/types";
 
 const extensions = [python(), indentUnit.of("    ")];
@@ -19,6 +21,7 @@ export type RunState = { source: "run" | "submit"; outcome: JudgeOutcome } | nul
 export function CodeWorkspace({
   userId,
   slug,
+  fileName,
   functionName,
   starterCode,
   savedCode,
@@ -35,6 +38,7 @@ export function CodeWorkspace({
 }: {
   userId: string;
   slug: string;
+  fileName: string;
   functionName: string;
   starterCode: string;
   savedCode: string | null;
@@ -61,10 +65,12 @@ export function CodeWorkspace({
   );
   const code = draft ?? savedCode ?? starterCode;
   const [state, setState] = useState<RunState>(null);
+  // Counts runs, so each new set of results is a fresh element and animates in.
+  const [runs, setRuns] = useState(0);
   const [busy, setBusy] = useState<"run" | "submit" | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [solved, setSolved] = useState(initiallySolved);
-  const [justSolved, setJustSolved] = useState<{ hintEarned: boolean } | null>(null);
+  const [justSolved, setJustSolved] = useState<Rewards | null>(null);
   const [, startTransition] = useTransition();
 
   // Start fetching Python straight away so the first Run is quick.
@@ -79,6 +85,7 @@ export function CodeWorkspace({
     const notAllowed = bannedUse(code, banned);
     const outcome: JudgeOutcome = notAllowed ? { status: "ERROR", loadError: notAllowed, results: [] } : await runInBrowser(code, functionName, visibleTests);
     setState({ source: "run", outcome });
+    setRuns((n) => n + 1);
     setBusy(null);
   };
 
@@ -93,9 +100,13 @@ export function CodeWorkspace({
           setMessage(result.message);
         } else {
           setState({ source: "submit", outcome: result.outcome });
-          if (result.outcome.status === "ACCEPTED") setSolved(true);
+          setRuns((n) => n + 1);
+          if (result.outcome.status === "ACCEPTED") {
+            setSolved(true);
+            celebrate();
+          }
           if (result.newlySolved) {
-            setJustSolved({ hintEarned: result.hintEarned });
+            setJustSolved(result.rewards);
             router.refresh();
           }
         }
@@ -114,24 +125,28 @@ export function CodeWorkspace({
   };
 
   return (
-    <main className="flex-1 grid gap-3 p-3 lg:grid-cols-2 lg:h-[calc(100vh-4rem)]">
-      <section className="glass rounded-[1.75rem] lg:overflow-y-auto px-5 sm:px-9 py-9">
+    <main className="grid flex-1 grid-cols-1 gap-4 p-4 lg:h-[calc(100vh-3.25rem)] lg:grid-cols-2">
+      <section className="card min-w-0 px-5 py-6 sm:px-8 sm:py-7 lg:overflow-y-auto">
         {header}
         {solved && (
-          <p className="badge mt-5 inline-flex items-center gap-1.5 bg-[#30d158]/20 px-3 py-1 text-sm text-[#126b2d]">✓ Solved</p>
+          <p className="mt-3">
+            <span className="tag" style={{ "--tone": "var(--pass)" } as React.CSSProperties}>
+              Solved
+            </span>
+          </p>
         )}
-        <div className="mt-8">{description}</div>
+        <div className="mt-7">{description}</div>
         {hints}
         {teacherNotes}
       </section>
 
-      <section className="window flex min-h-[38rem] flex-col overflow-hidden rounded-[1.75rem] lg:min-h-0">
-        <div className="window-bar flex items-center gap-2 px-5 py-2.5">
-          <span className="font-mono text-xs text-[#aeaeb2]">solution.py</span>
-          {isFix && <span className="ml-auto rounded-full bg-[#bf5af2]/25 px-2.5 py-0.5 text-xs font-medium text-[#e3c2ff]">This code has bugs</span>}
+      <section className="flex min-h-[36rem] min-w-0 flex-col overflow-hidden rounded-[22px] bg-[#21252b] text-[#f6f8fa] lg:min-h-0">
+        <div className="flex items-end gap-4 px-4 pt-2 font-mono text-[13px]">
+          <span className="rounded-t-[10px] bg-[#282c34] px-4 py-1.5">{fileName}</span>
+          {isFix && <span className="pb-1.5 text-[#e5a50a]">this code has bugs</span>}
         </div>
 
-        <div className="flex-1 min-h-0 overflow-hidden bg-[#282c34]">
+        <div className="min-h-0 flex-1 overflow-hidden bg-[#282c34]">
           <CodeMirror
             value={code}
             onChange={edit}
@@ -144,40 +159,38 @@ export function CodeWorkspace({
           />
         </div>
 
-        <div className="window-bar flex flex-wrap items-center gap-3 px-5 py-3">
+        <div className="flex flex-wrap items-center gap-3 px-4 py-3">
           <button type="button" onClick={run} disabled={busy !== null} className="btn btn-on-dark">
-            {busy === "run" ? "Running…" : "▶ Run examples"}
+            {busy === "run" ? "Running…" : "Run examples"}
           </button>
           <button type="button" onClick={submit} disabled={busy !== null} className="btn btn-primary">
             {busy === "submit" ? "Marking…" : "Submit"}
           </button>
-          <button type="button" onClick={reset} disabled={busy !== null} className="ml-auto text-sm text-[#aeaeb2] hover:text-white enabled:cursor-pointer">
+          <button type="button" onClick={reset} disabled={busy !== null} className="ml-auto text-sm text-[#9198a1] hover:text-white enabled:cursor-pointer">
             Reset
           </button>
         </div>
 
-        <div className="max-h-[45%] min-h-28 overflow-y-auto px-5 py-4 text-[#f5f5f7]" aria-live="polite">
-          {message && <p className="mb-3 rounded-xl bg-[#ff453a]/15 px-4 py-3 text-sm text-[#ff9f99]">{message}</p>}
-          {justSolved && (
-            <p className="mb-3 flex flex-wrap items-center gap-2 rounded-xl bg-[#30d158]/15 px-4 py-3 text-sm font-medium text-[#30d158]">
-              Solved. +{points} points
-              {justSolved.hintEarned && (
-                <span className="flex items-center gap-1.5 text-[#ffd60a]">
-                  <HintCoin size={16} /> You earned a hint.
-                </span>
-              )}
-            </p>
-          )}
+        <div className="max-h-[45%] min-h-28 overflow-y-auto border-t border-white/10 px-4 py-3 font-mono text-[13px] leading-6" aria-live="polite">
+          {message && <p className="text-[#ff7b72]">{message}</p>}
           {state ? (
-            <TestResults state={state} tests={visibleTests} functionName={functionName} />
+            <TestResults key={runs} state={state} tests={visibleTests} functionName={functionName} />
           ) : (
             !message && (
-              <p className="text-sm text-[#a1a1a6]">
-                <strong className="font-medium text-[#f5f5f7]">Run examples</strong> tries {isFix ? "the code" : "your code"} on the {visibleTests.length} example
-                {visibleTests.length === 1 ? "" : "s"} from the question. <strong className="font-medium text-[#f5f5f7]">Submit</strong> marks it against those plus{" "}
-                {hiddenCount} hidden test{hiddenCount === 1 ? "" : "s"}.
+              <p className="text-[#9198a1]">
+                Run examples: tries {isFix ? "the code" : "your code"} on the {visibleTests.length} example{visibleTests.length === 1 ? "" : "s"} from the question.
+                <br />
+                Submit: marks it against those plus {hiddenCount} hidden test{hiddenCount === 1 ? "" : "s"}.
               </p>
             )
+          )}
+          {justSolved && (
+            <div className="mt-2 text-sm">
+              <p className="rise" style={{ animationDelay: "200ms" }}>
+                <span className="font-semibold text-[#3fb950]">Solved</span> +{points} points
+              </p>
+              <RewardLines rewards={justSolved} dark />
+            </div>
           )}
         </div>
       </section>

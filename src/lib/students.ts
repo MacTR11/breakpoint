@@ -3,7 +3,7 @@ import { db } from "./db";
 /** Every student with their totals, for the teacher dashboard and CSV export. */
 export async function studentSummaries() {
   const [students, solves, activity] = await Promise.all([
-    db.user.findMany({ where: { role: "STUDENT" }, orderBy: { name: "asc" } }),
+    db.user.findMany({ where: { role: "STUDENT" }, orderBy: { name: "asc" }, select: { id: true, name: true, username: true, lastSeenAt: true } }),
     db.solve.groupBy({ by: ["userId"], _sum: { points: true }, _count: { _all: true } }),
     db.submission.groupBy({ by: ["userId"], _max: { createdAt: true }, _count: { _all: true }, _sum: { penalty: true } }),
   ]);

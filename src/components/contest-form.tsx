@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { deleteContest, saveContest } from "@/app/(app)/teacher/actions";
 import { FormErrors, field, hint, label as labelStyle } from "@/components/form-bits";
-import { DifficultyBadge, KindBadge } from "@/components/ui";
+import { kindLabel, levelLabel } from "@/components/ui";
 import { trackTitle } from "@/lib/tracks";
 
 type ProblemOption = { id: string; title: string; kind: string; style: string; track: string; difficulty: string; points: number; specRef: string; note: string | null };
@@ -20,7 +20,7 @@ export function ContestForm({ values: saved, problems }: { values: ContestFormVa
 
   return (
     <>
-      <form action={action} className="space-y-7 max-w-3xl">
+      <form action={action} className="max-w-3xl space-y-6">
         {values.id && <input type="hidden" name="id" value={values.id} />}
 
         <label className={labelStyle}>
@@ -52,11 +52,11 @@ export function ContestForm({ values: saved, problems }: { values: ContestFormVa
             Chosen problems are hidden from students until the competition starts, and join Practice when it ends. For a fair contest, pick problems students
             have not seen: any they have already solved will not score again.
           </p>
-          <ul className="glass mt-3 divide-y divide-line rounded-2xl">
+          <ul className="mt-3 border-y border-line divide-y divide-line">
             {problems.map((p) => (
               <li key={p.id}>
-                <label className="flex cursor-pointer items-center gap-3 px-5 py-3">
-                  <input type="checkbox" name="problemIds" value={p.id} defaultChecked={values.problemIds.includes(p.id)} className="h-4 w-4 accent-accent" />
+                <label className="flex cursor-pointer items-baseline gap-3 py-2.5">
+                  <input type="checkbox" name="problemIds" value={p.id} defaultChecked={values.problemIds.includes(p.id)} className="h-4 w-4 self-center" />
                   <span className="flex-1 min-w-0">
                     <span className="font-medium">{p.title}</span>
                     <span className="ml-2 text-sm text-muted">
@@ -64,9 +64,10 @@ export function ContestForm({ values: saved, problems }: { values: ContestFormVa
                       {p.note && ` · ${p.note}`}
                     </span>
                   </span>
-                  <KindBadge kind={p.kind} style={p.style} />
-                  <DifficultyBadge difficulty={p.difficulty} />
-                  <span className="w-12 text-right text-sm tabular-nums text-muted">{p.points} pts</span>
+                  <span className="hidden whitespace-nowrap text-sm text-muted sm:inline">
+                    {kindLabel(p.kind, p.style)} · {levelLabel(p.difficulty)}
+                  </span>
+                  <span className="w-8 text-right text-sm font-semibold tabular-nums text-muted">{p.points}</span>
                 </label>
               </li>
             ))}
@@ -75,7 +76,7 @@ export function ContestForm({ values: saved, problems }: { values: ContestFormVa
 
         <FormErrors state={state} />
 
-        <button disabled={pending} className="btn btn-primary px-6 py-2.5 text-base">
+        <button disabled={pending} className="btn btn-primary">
           {pending ? "Saving…" : "Save competition"}
         </button>
       </form>
@@ -89,7 +90,7 @@ export function ContestForm({ values: saved, problems }: { values: ContestFormVa
           className="mt-12 max-w-3xl border-t border-line pt-6"
         >
           <input type="hidden" name="id" value={values.id} />
-          <button className="text-sm text-[#c4271b] hover:underline cursor-pointer">Delete this competition</button>
+          <button className="cursor-pointer text-sm text-fail hover:underline">Delete this competition</button>
         </form>
       )}
     </>

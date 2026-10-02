@@ -1,7 +1,7 @@
 import { db } from "./db";
 
-// Every student starts with a few hint tokens and earns another each time
-// they solve this many more challenges.
+// Every student starts with a few hint tokens, earns another each time they
+// solve this many more challenges, and one for each daily challenge done on its day.
 export const STARTING_HINTS = 3;
 export const SOLVES_PER_HINT = 3;
 
@@ -14,9 +14,13 @@ export type HintWallet = {
 };
 
 export async function hintWallet(userId: string): Promise<HintWallet> {
-  const [solved, used] = await Promise.all([db.solve.count({ where: { userId } }), db.hintUnlock.count({ where: { userId } })]);
+  const [solved, used, daily] = await Promise.all([
+    db.solve.count({ where: { userId } }),
+    db.hintUnlock.count({ where: { userId } }),
+    db.dailyBonus.count({ where: { userId } }),
+  ]);
   return {
-    balance: Math.max(0, STARTING_HINTS + Math.floor(solved / SOLVES_PER_HINT) - used),
+    balance: Math.max(0, STARTING_HINTS + Math.floor(solved / SOLVES_PER_HINT) + daily - used),
     untilNext: SOLVES_PER_HINT - (solved % SOLVES_PER_HINT),
     solved,
   };

@@ -29,3 +29,16 @@ export function londonToDate(local: string): Date {
 export function dateToLondonInput(date: Date): string {
   return new Date(date.getTime() + offsetMinutes(date) * 60_000).toISOString().slice(0, 16);
 }
+
+/** The UK calendar day a moment falls on, as "2026-10-02". */
+export const londonDay = (date = new Date()) => dateToLondonInput(date).slice(0, 10);
+
+/** The instant a UK calendar day begins. */
+export const londonDayStart = (day: string) => londonToDate(`${day}T00:00`);
+
+/** Move a "YYYY-MM-DD" day forwards or backwards by whole days. */
+export function shiftDay(day: string, by: number) {
+  const [year, month, date] = day.split("-").map(Number);
+  // Midday UTC keeps clear of clock changes.
+  return new Date(Date.UTC(year, month - 1, date + by, 12)).toISOString().slice(0, 10);
+}

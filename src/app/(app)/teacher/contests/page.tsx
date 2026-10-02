@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ButtonLink, Card, PageHeader, formatDateTime } from "@/components/ui";
+import { ButtonLink, PageHeader, formatDateTime, link } from "@/components/ui";
 import { db } from "@/lib/db";
 import { contestState, contestStateLabel } from "@/lib/scoring";
 
@@ -8,42 +8,43 @@ export default async function TeacherContestsPage() {
   return (
     <>
       <PageHeader
+        path={[{ label: "teacher" }, { label: "competitions" }]}
         title="Competitions"
-        intro="Ready-made packs are waiting to be given a date. Their problems stay hidden from students until the competition starts, and join Practice once it ends."
+        intro="Ready-made packs are waiting to be given a date. Their challenges stay hidden from students until the competition starts, and join Practice once it ends."
       >
         <ButtonLink href="/teacher/contests/new">New competition</ButtonLink>
       </PageHeader>
       {contests.length === 0 ? (
-        <Card className="p-10 text-center text-muted">No competitions yet.</Card>
+        <p className="border-y border-line py-6 text-muted">No competitions yet.</p>
       ) : (
-        <Card className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="text-xs text-muted">
-              <tr className="border-b border-line">
-                <th className="px-6 py-3 font-medium">Competition</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Starts</th>
-                <th className="px-4 py-3 font-medium">Ends</th>
-                <th className="px-4 py-3 font-medium text-right">Problems</th>
-                <th className="px-6 py-3" />
+        <div className="overflow-x-auto">
+          <table className="tbl">
+            <thead>
+              <tr>
+                <th>Competition</th>
+                <th>Status</th>
+                <th>Starts</th>
+                <th>Ends</th>
+                <th className="num">Challenges</th>
+                <th />
               </tr>
             </thead>
-            <tbody className="divide-y divide-line">
+            <tbody>
               {contests.map((contest) => {
                 const state = contestState(contest);
                 return (
-                  <tr key={contest.id} className="hover:bg-white/60">
-                    <td className="px-6 py-3.5">
-                      <Link href={`/contests/${contest.id}`} className="font-medium text-base hover:underline">
+                  <tr key={contest.id}>
+                    <td>
+                      <Link href={`/contests/${contest.id}`} className={link}>
                         {contest.title}
                       </Link>
                     </td>
-                    <td className="px-4 py-3.5">{contestStateLabel[state]}</td>
-                    <td className="px-4 py-3.5 text-muted whitespace-nowrap">{contest.startsAt ? formatDateTime(contest.startsAt) : "—"}</td>
-                    <td className="px-4 py-3.5 text-muted whitespace-nowrap">{contest.endsAt ? formatDateTime(contest.endsAt) : "—"}</td>
-                    <td className="px-4 py-3.5 text-right tabular-nums">{contest._count.problems}</td>
-                    <td className="px-6 py-3.5 text-right">
-                      <Link href={`/teacher/contests/${contest.id}`} className="text-link hover:underline">
+                    <td className="whitespace-nowrap">{contestStateLabel[state]}</td>
+                    <td className="whitespace-nowrap text-muted">{contest.startsAt ? formatDateTime(contest.startsAt) : "—"}</td>
+                    <td className="whitespace-nowrap text-muted">{contest.endsAt ? formatDateTime(contest.endsAt) : "—"}</td>
+                    <td className="num">{contest._count.problems}</td>
+                    <td>
+                      <Link href={`/teacher/contests/${contest.id}`} className={link}>
                         {state === "DRAFT" ? "Schedule" : "Edit"}
                       </Link>
                     </td>
@@ -52,7 +53,7 @@ export default async function TeacherContestsPage() {
               })}
             </tbody>
           </table>
-        </Card>
+        </div>
       )}
     </>
   );

@@ -3,28 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { unlockHint } from "@/app/actions";
-import { HintCoin } from "@/components/brand";
 import { Markdown } from "@/components/markdown";
 
 /**
  * The hints for one challenge. Revealed hints are shown; the next one costs a
  * hint token. `free` is for teachers, who reveal hints without spending.
  */
-export function HintPanel({
-  slug,
-  total,
-  unlocked,
-  balance,
-  untilNext,
-  free,
-}: {
-  slug: string;
-  total: number;
-  unlocked: string[];
-  balance: number;
-  untilNext: number;
-  free: boolean;
-}) {
+export function HintPanel({ slug, total, unlocked, balance, untilNext, free }: { slug: string; total: number; unlocked: string[]; balance: number; untilNext: number; free: boolean }) {
   const router = useRouter();
   // Hints revealed in this visit, shown at once while the page catches up. The
   // server's list wins as soon as it is longer, e.g. when solving unlocks them all.
@@ -46,34 +31,23 @@ export function HintPanel({
   };
 
   return (
-    <section className="mt-10" aria-label="Hints">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold tracking-tight">Hints</h2>
-        {!free && (
-          <span className="flex items-center gap-1.5 text-sm text-muted">
-            <HintCoin size={18} />
-            {balance} to spend
-          </span>
-        )}
-      </div>
+    <section className="mt-9 border-t border-line pt-5" aria-label="Hints">
+      <h2 className="cap">Hints</h2>
 
-      <div className="mt-3 space-y-3">
-        {hints.map((hint, index) => (
-          <div key={index} className="hint-card">
-            <p className="text-xs font-semibold text-[#7a5200]">
-              Hint {index + 1} of {total}
-            </p>
-            <div className="md-compact mt-1 text-[#4a3200]">
+      {hints.length > 0 && (
+        <ol className="mt-3 space-y-3">
+          {hints.map((hint, index) => (
+            <li key={index} className="rise flex gap-4">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-[8px] bg-hint font-display text-sm font-extrabold text-white">{index + 1}</span>
               <Markdown>{hint}</Markdown>
-            </div>
-          </div>
-        ))}
-      </div>
+            </li>
+          ))}
+        </ol>
+      )}
 
       {remaining > 0 && (
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-          <button type="button" onClick={reveal} disabled={pending || (!free && balance <= 0)} className="btn btn-hint">
-            <HintCoin size={18} />
+          <button type="button" onClick={reveal} disabled={pending || (!free && balance <= 0)} className="btn btn-secondary">
             {pending ? "Revealing…" : hints.length === 0 ? "Use a hint" : "Use another hint"}
           </button>
           <p className="text-sm text-muted">
@@ -86,7 +60,7 @@ export function HintPanel({
         </div>
       )}
       {message && (
-        <p role="alert" className="mt-3 text-sm text-[#a51d13]">
+        <p role="alert" className="mt-3 text-sm text-fail">
           {message}
         </p>
       )}

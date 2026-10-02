@@ -12,8 +12,8 @@ export async function GET() {
   if (user?.role !== "TEACHER") return new Response("Forbidden", { status: 403 });
 
   const rows = [
-    ["Name", "Email", "Points", "Solved", "Submissions", "Last active"],
-    ...(await studentSummaries()).map((s) => [s.name, s.email, s.points, s.solved, s.submissions, s.lastActive?.toISOString() ?? ""]),
+    ["Name", "Username", "Points", "Solved", "Submissions", "Last active"],
+    ...(await studentSummaries()).map((s) => [s.name, s.username, s.points, s.solved, s.submissions, s.lastActive?.toISOString() ?? ""]),
   ];
   return new Response(rows.map((row) => row.map(cell).join(",")).join("\r\n"), {
     headers: {

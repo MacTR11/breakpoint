@@ -9,19 +9,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Students are created by the teacher (one at a time or from a CSV). The
+// teacher's own sign-in is set in .env, so their row never holds a password.
 model User {
-  id         String   @id @default(cuid())
-  email      String   @unique
-  name       String
-  image      String?
-  role       String   @default("STUDENT") // STUDENT | TEACHER
-  school     String? // email domain, e.g. "example-college.ac.uk"
-  createdAt  DateTime @default(now())
-  lastSeenAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  username     String   @unique // lower case; what is typed to sign in
+  name         String
+  passwordHash String   @default("") // scrypt, see src/lib/passwords.ts; empty means no password works
+  role         String   @default("STUDENT") // STUDENT | TEACHER
+  sessionEpoch Int      @default(0) // raised when the password changes, which signs the old password's sessions out
+  createdAt    DateTime @default(now())
+  lastSeenAt   DateTime?
 
   submissions Submission[]
   solves      Solve[]
   hintUnlocks HintUnlock[]
+  dailyBonus  DailyBonus[]
+}
+
+// Wrong sign-in attempts per username, so passwords cannot be guessed at speed.
+model LoginThrottle {
+  username    String    @id
+  failures    Int       @default(0)
+  lockedUntil DateTime?
+  updatedAt   DateTime  @updatedAt
 }
 
 model Problem {
@@ -106,6 +117,19 @@ model HintUnlock {
   problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
   @@unique([userId, problemId, index])
+}
+
+// A bonus hint token, earned by solving the daily challenge on its day.
+model DailyBonus {
+  id        String   @id @default(cuid())
+  userId    String
+  day       String // "2026-10-02", in UK time
+  problemId String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, day])
 }
 
 // A contest with no dates is a ready-made pack waiting to be scheduled.

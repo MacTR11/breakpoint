@@ -1,53 +1,54 @@
 import Link from "next/link";
 import { signOutAction } from "@/app/actions";
-import { HintCoin, Logo } from "@/components/brand";
+import { Wordmark } from "@/components/brand";
 import { NavLinks } from "@/components/nav-links";
-import { Avatar } from "@/components/ui";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { activity } from "@/lib/activity";
 import { siteName } from "@/lib/config";
 import { hintWallet } from "@/lib/hints";
 import { requireUser } from "@/lib/session";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const user = await requireUser();
-  const wallet = await hintWallet(user.id);
+  const [wallet, history] = await Promise.all([hintWallet(user.id), activity(user.id, 1)]);
   const links = [
     { href: "/", label: "Home" },
     { href: "/problems", label: "Practice" },
     { href: "/syllabus", label: "Course map" },
     { href: "/contests", label: "Competitions" },
     { href: "/leaderboard", label: "Leaderboard" },
+    { href: "/awards", label: "Awards" },
     ...(user.role === "TEACHER" ? [{ href: "/teacher", label: "Teacher" }] : []),
   ];
 
   return (
     <>
-      <header className="sticky top-0 z-30 px-3 pt-3">
-        <div className="glass-nav mx-auto flex h-13 max-w-6xl items-center gap-3 rounded-full pl-3 pr-4 sm:gap-5">
-          <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap" aria-label={siteName}>
-            <Logo size={30} />
-            <span className="hidden text-[17px] font-semibold tracking-tight md:inline">{siteName}</span>
+      <header className="sticky top-0 z-20 border-b border-line bg-card">
+        {/* On a phone the links drop to a second row, which scrolls sideways. */}
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 px-4 sm:px-6 md:h-[3.25rem] md:flex-nowrap">
+          <Link href="/" aria-label={siteName} className="flex h-12 items-center md:h-auto">
+            <Wordmark />
           </Link>
-          <div className="min-w-0 flex-1">
+          <div className="order-last w-full min-w-0 pb-2.5 md:order-none md:w-auto md:flex-1 md:pb-0">
             <NavLinks links={links} />
           </div>
-          <div className="flex items-center gap-3">
-            <span
-              className="flex items-center gap-1.5 rounded-full bg-[#ffd60a]/30 py-1 pl-1.5 pr-2.5 text-[13px] font-semibold tabular-nums"
-              title={`${wallet.balance} hint${wallet.balance === 1 ? "" : "s"} to spend. Next one in ${wallet.untilNext} solve${wallet.untilNext === 1 ? "" : "s"}.`}
-            >
-              <HintCoin size={18} />
-              {wallet.balance}
+          <div className="ml-auto flex items-center gap-4 text-sm">
+            {/* Always in view: the streak (amber until today's solve is done) and hints to spend. */}
+            <span className="hidden whitespace-nowrap text-muted lg:inline" title={history.solvedToday ? "You have solved something today" : "Solve something today to keep your streak"}>
+              <span className={`font-display font-extrabold ${history.solvedToday ? "text-streak" : "text-muted"}`}>{history.streak}</span> day streak
             </span>
-            <span className="hidden sm:inline-flex" title={user.name}>
-              <Avatar name={user.name} image={user.image} size={28} />
+            <span className="hidden whitespace-nowrap text-muted lg:inline" title={`Next hint after ${wallet.untilNext} more solve${wallet.untilNext === 1 ? "" : "s"}`}>
+              <span className="font-display font-extrabold text-hint">{wallet.balance}</span> hint{wallet.balance === 1 ? "" : "s"}
             </span>
-            <form action={signOutAction}>
-              <button className="text-[13px] text-ink/70 hover:text-ink cursor-pointer whitespace-nowrap">Sign out</button>
+            <ThemeToggle />
+            <form action={signOutAction} className="flex">
+              <button className="cursor-pointer whitespace-nowrap text-muted hover:text-ink">Sign out</button>
             </form>
           </div>
         </div>
       </header>
-      <div className="flex-1 flex flex-col">{children}</div>
+
+      <div className="flex flex-1 flex-col">{children}</div>
     </>
   );
 }

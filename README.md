@@ -1,17 +1,22 @@
-# Bitwise
+# Breakpoint
 
 A Python practice and competition platform for A Level Computer Science.
 
 - **Write code**: students write a function or a class in an in-browser editor, run it against examples, then submit to be marked against hidden tests.
+- **Exam-style questions**: write-the-code questions in the style of the H446 papers, with a scenario, lettered parts and marks. Solving one reveals its mark scheme and a model answer.
+- **First steps**: a gentle on-ramp of tiny challenges with most of the code already written.
 - **Fix the bug**: the editor opens on a broken program. Students find the fault and repair it.
 - **Puzzles**: read some code and say what it prints, spot the bug, or trace an algorithm. Wrong answers cost points, so guessing does not pay.
 - **Hints**: every challenge has hints. Students earn hint tokens by solving challenges and spend one to reveal each hint.
+- **Daily challenge, streaks and awards**: one challenge is featured each day and earns a bonus hint if solved that day; a calendar and a streak count show which days a student solved something; and there are 18 awards to collect.
 - **Course map**: every challenge grouped by topic, from Python basics to algorithm challenges, with the student's progress.
 - **Competitions**: timed events whose challenges unlock at the start time, with a live leaderboard. Nine ready-made packs are included.
 - **Teacher dashboard**: every student's progress and submitted code, a problem editor, a competition scheduler and a CSV export.
-- **Google sign-in**, restricted to your school or college domain.
+- **Accounts you control**: one teacher account, and student accounts that you create, singly or by importing a CSV of your class. No Google or email accounts are involved.
+- **Light and dark**: the site follows the device, with a switch in the top bar.
+- **Model answers**: once a student has solved a coding challenge they can compare their code with a model answer.
 
-The name shown on the site is set by `NEXT_PUBLIC_SITE_NAME` in `.env`.
+The name shown on the site is set by `NEXT_PUBLIC_SITE_NAME` in `.env`. The look is described in [DESIGN.md](DESIGN.md).
 
 ## Run it on your computer
 
@@ -24,34 +29,47 @@ npm run setup          # creates the database and loads the starter problems
 npm run dev
 ```
 
-Open <http://localhost:3000>. Until Google sign-in is configured, the sign-in page shows a **Local testing only** form: sign in with any email to act as a student, or with an email listed in `TEACHER_EMAILS` (in `.env`) to act as a teacher. That form is switched off automatically on the live site.
+Before the first run, open `.env` and set `TEACHER_PASSWORD` (your own sign-in, see Accounts below) and `AUTH_SECRET` (`npx auth secret` writes one for you).
 
-## Set up Google sign-in
+If the project folder is inside iCloud Drive, OneDrive or Dropbox (a Mac's Desktop and Documents folders often are), add `NEXT_DIST_DIR=".next.nosync"` to `.env`. Sync clients duplicate files inside the build folder, which crashes the dev server. Better still, keep the project somewhere that is not synced.
 
-Students sign in with their school Google account; the site never sees or stores a password.
+Open <http://localhost:3000> and sign in as the teacher, with the `TEACHER_USERNAME` and `TEACHER_PASSWORD` you set in `.env` (next section).
 
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/) and create a project. If you create it while signed in to your school account, you can make the app **Internal**, which limits it to your organisation's accounts and avoids Google's app review. Your IT team may need to do this step, or approve the app in the Google Workspace admin console.
-2. **APIs & Services → OAuth consent screen**: set the app name and choose *Internal*.
-3. **APIs & Services → Credentials → Create credentials → OAuth client ID**, type *Web application*.
-   - Authorised redirect URI for local testing: `http://localhost:3000/api/auth/callback/google`
-   - Add a second one for the live site: `https://YOUR-DOMAIN/api/auth/callback/google`
-4. Copy the client ID and secret into `.env`:
+## Accounts
+
+There is no sign-up page and no link to Google. You are the only teacher, and you create every student account.
+
+### Your teacher account
+
+Your sign-in lives in `.env` (or, once the site is online, in the host's environment settings), not in the database:
 
 ```
-AUTH_GOOGLE_ID="..."
-AUTH_GOOGLE_SECRET="..."
-ALLOWED_EMAIL_DOMAINS="your-college.ac.uk"
-TEACHER_EMAILS="you@your-college.ac.uk,colleague@your-college.ac.uk"
+TEACHER_USERNAME="teacher"
+TEACHER_PASSWORD="a long password of your own"
+TEACHER_NAME="Mr Example"
 ```
 
-Restart `npm run dev`. Anyone in `TEACHER_EMAILS` gets the teacher dashboard; everyone else on an allowed domain is a student.
+The password needs at least 8 characters; make it long, and do not reuse one from elsewhere. To change your username or password, change these values and restart the site. `AUTH_SECRET` must also be set: it signs the sign-in cookies (`npx auth secret` makes one).
+
+### Student accounts
+
+Teacher → Students → **Add students**.
+
+- **Import a class.** Upload a CSV file, or paste rows straight from a spreadsheet. Give it a heading row: `name` (or `first name` and `surname`), and optionally `username` and `password`. A missing username is made from the name (Ada Lovelace becomes `alovelace`); a missing password is made up for you (two words and a number). If any row has a problem, nothing is imported, so you can fix the file and try again.
+- **The sign-in sheet.** After an import the page lists every username and password, with buttons to download it as a CSV or print it. This is the only time the passwords can be read: they are stored as one-way hashes. If a student loses theirs, set a new one.
+- **Changing things.** Open a student from the Students table to change their name, username or password, or to delete them along with their work. Setting a new password signs that student out everywhere.
+- **Changing many at once.** Import a CSV whose `username` column matches existing students: each row updates that student's name, and their password if the row gives one.
+
+Usernames are not case sensitive. After five wrong passwords in a row a username is locked for a short while, and for longer each time after that (up to 15 minutes), so passwords cannot be guessed at speed. Setting a new password for a student clears their lock.
 
 ## What is covered
 
-The 197 starter challenges are original, written for this project: 87 write-the-code, 34 fix-the-bug and 76 puzzles. 141 are in Practice and 56 are held in competition packs.
+The 245 starter challenges are original, written for this project: 132 write-the-code, 37 fix-the-bug and 76 puzzles. 189 are in Practice and 56 are held in competition packs.
 
 | Topic | Write | Fix | Puzzles | Includes |
 | --- | --- | --- | --- | --- |
+| First steps | 11 | 3 | | One idea at a time: a return, an `if`, a loop, a list. Worth 5 points each |
+| Exam-style questions | 34 | | | Ten scenarios with parts (a), (b), (c): 2D arrays, stacks and queues in arrays, recursion, classes and inheritance, records from a file, sorts and searches by hand, linked lists and trees in arrays, string handling |
 | Debugging | | 34 | 17 | Syntax, runtime and logic errors; off-by-one; infinite loops; broken searches and sorts; choosing test data that exposes a bug |
 | Sorting | 11 | | 10 | Bubble, insertion, merge and quick sort, each written by hand, plus traces and best and worst cases |
 | Python basics | 9 | | 11 | Selection, loops, arithmetic, tracing |
@@ -67,13 +85,19 @@ The 197 starter challenges are original, written for this project: 87 write-the-
 
 Every search and sort named in OCR H446 (linear search, binary search, bubble sort, insertion sort, merge sort, quick sort) has a write-it challenge, a fix-it challenge and at least one tracing puzzle. Each challenge also carries its H446 reference (`specRef`) for your records.
 
+### Exam-style questions
+
+These are original questions written to match what the programming questions on the H446 papers ask for; none is copied from a past paper, which are OCR's copyright. Each states its marks, and its mark scheme lists what each mark is for. The marking is still automatic (the code either passes the tests or it does not), so use the mark scheme for discussion: a student whose code passes has usually earned every mark, but an examiner also credits partly working answers, which this site cannot.
+
 This is a programming platform, not a full revision site: the theory content of Component 01 and the written sections of the programming project are deliberately left out.
 
 ## Scoring and hints
 
 - **Code** (write or fix) is worth its full points however many attempts are needed.
 - **Puzzles** allow two attempts. Each wrong answer **deducts** points, sized so that guessing loses on average: with four options a wrong answer costs a third of the puzzle's value. A correct second attempt earns half points. After two wrong answers the puzzle locks and the worked explanation is shown (after the competition ends, if it is part of a live one).
-- **Hints.** Every student starts with 3 hint tokens and earns another for every 3 challenges solved. Revealing a hint costs one token; hints are revealed in order, gentlest first. Once a challenge is solved, its remaining hints are free to read. The numbers are set in `src/lib/hints.ts`.
+- **Hints.** Every student starts with 3 hint tokens, earns another for every 3 challenges solved, and one for each daily challenge done on its day. Revealing a hint costs one token; hints are revealed in order, gentlest first. Once a challenge is solved, its remaining hints are free to read. The numbers are set in `src/lib/hints.ts`.
+- **Daily challenge.** Everyone is shown the same easy or medium practice challenge each day (anyone who had already solved it gets the next in that day's order). Solving it before midnight UK time earns one extra hint token.
+- **Awards and streaks** carry no points. Awards are worked out from a student's history each time they are shown, so adding or changing one in `src/lib/awards.ts` applies to everyone at once.
 - Teachers can reopen a locked puzzle for a student from that student's page, which also refunds the penalty. Teachers reveal hints without spending tokens.
 - **Competition standings** count only points and penalties between the start and end times. Ties go to whoever reached that score first.
 - Leaderboards list students who have solved at least one challenge. Teacher accounts never appear.
@@ -132,24 +156,32 @@ npm run build
 npm start
 ```
 
-Set the same variables as `.env` on the host, with a fresh `AUTH_SECRET` (`npx auth secret`) and `ALLOW_DEV_LOGIN` removed. Serve it over HTTPS.
+Set the same variables as `.env` on the host, with a fresh `AUTH_SECRET` (`npx auth secret`) and your own `TEACHER_PASSWORD`. Serve it over HTTPS: passwords are typed into this site, so it must never be reached over plain HTTP.
 
 The database is a single SQLite file (`prisma/dev.db`), which is plenty for one college. **Back that file up**: it holds every student's progress.
 
-### Why not Vercel?
+### Vercel
 
-Vercel does not give a site a persistent disk, so the SQLite file would be wiped on every deploy. To host there, move the database to hosted PostgreSQL first (change `provider` in `prisma/schema.prisma` to `postgresql`, point `DATABASE_URL` at the database, and run `npx prisma db push`). The marker also starts a small sandboxed process for each submission; that is likely to work in Vercel's functions but has not been tested there.
+Vercel works, with one change first: it does not give a site a persistent disk, so the SQLite file would be wiped on every deploy. Move the database to hosted PostgreSQL (Vercel's Storage tab offers Neon, which has a free tier):
+
+1. In `prisma/schema.prisma`, change `provider = "sqlite"` to `provider = "postgresql"`.
+2. Set `DATABASE_URL` to the database's connection string, locally and in Vercel's environment settings.
+3. Run `npm run setup` once against that database to create the tables and load the challenges.
+4. In Vercel's environment settings add `AUTH_SECRET`, `TEACHER_USERNAME`, `TEACHER_PASSWORD` and `NEXT_PUBLIC_SITE_NAME`.
+
+Nothing else needs setting up: there is no Google project or redirect address to configure. One thing is untested there: the marker starts a small sandboxed process for each submission. That is expected to work in Vercel's functions, but submit a challenge straight after the first deploy to make sure.
 
 ## Before you put real students on it
 
-- **Data protection.** The site stores each student's name, school email address, Google profile picture and the code they submit. Speak to your data protection officer and IT team before launch, and host it somewhere they are happy with.
-- **Read through the challenges.** Every coding challenge is proven by `npm run verify`: its reference solution passes every test, its starter code does not, and for a fix-the-bug task the examples reveal the bug. `python3 scripts/check-puzzles.py` recomputes 54 of the 76 puzzle answers, by running the code in the question or re-tracing the algorithm. The other 22 are judgement questions (which kind of error, which fix, which test data), so have a subject specialist read those.
+- **Data protection.** The site stores each student's name, username, a one-way hash of their password, and the code they submit. It holds no email addresses. Speak to your data protection officer before launch, and host it somewhere they are happy with. Treat the sign-in sheet like any other list of passwords: hand each student only their own line.
+- **Passwords you set are known to you.** That is the point of a teacher-managed class, but it means a student's account is only as private as the sheet it was printed on. Students cannot change their own password; you set it.
+- **Read through the challenges.** Every coding challenge is proven by `npm run verify`: its reference solution passes every test, its starter code does not, and for a fix-the-bug task the examples reveal the bug. The exam-style mark schemes were written for this project, not taken from OCR, so have a subject specialist read those too. `python3 scripts/check-puzzles.py` recomputes 54 of the 76 puzzle answers, by running the code in the question or re-tracing the algorithm. The other 22 are judgement questions (which kind of error, which fix, which test data), so have a subject specialist read those.
 
 ## Before running a national competition
 
 1. **Harden the judge.** Student code runs in a WebAssembly Python interpreter inside a process with no file-write, child-process or worker permissions, and with the bridge to the host blocked. That is a reasonable barrier against curious students, but it has not been independently security tested. For an open competition, run the judge in a separate container with no network access and get it reviewed.
 2. **Move to PostgreSQL**, as above. Leaderboards are computed on each page view, which will need caching at national scale.
-3. **Add schools.** Each user's email domain is already recorded in `school`. Per-school leaderboards, teachers scoped to their own students, and a registration process for schools are not built yet.
+3. **Add schools and more teachers.** The site is built for one teacher and their students. Several teachers, classes, per-school leaderboards and a way for schools to register are not built.
 
 ## Project layout
 
@@ -159,8 +191,10 @@ Vercel does not give a site a persistent disk, so the SQLite file would be wiped
 | `content/contests.json` | Ready-made competition packs |
 | `src/lib/tracks.ts` | The topics used by the course map |
 | `src/lib/hints.ts` | How hint tokens are earned |
+| `src/lib/awards.ts`, `daily.ts`, `activity.ts` | Awards, the daily challenge, streaks and the solve calendar |
 | `src/app/(app)/` | Student pages: home, practice, course map, competitions, leaderboard |
-| `src/app/(app)/teacher/` | Teacher dashboard |
+| `src/app/(app)/teacher/` | Teacher dashboard, including adding and editing students |
+| `src/auth.ts`, `src/lib/accounts.ts`, `passwords.ts`, `throttle.ts` | Sign-in, usernames and the CSV import, password hashing, the wrong-password lock |
 | `src/app/actions.ts` | Submitting code and puzzle answers; penalties |
 | `src/lib/judge.ts`, `judge/runner.mjs` | Server-side marking |
 | `public/judge/` | Marking code shared by the browser ("Run") and the server ("Submit") |

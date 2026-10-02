@@ -1,65 +1,163 @@
 import Link from "next/link";
 import { difficultyLabel } from "@/lib/problems";
+import { TRACKS, trackColor, trackTitle } from "@/lib/tracks";
 
-const difficultyStyles: Record<string, string> = {
-  EASY: "bg-[#30d158]/20 text-[#126b2d]",
-  MEDIUM: "bg-[#ff9f0a]/22 text-[#7d4a00]",
-  HARD: "bg-[#ff453a]/18 text-[#b3231a]",
-};
-
-export function DifficultyBadge({ difficulty }: { difficulty: string }) {
-  return <span className={`badge ${difficultyStyles[difficulty] ?? "bg-white/70 text-ink-soft"}`}>{difficultyLabel[difficulty] ?? difficulty}</span>;
-}
+type Tone = React.CSSProperties & { "--tone"?: string; "--topic"?: string };
+export const tone = (color: string): Tone => ({ "--tone": color });
 
 /** What the student is asked to do: write code, repair code, or answer a question. */
 export const kindLabel = (kind: string, style?: string) => (kind === "PUZZLE" ? "Puzzle" : style === "FIX" ? "Fix the bug" : "Write code");
 
-const kindStyles: Record<string, string> = {
-  "Write code": "bg-[#0a84ff]/16 text-[#0a4fa8]",
-  "Fix the bug": "bg-[#bf5af2]/20 text-[#6b2bb0]",
-  Puzzle: "bg-[#30b0c7]/22 text-[#0d6071]",
+/** The word of code that stands for each kind of challenge. */
+const kindGlyph = (kind: string, style?: string) => (kind === "PUZZLE" ? "?" : style === "FIX" ? "fix" : "def");
+
+/** A challenge's icon: its topic's colour, holding the glyph for its kind. */
+export function KindIcon({ kind, style, track }: { kind: string; style?: string; track: string }) {
+  return (
+    <span className="icon" style={tone(trackColor(track))} aria-hidden="true">
+      {kindGlyph(kind, style)}
+    </span>
+  );
+}
+
+export type ProblemStatus = "solved" | "failing" | "locked" | "open";
+
+const statusWord: Record<ProblemStatus, [string, string]> = {
+  solved: ["Solved", "var(--pass)"],
+  failing: ["In progress", "var(--warn)"],
+  locked: ["Locked", "var(--fail)"],
+  open: ["", ""],
 };
 
-export function KindBadge({ kind, style }: { kind: string; style?: string }) {
-  const label = kindLabel(kind, style);
-  return <span className={`badge ${kindStyles[label]}`}>{label}</span>;
-}
-
-export type ProblemStatus = "solved" | "locked" | "open";
-
-/** Solved, out of attempts (puzzles only), or still to do. */
-export function StatusMark({ status }: { status: ProblemStatus }) {
-  if (status === "solved") {
-    return (
-      <span title="Solved" className="bead bead-done">
-        ✓
-      </span>
-    );
-  }
-  if (status === "locked") {
-    return (
-      <span title="No attempts left" className="bead bead-locked">
-        ✕
-      </span>
-    );
-  }
-  return <span title="Not solved yet" className="bead bead-open" />;
-}
-
-export function PageHeader({ title, intro, children }: { title: string; intro?: string; children?: React.ReactNode }) {
+/** Where a student stands on a challenge, as a word on a wash of its colour. Nothing until they have tried it. */
+export function Status({ status }: { status: ProblemStatus }) {
+  const [word, color] = statusWord[status];
+  if (!word) return null;
   return (
-    <div className="flex flex-wrap items-end justify-between gap-5 mb-10">
-      <div>
-        <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight">{title}</h1>
-        {intro && <p className="mt-3 text-lg text-muted max-w-2xl">{intro}</p>}
-      </div>
+    <span className="tag" style={tone(color)}>
+      {word}
+    </span>
+  );
+}
+
+/** A short word on a wash of colour. */
+export function Tag({ color, children }: { color: string; children: React.ReactNode }) {
+  return (
+    <span className="tag" style={tone(color)}>
       {children}
+    </span>
+  );
+}
+
+/** A topic's name in the topic's own colour. */
+export function TopicName({ track, className = "" }: { track: string; className?: string }) {
+  return (
+    <span className={`topic ${className}`} style={{ "--topic": trackColor(track) } as Tone}>
+      {trackTitle(track)}
+    </span>
+  );
+}
+
+/** A topic as a block of its colour: name, progress and its glyph in the corner. */
+export function TopicTile({ track, solved, total, href }: { track: string; solved: number; total: number; href: string }) {
+  const info = TRACKS.find((t) => t.id === track);
+  return (
+    <Link href={href} className="tile flex min-h-[6.75rem] flex-col justify-between p-4" style={tone(info?.color ?? "#8e8e93")}>
+      <span className="glyph top-auto bottom-7 text-[1.75rem]" aria-hidden="true">
+        {info?.glyph}
+      </span>
+      <span className="font-semibold leading-tight">{info?.title ?? track}</span>
+      <span>
+        <span className="text-xs font-medium opacity-90">
+          {solved} of {total}
+        </span>
+        <span className="meter mt-1.5 block" role="progressbar" aria-valuenow={solved} aria-valuemin={0} aria-valuemax={total}>
+          <span style={{ width: `${total ? (solved / total) * 100 : 0}%` }} />
+        </span>
+      </span>
+    </Link>
+  );
+}
+
+/** A thin progress bar, with the count beside it. */
+export function Progress({ value, total, color }: { value: number; total: number; color?: string }) {
+  return (
+    <span className="flex items-center gap-3" role="img" aria-label={`${value} of ${total} solved`}>
+      <span className="meter w-28" style={color ? tone(color) : undefined}>
+        <span style={{ width: `${total ? (value / total) * 100 : 0}%` }} />
+      </span>
+      <span className="w-12 text-right text-sm font-semibold tabular-nums text-muted">
+        {value}/{total}
+      </span>
+    </span>
+  );
+}
+
+const humanise = (label: string) => (/[._]/.test(label) ? label : label.charAt(0).toUpperCase() + label.slice(1).replace(/-/g, " "));
+
+/** The way back: links to the pages above this one. */
+export function Path({ parts }: { parts: { label: string; href?: string }[] }) {
+  const above = parts.filter((part) => part.href);
+  if (above.length === 0) return null;
+  return (
+    <p className="mb-1.5 text-sm font-medium text-muted">
+      {above.map((part, index) => (
+        <span key={part.label}>
+          {index > 0 && <span className="mx-1.5">/</span>}
+          <Link href={part.href!} className="text-link hover:underline">
+            {humanise(part.label)}
+          </Link>
+        </span>
+      ))}
+    </p>
+  );
+}
+
+/** The page column. Pages lay their own cards out inside it. */
+export function Page({ children, width = "max-w-5xl" }: { children: React.ReactNode; width?: string }) {
+  return <main className={`mx-auto w-full ${width} px-4 py-7 sm:px-6 sm:py-9`}>{children}</main>;
+}
+
+/** A page whose whole content sits on one card. */
+export function Sheet({ children, width = "max-w-5xl" }: { children: React.ReactNode; width?: string }) {
+  return (
+    <Page width={width}>
+      <div className="card px-5 py-6 sm:px-8 sm:py-8">{children}</div>
+    </Page>
+  );
+}
+
+export function PageHeader({ path, title, intro, children }: { path: { label: string; href?: string }[]; title: string; intro?: string; children?: React.ReactNode }) {
+  return (
+    <div className="mb-6">
+      <Path parts={path} />
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <h1 className="font-display text-4xl font-extrabold tracking-tight">{title}</h1>
+        {children}
+      </div>
+      {intro && <p className="mt-1.5 max-w-2xl text-muted">{intro}</p>}
     </div>
   );
 }
 
-export function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`glass rounded-3xl ${className}`}>{children}</div>;
+/** A row of mutually exclusive filters: a segmented control, or coloured chips when the options are topics. */
+export function FilterRow({ label, options }: { label: string; options: { label: string; href: string; active: boolean; track?: string }[] }) {
+  const chips = options.some((option) => option.track);
+  return (
+    <div className={chips ? "flex flex-wrap gap-1.5" : "segmented"} role="group" aria-label={label}>
+      {options.map((option) => (
+        <Link
+          key={option.href}
+          href={option.href}
+          aria-current={option.active ? "true" : undefined}
+          className={chips ? "chip" : undefined}
+          style={chips ? tone(option.track ? trackColor(option.track) : "#8e8e93") : undefined}
+        >
+          {option.label}
+        </Link>
+      ))}
+    </div>
+  );
 }
 
 export const buttonStyle = { primary: "btn btn-primary", secondary: "btn btn-secondary" };
@@ -72,44 +170,9 @@ export function ButtonLink({ href, children, variant = "primary" }: { href: stri
   );
 }
 
-/** A filter pill, as used in rows of mutually exclusive choices. */
-export const chip = (active: boolean) => `chip ${active ? "chip-on" : ""}`;
+export const link = "text-link hover:underline";
 
-export const backLink = "text-sm text-link hover:underline";
-
-export function ProgressBar({ value, total, color }: { value: number; total: number; color?: string }) {
-  const percent = total ? Math.round((value / total) * 100) : 0;
-  return (
-    <div className="well h-2 rounded-full overflow-hidden" role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={total}>
-      <div className="bar h-full rounded-full" style={{ width: `${percent}%`, ...(color ? { background: color } : {}) }} />
-    </div>
-  );
-}
-
-const avatarColors = ["#0a84ff", "#5e5ce6", "#bf5af2", "#ff375f", "#ff9f0a", "#30b0c7", "#30d158"];
-
-export function Avatar({ name, image, size = 32 }: { name: string; image?: string | null; size?: number }) {
-  const initials = name
-    .split(/\s+/)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-  // The same person always gets the same colour.
-  const color = avatarColors[[...name].reduce((sum, character) => sum + character.charCodeAt(0), 0) % avatarColors.length];
-  if (image) {
-    // eslint-disable-next-line @next/next/no-img-element -- remote avatar; not worth configuring the image optimiser for
-    return <img src={image} alt="" width={size} height={size} referrerPolicy="no-referrer" className="rounded-full" style={{ width: size, height: size }} />;
-  }
-  return (
-    <span
-      className="inline-flex shrink-0 items-center justify-center rounded-full text-white font-medium"
-      style={{ width: size, height: size, fontSize: size * 0.4, background: color }}
-    >
-      {initials}
-    </span>
-  );
-}
+export const levelLabel = (difficulty: string) => difficultyLabel[difficulty] ?? difficulty;
 
 const dateFormat = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/London" });
 

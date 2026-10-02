@@ -1,15 +1,15 @@
-import Link from "next/link";
-import { Card, DifficultyBadge, KindBadge, PageHeader, StatusMark, chip } from "@/components/ui";
+import { ChallengeList } from "@/components/challenge-list";
+import { FilterRow, Page, PageHeader } from "@/components/ui";
 import { db } from "@/lib/db";
-import { difficultyLabel, lockedPuzzleIds, MAX_PUZZLE_ATTEMPTS, practiceFilter } from "@/lib/problems";
+import { difficultyLabel, MAX_PUZZLE_ATTEMPTS, practiceFilter, standings } from "@/lib/problems";
 import { requireUser } from "@/lib/session";
-import { TRACKS, trackTitle } from "@/lib/tracks";
+import { TRACKS } from "@/lib/tracks";
 import { DIFFICULTIES } from "@/lib/types";
 
 export const metadata = { title: "Practice" };
 
 const TYPES = [
-  { value: "", label: "Everything" },
+  { value: "", label: "All" },
   { value: "write", label: "Write code" },
   { value: "fix", label: "Fix the bug" },
   { value: "puzzle", label: "Puzzles" },
@@ -23,20 +23,19 @@ export default async function ProblemsPage({ searchParams }: PageProps<"/problem
   const pick = (key: string) => (typeof params[key] === "string" ? (params[key] as string) : "");
   const filters = { type: pick("type"), difficulty: pick("difficulty"), track: pick("track") };
 
-  const [all, solves, locked] = await Promise.all([
+  const [all, statusOf] = await Promise.all([
     db.problem.findMany({
       where: practiceFilter(),
       orderBy: [{ sortOrder: "asc" }],
-      select: { id: true, slug: true, title: true, kind: true, style: true, difficulty: true, topic: true, points: true, track: true, _count: { select: { solves: true } } },
+      select: { id: true, slug: true, title: true, kind: true, style: true, difficulty: true, points: true, track: true },
     }),
-    db.solve.findMany({ where: { userId: user.id }, select: { problemId: true } }),
-    lockedPuzzleIds(user.id),
+    standings(user.id),
   ]);
-  const solved = new Set(solves.map((s) => s.problemId));
   const problems = all.filter(
     (p) => (!filters.type || typeOf(p) === filters.type) && (!filters.difficulty || p.difficulty === filters.difficulty) && (!filters.track || p.track === filters.track),
   );
   const tracksInUse = TRACKS.filter((track) => all.some((p) => p.track === track.id));
+  const solved = problems.filter((p) => statusOf(p.id) === "solved").length;
 
   const href = (change: Partial<typeof filters>) => {
     const query = new URLSearchParams(Object.entries({ ...filters, ...change }).filter(([, v]) => v));
@@ -44,70 +43,41 @@ export default async function ProblemsPage({ searchParams }: PageProps<"/problem
   };
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12">
+    <Page>
       <PageHeader
+        path={[{ label: "practice" }]}
         title="Practice"
         intro={`Code is marked automatically and can be retried freely. Puzzles give you ${MAX_PUZZLE_ATTEMPTS} attempts, and a wrong answer costs points.`}
       />
 
-      <div className="space-y-3 mb-8">
-        <div className="flex flex-wrap gap-2">
-          {TYPES.map((t) => (
-            <Link key={t.value} href={href({ type: t.value })} className={chip(filters.type === t.value)}>
-              {t.label}
-            </Link>
-          ))}
-          <span className="mx-1 hidden w-px bg-line sm:block" />
-          <Link href={href({ difficulty: "" })} className={chip(!filters.difficulty)}>
-            Any level
-          </Link>
-          {DIFFICULTIES.map((d) => (
-            <Link key={d} href={href({ difficulty: d })} className={chip(filters.difficulty === d)}>
-              {difficultyLabel[d]}
-            </Link>
-          ))}
+      <div className="mb-5 space-y-3">
+        <div className="flex flex-wrap gap-3">
+        <FilterRow label="type" options={TYPES.map((t) => ({ label: t.label, href: href({ type: t.value }), active: filters.type === t.value }))} />
+        <FilterRow
+          label="level"
+          options={[
+            { label: "Any level", href: href({ difficulty: "" }), active: !filters.difficulty },
+            ...DIFFICULTIES.map((d) => ({ label: difficultyLabel[d], href: href({ difficulty: d }), active: filters.difficulty === d })),
+          ]}
+        />
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Link href={href({ track: "" })} className={chip(!filters.track)}>
-            All topics
-          </Link>
-          {tracksInUse.map((track) => (
-            <Link key={track.id} href={href({ track: track.id })} className={chip(filters.track === track.id)}>
-              {track.title}
-            </Link>
-          ))}
-        </div>
+        <FilterRow
+          label="topic"
+          options={[
+            { label: "All topics", href: href({ track: "" }), active: !filters.track },
+            ...tracksInUse.map((track) => ({ label: track.title, href: href({ track: track.id }), active: filters.track === track.id, track: track.id })),
+          ]}
+        />
       </div>
 
-      <Card className="overflow-hidden">
-        {problems.length === 0 ? (
-          <p className="p-10 text-center text-muted">No challenges match those filters.</p>
-        ) : (
-          <ul className="divide-y divide-line">
-            {problems.map((p) => (
-              <li key={p.id}>
-                <Link href={`/problems/${p.slug}`} className="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-white/60">
-                  <StatusMark status={solved.has(p.id) ? "solved" : locked.has(p.id) ? "locked" : "open"} />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium truncate">{p.title}</p>
-                    <p className="text-sm text-muted truncate">
-                      {trackTitle(p.track)} · {p.topic} · solved by {p._count.solves}
-                    </p>
-                  </div>
-                  <div className="hidden sm:flex items-center gap-2">
-                    <KindBadge kind={p.kind} style={p.style} />
-                    <DifficultyBadge difficulty={p.difficulty} />
-                  </div>
-                  <span className="w-14 text-right text-sm text-muted tabular-nums">{p.points} pts</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
-      <p className="mt-4 text-sm text-muted">
-        {problems.length} of {all.length} challenges shown.
-      </p>
-    </main>
+      <div className="card">
+        <p className="cap">
+          {problems.length} challenge{problems.length === 1 ? "" : "s"} · {solved} solved
+        </p>
+        <div className="mt-1">
+          {problems.length === 0 ? <p className="py-5 text-muted">No challenges match those filters.</p> : <ChallengeList problems={problems} statusOf={statusOf} showTrack={!filters.track} />}
+        </div>
+      </div>
+    </Page>
   );
 }

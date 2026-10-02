@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ButtonLink, Card, DifficultyBadge, KindBadge, PageHeader } from "@/components/ui";
+import { ButtonLink, PageHeader, kindLabel, levelLabel, link } from "@/components/ui";
 import { db } from "@/lib/db";
 import { isPending } from "@/lib/problems";
 import { trackTitle } from "@/lib/tracks";
@@ -12,50 +12,43 @@ export default async function TeacherProblemsPage() {
 
   return (
     <>
-      <PageHeader title="Problems" intro="Everything in the bank, including unpublished problems and those held back for a competition.">
+      <PageHeader path={[{ label: "teacher" }, { label: "problems" }]} title="Problems" intro="Everything in the bank, including unpublished problems and those held back for a competition.">
         <ButtonLink href="/teacher/problems/new">New problem</ButtonLink>
       </PageHeader>
-      <Card className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="text-xs text-muted">
-            <tr className="border-b border-line">
-              <th className="px-6 py-3 font-medium">Problem</th>
-              <th className="px-4 py-3 font-medium">Topic</th>
-              <th className="px-4 py-3 font-medium">Type</th>
-              <th className="px-4 py-3 font-medium">Level</th>
-              <th className="px-4 py-3 font-medium text-right">Points</th>
-              <th className="px-4 py-3 font-medium text-right">Solved</th>
-              <th className="px-4 py-3 font-medium text-right">Attempts</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-6 py-3" />
+      <div className="overflow-x-auto">
+        <table className="tbl">
+          <thead>
+            <tr>
+              <th>Problem</th>
+              <th>Type</th>
+              <th>Level</th>
+              <th>Topic</th>
+              <th className="num">Points</th>
+              <th className="num">Solved</th>
+              <th className="num">Attempts</th>
+              <th>Status</th>
+              <th />
             </tr>
           </thead>
-          <tbody className="divide-y divide-line">
+          <tbody>
             {problems.map((p) => {
               const held = p.contests.map((c) => c.contest).find((c) => isPending(c));
               return (
-                <tr key={p.id} className="hover:bg-white/60">
-                  <td className="px-6 py-3.5">
-                    <Link href={`/problems/${p.slug}`} className="font-medium text-base hover:underline">
+                <tr key={p.id}>
+                  <td>
+                    <Link href={`/problems/${p.slug}`} className={link}>
                       {p.title}
                     </Link>
-                    <span className="block text-muted">
-                      {p.topic} · {p.specRef}
-                    </span>
                   </td>
-                  <td className="px-4 py-3.5 text-muted whitespace-nowrap">{trackTitle(p.track)}</td>
-                  <td className="px-4 py-3.5">
-                    <KindBadge kind={p.kind} style={p.style} />
-                  </td>
-                  <td className="px-4 py-3.5">
-                    <DifficultyBadge difficulty={p.difficulty} />
-                  </td>
-                  <td className="px-4 py-3.5 text-right tabular-nums">{p.points}</td>
-                  <td className="px-4 py-3.5 text-right tabular-nums">{p._count.solves}</td>
-                  <td className="px-4 py-3.5 text-right tabular-nums">{p._count.submissions}</td>
-                  <td className="px-4 py-3.5 text-muted">{!p.published ? "Unpublished" : held ? `Held for ${held.title}` : "In practice"}</td>
-                  <td className="px-6 py-3.5 text-right">
-                    <Link href={`/teacher/problems/${p.id}`} className="text-link hover:underline">
+                  <td className="whitespace-nowrap text-muted">{kindLabel(p.kind, p.style)}</td>
+                  <td className="text-muted">{levelLabel(p.difficulty)}</td>
+                  <td className="whitespace-nowrap text-muted">{trackTitle(p.track)}</td>
+                  <td className="num">{p.points}</td>
+                  <td className="num">{p._count.solves}</td>
+                  <td className="num">{p._count.submissions}</td>
+                  <td className="whitespace-nowrap text-muted">{!p.published ? "Unpublished" : held ? `Held for ${held.title}` : "In practice"}</td>
+                  <td>
+                    <Link href={`/teacher/problems/${p.id}`} className={link}>
                       Edit
                     </Link>
                   </td>
@@ -64,7 +57,7 @@ export default async function TeacherProblemsPage() {
             })}
           </tbody>
         </table>
-      </Card>
+      </div>
     </>
   );
 }

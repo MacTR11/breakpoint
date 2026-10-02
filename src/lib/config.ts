@@ -1,22 +1,15 @@
-const list = (value: string | undefined) =>
-  (value ?? "")
-    .split(",")
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean);
+export const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Breakpoint";
 
-export const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bitwise";
+const MIN_TEACHER_PASSWORD = 8;
 
-export const allowedDomains = () => list(process.env.ALLOWED_EMAIL_DOMAINS);
-export const teacherEmails = () => list(process.env.TEACHER_EMAILS);
-
-export const googleConfigured = () => Boolean(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET);
-
-/** The password-free sign-in form exists only for trying the site locally. */
-export const devLoginEnabled = () => process.env.NODE_ENV !== "production" && process.env.ALLOW_DEV_LOGIN === "true";
-
-export function emailAllowed(email: string) {
-  const domains = allowedDomains();
-  const lower = email.toLowerCase();
-  if (teacherEmails().includes(lower)) return true;
-  return domains.length === 0 || domains.includes(lower.split("@")[1] ?? "");
+/**
+ * The teacher's sign-in, which is set in .env (or the host's settings) rather
+ * than stored in the database. Null until both values are set and the
+ * password is long enough to be worth having.
+ */
+export function teacherLogin() {
+  const username = (process.env.TEACHER_USERNAME ?? "").trim().toLowerCase();
+  const password = process.env.TEACHER_PASSWORD ?? "";
+  if (!username || password.length < MIN_TEACHER_PASSWORD) return null;
+  return { username, password, name: (process.env.TEACHER_NAME ?? "").trim() || null };
 }

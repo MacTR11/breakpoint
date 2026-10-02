@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProblemForm } from "@/components/problem-form";
-import { backLink } from "@/components/ui";
+import { PageHeader } from "@/components/ui";
 import { db } from "@/lib/db";
 import { parseHints } from "@/lib/hints";
 import { parseBanned, parseOptions, parseTests } from "@/lib/problems";
@@ -17,10 +16,7 @@ export default async function EditProblemPage({ params }: PageProps<"/teacher/pr
 
   return (
     <>
-      <Link href="/teacher/problems" className={backLink}>
-        ‹ Problems
-      </Link>
-      <h1 className="mt-4 mb-10 text-4xl font-semibold tracking-tight">Edit problem</h1>
+      <PageHeader path={[{ label: "teacher" }, { label: "problems", href: "/teacher/problems" }, { label: problem.slug }]} title="Edit problem" />
       <ProblemForm
         values={{
           id: problem.id,

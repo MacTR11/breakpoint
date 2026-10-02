@@ -1,121 +1,74 @@
-import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
-import { signIn } from "@/auth";
-import { HintCoin, Logo } from "@/components/brand";
-import { allowedDomains, devLoginEnabled, googleConfigured, siteName } from "@/lib/config";
+import { Wordmark } from "@/components/brand";
+import { CodeLine } from "@/components/code-text";
+import { LoginForm } from "@/components/login-form";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { teacherLogin } from "@/lib/config";
 import { getCurrentUser } from "@/lib/session";
 
 export const metadata = { title: "Sign in" };
 
-async function googleSignIn() {
-  "use server";
-  await signIn("google", { redirectTo: "/" });
-}
+// A real challenge from the bank, shown the way the site shows it.
+const sample = ["def sum_to(n):", "    total = 0", "    for i in range(1, n):", "        total = total + i", "    return total"];
+const BUG_LINE = 3;
 
-async function devSignIn(formData: FormData) {
-  "use server";
-  if (!devLoginEnabled()) return;
-  try {
-    await signIn("dev", { email: formData.get("email"), name: formData.get("name"), redirectTo: "/" });
-  } catch (error) {
-    if (error instanceof AuthError) redirect("/login?error=dev");
-    throw error;
-  }
-}
-
-function errorMessage(code: string | undefined) {
-  if (!code) return null;
-  const domains = allowedDomains();
-  if (code === "domain" || code === "AccessDenied") {
-    return domains.length
-      ? `Please sign in with your school or college Google account (@${domains.join(" or @")}).`
-      : "That account could not be used to sign in.";
-  }
-  if (code === "dev") return "Enter a valid email address.";
-  return "Sign-in did not complete. Please try again.";
-}
-
-const features = [
-  ["Write it.", "Real Python in your browser, marked in seconds. Searching, sorting, recursion, classes and more."],
-  ["Fix it.", "Broken programs to repair and bugs to spot. The fastest way to get good at debugging."],
-  ["Win it.", "Timed competitions with a live leaderboard. Earn hints as you solve, and spend them wisely."],
-];
-
-export default async function LoginPage({ searchParams }: PageProps<"/login">) {
+export default async function LoginPage() {
   if (await getCurrentUser()) redirect("/");
-  const { error } = await searchParams;
-  const message = errorMessage(typeof error === "string" ? error : undefined);
 
   return (
-    <main className="flex-1">
-      <section className="mx-auto max-w-5xl px-6 pt-16 sm:pt-24 pb-14 text-center">
-        <div className="flex justify-center">
-          <Logo size={84} />
-        </div>
-        <h1 className="mt-7 text-6xl sm:text-8xl font-semibold tracking-tighter">{siteName}</h1>
-        <p className="mx-auto mt-5 max-w-xl text-xl sm:text-2xl text-muted leading-snug">Python challenges for A Level Computer Science. Write it. Fix it. Win it.</p>
+    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 lg:justify-center">
+      <div className="mb-3 flex justify-end px-2 text-sm">
+        <ThemeToggle />
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+        <section className="card px-6 py-9 sm:px-9 sm:py-11">
+          <h1 className="text-5xl sm:text-[3.5rem]">
+            <Wordmark />
+          </h1>
+          <p className="mt-4 max-w-md text-lg text-ink-soft">Python challenges for A Level Computer Science. Write programs, fix broken ones, and compete on the clock.</p>
 
-        <div className="mx-auto mt-10 w-full max-w-sm">
-          {message && (
-            <p role="alert" className="mb-5 rounded-2xl bg-[#ffe6e4] px-4 py-3 text-sm text-[#c4271b]">
-              {message}
-            </p>
-          )}
-
-          {googleConfigured() ? (
-            <form action={googleSignIn}>
-              <button className="btn btn-dark w-full py-3.5 text-[17px]">
-                <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
-                  <path fill="#EA4335" d="M24 9.5c3.5 0 6.7 1.2 9.2 3.6l6.9-6.9C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l8 6.2C12.5 13.7 17.8 9.5 24 9.5z" />
-                  <path fill="#4285F4" d="M46.6 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.2 5.5-4.7 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z" />
-                  <path fill="#FBBC05" d="M10.6 28.6a14.5 14.5 0 0 1 0-9.2l-8-6.2a24 24 0 0 0 0 21.6l8-6.2z" />
-                  <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.2 1.5-5 2.3-8.2 2.3-6.2 0-11.5-4.2-13.4-9.9l-8 6.2C6.5 42.6 14.6 48 24 48z" />
-                </svg>
-                Continue with Google
-              </button>
-              <p className="mt-4 text-sm text-muted">Use your school or college account. There is no separate password.</p>
-            </form>
-          ) : (
-            <p className="rounded-2xl bg-[#fff2d9] px-4 py-3 text-sm text-[#7a4700]">
-              Google sign-in is not set up yet. Add <code className="font-mono">AUTH_GOOGLE_ID</code> and <code className="font-mono">AUTH_GOOGLE_SECRET</code> to{" "}
-              <code className="font-mono">.env</code> (the README explains how).
-            </p>
-          )}
-
-          {devLoginEnabled() && (
-            <form action={devSignIn} className="glass mt-8 rounded-3xl p-6 space-y-4 text-left">
-              <div>
-                <p className="text-sm font-semibold">Local testing only</p>
-                <p className="mt-1 text-sm text-muted">
-                  Sign in as anyone to try the site. An email listed in <code className="font-mono">TEACHER_EMAILS</code> gets the teacher dashboard. This form
-                  does not exist on the live site.
-                </p>
-              </div>
-              <label className="block text-sm font-medium">
-                Name
-                <input name="name" placeholder="Taken from the email if left empty" className="field" />
-              </label>
-              <label className="block text-sm font-medium">
-                Email
-                <input name="email" type="email" required defaultValue="student@example.test" className="field" />
-              </label>
-              <button className="btn btn-primary w-full py-2.5 text-base">Sign in for testing</button>
-            </form>
-          )}
-        </div>
-      </section>
-
-      <section className="mx-auto grid max-w-5xl gap-4 px-6 pb-24 sm:grid-cols-3">
-        {features.map(([title, text], index) => (
-          <div key={title} className="glass rounded-3xl p-8">
-            <h2 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">
-              {title}
-              {index === 2 && <HintCoin size={22} />}
-            </h2>
-            <p className="mt-2 text-muted">{text}</p>
+          <div className="mt-9 max-w-sm">
+            <LoginForm />
+            <p className="mt-4 text-sm text-muted">Your teacher gives you your username and password. If you have lost them, ask your teacher to set a new password.</p>
+            {!teacherLogin() && (
+              <p className="mt-6 border-t border-line pt-4 text-sm text-warn">
+                The teacher account is not set up yet. Add <code className="font-mono">TEACHER_USERNAME</code> and <code className="font-mono">TEACHER_PASSWORD</code> (8 characters or more) to{" "}
+                <code className="font-mono">.env</code>, then restart the site. The README explains how.
+              </p>
+            )}
           </div>
-        ))}
-      </section>
+        </section>
+
+        <section aria-label="An example challenge" className="tile flex flex-col justify-center rounded-[22px] px-6 py-9 sm:px-9" style={{ "--tone": "#e5372c" } as React.CSSProperties}>
+          <span className="glyph right-6 top-4 text-[5rem]" aria-hidden="true">
+            !=
+          </span>
+          <p className="text-[13px] font-semibold opacity-90">Fix the bug · Debugging</p>
+          <p className="mt-1 font-display text-3xl font-extrabold tracking-tight">Fix: Sum to N</p>
+          <div className="dark mt-5 overflow-x-auto rounded-[16px] bg-[#21252b] py-4 font-mono text-sm leading-7 text-[#f6f8fa]">
+            {sample.map((line, index) => (
+              <div key={index} className={`flex ${index + 1 === BUG_LINE ? "bg-brand/20" : ""}`}>
+                <span className="flex w-8 shrink-0 items-center justify-center">
+                  {index + 1 === BUG_LINE && <span className="h-2.5 w-2.5 rounded-full bg-brand" aria-label="breakpoint" />}
+                </span>
+                <span className="w-6 shrink-0 select-none text-right text-[#9198a1]">{index + 1}</span>
+                <pre className="pl-4 pr-6">
+                  <CodeLine line={line} />
+                </pre>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 rounded-[16px] bg-[#21252b] px-4 py-3 font-mono text-[13px] leading-6 text-[#f6f8fa]">
+            <p>
+              <span className="inline-block w-[5.75rem] font-semibold text-[#ff7b72]">✗ Failed</span>sum_to(5) expected 15, returned 10
+            </p>
+            <p>
+              <span className="inline-block w-[5.75rem] font-semibold text-[#3fb950]">✓ Passed</span>sum_to(0) returned 0
+            </p>
+          </div>
+          <p className="mt-5 max-w-md text-[15px] opacity-95">One line is wrong. Finding it is the skill: that is what a breakpoint is for, and what a quarter of the challenges here are about.</p>
+        </section>
+      </div>
     </main>
   );
 }

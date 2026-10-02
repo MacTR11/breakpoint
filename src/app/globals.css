@@ -1,92 +1,207 @@
 @import "tailwindcss";
 
-@theme inline {
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
-  --color-ink: #1d1d1f;
-  --color-ink-soft: #424245;
-  --color-paper: #f5f5f7;
-  --color-line: rgba(20, 28, 70, 0.1);
-  --color-muted: #62666f;
-  --color-accent: #0a84ff;
-  --color-accent-dark: #0070e0;
-  --color-link: #0060d0;
-  /* The accent as it appears on dark panels. */
-  --color-glow: #5cb8ff;
+/* See DESIGN.md ("Playground"). A soft grey page, solid rounded cards, rounded
+   display type, and each topic as a block of its own colour. Every colour is
+   a variable, so light and dark only differ here. */
+:root {
+  color-scheme: light;
+  --page: #f5f5f7;
+  --card: #ffffff;
+  --paper: #f2f2f7;
+  --ink: #1d1d1f;
+  --ink-soft: #424245;
+  --muted: #6e6e73;
+  --line: #e5e5ea;
+  --link: #0066cc;
+  --accent: #0071e3;
+  --accent-dark: #0062c4;
+  --pass: #1d8a3a;
+  --fail: #d70015;
+  --warn: #b25000;
+  --brand: #ff3b30;
+  --streak: #f08a00;
+  --hint: #a550e0;
+  /* Used only where something is written as code. */
+  --kw: #9a2bb3;
+  --fn: #0550ae;
+  --str: #17803a;
+  --num: #b35900;
+  --com: #6e7781;
+  --field: #ffffff;
+  --cal-0: #e5e5ea;
+  --cal-1: #9be9a8;
+  --cal-2: #40c463;
+  --cal-3: #216e39;
+  /* How far a topic colour is pulled towards the text colour when used as text. */
+  --topic-mix: #000;
+  --topic-keep: 78%;
+  /* How strongly a tinted tag is washed with its colour. */
+  --tint: 13%;
+}
+.dark {
+  color-scheme: dark;
+  --page: #000000;
+  --card: #1c1c1e;
+  --paper: #2c2c2e;
+  --ink: #f5f5f7;
+  --ink-soft: #d1d1d6;
+  --muted: #98989d;
+  --line: #38383a;
+  --link: #4aa3ff;
+  --accent: #0a84ff;
+  --accent-dark: #3a9bff;
+  --pass: #30d158;
+  --fail: #ff453a;
+  --warn: #ff9f0a;
+  --streak: #ff9f0a;
+  --hint: #bf5af2;
+  --kw: #d2a8ff;
+  --fn: #79c0ff;
+  --str: #7ee787;
+  --num: #ffa657;
+  --com: #8b949e;
+  --field: #2c2c2e;
+  --cal-0: #2c2c2e;
+  --cal-1: #0e4429;
+  --cal-2: #26a641;
+  --cal-3: #39d353;
+  --topic-mix: #fff;
+  --topic-keep: 72%;
+  --tint: 22%;
 }
 
-/* A bright, fixed wash of colour for the glass to float over. */
+@theme inline {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+  /* Rounded headings and numbers: the system's rounded face on Apple devices, Nunito elsewhere. */
+  --font-display: ui-rounded, "SF Pro Rounded", var(--font-nunito), -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --color-page: var(--page);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-paper: var(--paper);
+  --color-link: var(--link);
+  --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
+  --color-pass: var(--pass);
+  --color-fail: var(--fail);
+  --color-warn: var(--warn);
+  --color-brand: var(--brand);
+  --color-streak: var(--streak);
+  --color-hint: var(--hint);
+  --color-kw: var(--kw);
+  --color-fn: var(--fn);
+  --color-str: var(--str);
+  --color-num: var(--num);
+  --color-com: var(--com);
+  --color-editor: #1f2328;
+}
+
 body {
-  color: var(--color-ink);
-  letter-spacing: -0.01em;
-  background-color: #f3f1fc;
-  background-image:
-    radial-gradient(48rem 36rem at 4% -6%, rgba(10, 132, 255, 0.4), transparent 60%),
-    radial-gradient(44rem 34rem at 100% 0%, rgba(191, 90, 242, 0.36), transparent 60%),
-    radial-gradient(40rem 30rem at 94% 66%, rgba(255, 55, 95, 0.24), transparent 60%),
-    radial-gradient(46rem 34rem at 0% 80%, rgba(48, 209, 88, 0.24), transparent 60%),
-    radial-gradient(42rem 30rem at 50% 108%, rgba(255, 159, 10, 0.3), transparent 60%);
-  background-attachment: fixed;
+  background: var(--page);
+  color: var(--ink);
+}
+
+/* Syntax colours, wherever something is written as code. */
+.tok-kw {
+  color: var(--kw);
+}
+.tok-fn {
+  color: var(--fn);
+}
+.tok-str {
+  color: var(--str);
+}
+.tok-num {
+  color: var(--num);
+}
+.tok-com {
+  color: var(--com);
 }
 
 @layer components {
-  /* Liquid glass: a flat, translucent sheet that blurs and brightens what is behind it. */
-  .glass {
-    background: rgba(255, 255, 255, 0.58);
-    -webkit-backdrop-filter: blur(26px) saturate(180%);
-    backdrop-filter: blur(26px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.66);
-    box-shadow: 0 12px 40px -14px rgba(70, 50, 150, 0.2);
+  /* The one surface: a solid, generously rounded card. No border, no shadow. */
+  .card {
+    background: var(--card);
+    border-radius: 22px;
+    padding: 1.375rem;
   }
-  .glass-nav {
-    background: rgba(255, 255, 255, 0.5);
-    -webkit-backdrop-filter: blur(30px) saturate(200%);
-    backdrop-filter: blur(30px) saturate(200%);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 0 10px 34px -12px rgba(70, 50, 150, 0.24);
+  /* The small label at the top of a card. */
+  .cap {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--muted);
   }
-  a.glass,
-  .glass-lift {
-    transition:
-      transform 0.2s ease,
-      background-color 0.2s ease;
-  }
-  a.glass:hover {
-    transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.74);
-  }
-  .glass-lift:hover {
-    transform: translateY(-2px);
+  /* A big rounded number. */
+  .figure {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
   }
 
-  /* Tinted glass, for tiles that deserve a colour of their own. */
-  .tint-blue {
-    background: linear-gradient(135deg, rgba(10, 132, 255, 0.24), rgba(255, 255, 255, 0.56) 70%);
+  /* A topic's colour as text, pulled towards the text colour so it stays readable. */
+  .topic {
+    color: color-mix(in oklab, var(--topic) var(--topic-keep), var(--topic-mix));
   }
-  .tint-green {
-    background: linear-gradient(135deg, rgba(48, 209, 88, 0.26), rgba(255, 255, 255, 0.56) 70%);
-  }
-  .tint-purple {
-    background: linear-gradient(135deg, rgba(191, 90, 242, 0.26), rgba(255, 255, 255, 0.56) 70%);
-  }
-  .tint-yellow {
-    background: linear-gradient(135deg, rgba(255, 204, 0, 0.34), rgba(255, 255, 255, 0.56) 70%);
-  }
-
-  /* The loud panel: live competitions and competition headers. */
-  .panel-hero {
+  /* A block of solid colour with white writing: a topic, today's challenge, an earned award. */
+  .tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    background: var(--tone);
     color: #fff;
-    background: linear-gradient(120deg, #5e5ce6 0%, #bf5af2 50%, #ff375f 100%);
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    box-shadow: 0 22px 50px -20px rgba(160, 60, 220, 0.6);
+    transition: transform 0.14s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-
-  /* Progress tracks and their fill. */
-  .well {
-    background: rgba(70, 60, 130, 0.1);
+  a.tile:active {
+    transform: scale(0.975);
   }
-  .bar {
-    background: linear-gradient(90deg, #0a84ff, #bf5af2);
+  /* The code glyph printed faintly in a tile's corner. */
+  .glyph {
+    position: absolute;
+    right: 0.7rem;
+    top: 0.35rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.26);
+    font-variant-ligatures: none;
+    pointer-events: none;
+    user-select: none;
+  }
+  .tile .meter {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  .tile .meter > span {
+    background: #fff;
+  }
+  /* A small rounded square in a colour, holding a word of code. */
+  .icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.375rem;
+    height: 2.375rem;
+    border-radius: 11px;
+    background: var(--tone);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-variant-ligatures: none;
+  }
+  /* A word on a wash of its own colour: Solved, In progress, Live. */
+  .tag {
+    display: inline-block;
+    border-radius: 9999px;
+    padding: 0.1rem 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--tone);
+    background: color-mix(in srgb, var(--tone) var(--tint), transparent);
   }
 
   .btn {
@@ -95,169 +210,165 @@ body {
     justify-content: center;
     gap: 0.5rem;
     border-radius: 9999px;
-    padding: 0.5rem 1.15rem;
-    font-size: 0.875rem;
-    font-weight: 500;
+    padding: 0.5rem 1.05rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
     white-space: nowrap;
     transition:
       background-color 0.15s ease,
-      transform 0.1s ease,
-      opacity 0.15s ease;
+      transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .btn:enabled,
   a.btn {
     cursor: pointer;
   }
-  .btn:disabled {
-    opacity: 0.4;
-  }
   .btn:not(:disabled):active {
-    transform: scale(0.97);
+    transform: scale(0.96);
+  }
+  .btn:disabled {
+    opacity: 0.45;
   }
   .btn-primary {
+    background: var(--accent);
     color: #fff;
-    background: #0a84ff;
-    box-shadow: 0 10px 22px -10px rgba(10, 132, 255, 0.75);
   }
   .btn-primary:not(:disabled):hover {
-    background: #2b95ff;
+    background: var(--accent-dark);
   }
   .btn-secondary {
-    color: var(--color-ink);
-    background: rgba(255, 255, 255, 0.62);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.72);
+    background: var(--paper);
+    color: var(--ink);
   }
   .btn-secondary:not(:disabled):hover {
-    background: rgba(255, 255, 255, 0.85);
+    background: var(--line);
   }
-  .btn-dark {
-    color: #fff;
-    background: #1d1d1f;
+  /* On a coloured tile: white, with the tile's colour for its words. */
+  .btn-on-tile {
+    background: #fff;
+    color: var(--tone);
   }
-  .btn-dark:not(:disabled):hover {
-    background: #3a3a3d;
-  }
-  .btn-hint {
-    color: #4a3500;
-    background: #ffd60a;
-    box-shadow: 0 10px 22px -10px rgba(255, 190, 0, 0.85);
-  }
-  .btn-hint:not(:disabled):hover {
-    background: #ffe04d;
-  }
-  /* For buttons that sit on the dark editor. */
   .btn-on-dark {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.12);
+    color: #f6f8fa;
   }
   .btn-on-dark:not(:disabled):hover {
-    background: rgba(255, 255, 255, 0.24);
-  }
-
-  /* Filter pills. */
-  .chip {
-    border-radius: 9999px;
-    padding: 0.4rem 0.95rem;
-    font-size: 0.875rem;
-    white-space: nowrap;
-    color: var(--color-ink);
-    background: rgba(255, 255, 255, 0.5);
-    -webkit-backdrop-filter: blur(14px) saturate(180%);
-    backdrop-filter: blur(14px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.66);
-    transition: background-color 0.15s ease;
-  }
-  .chip:hover {
-    background: rgba(255, 255, 255, 0.8);
-  }
-  .chip-on,
-  .chip-on:hover {
-    color: #fff;
-    background: #1d1d1f;
-    border-color: transparent;
-  }
-
-  .badge {
-    display: inline-block;
-    border-radius: 9999px;
-    padding: 0.1rem 0.6rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  /* Status dots. */
-  .bead {
-    display: inline-flex;
-    height: 1.5rem;
-    width: 1.5rem;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    border-radius: 9999px;
-    font-size: 0.8rem;
-    color: #fff;
-  }
-  .bead-done {
-    background: #30d158;
-  }
-  .bead-locked {
-    background: #ff453a;
-  }
-  .bead-open {
-    border: 2px solid rgba(70, 60, 130, 0.22);
+    background: rgba(255, 255, 255, 0.2);
   }
 
   .field {
     display: block;
     width: 100%;
-    margin-top: 0.4rem;
-    border-radius: 0.9rem;
-    padding: 0.6rem 0.9rem;
+    margin-top: 0.35rem;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--field);
+    color: var(--ink);
+    padding: 0.55rem 0.8rem;
     font-weight: 400;
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(70, 60, 130, 0.16);
-    outline: none;
   }
   .field:focus {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.2);
+    border-color: var(--accent);
+    outline: 3px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    outline-offset: 0;
   }
 
-  /* A revealed hint: yellow glass. */
-  .hint-card {
-    border-radius: 1.1rem;
-    padding: 0.9rem 1.1rem;
-    background: rgba(255, 214, 10, 0.22);
-    border: 1px solid rgba(255, 204, 0, 0.5);
+  /* One choice from a few, as on an iPhone: a grey track with the chosen one raised. */
+  .segmented {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    border-radius: 11px;
+    background: var(--line);
+    padding: 2px;
+  }
+  .segmented a {
+    border-radius: 9px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  .segmented a[aria-current] {
+    background: var(--card);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  /* A topic to filter by: a wash of its colour, solid once chosen. */
+  .chip {
+    border-radius: 9999px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: color-mix(in oklab, var(--tone) var(--topic-keep), var(--topic-mix));
+    background: color-mix(in srgb, var(--tone) var(--tint), transparent);
+  }
+  .chip[aria-current] {
+    background: var(--tone);
+    color: #fff;
   }
 
-  /* The editor: a flat dark sheet, so code stays easy to read. */
-  .window {
-    background: #1c1c1e;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 24px 60px -26px rgba(50, 30, 120, 0.55);
+  .meter {
+    height: 6px;
+    overflow: hidden;
+    border-radius: 9999px;
+    background: var(--cal-0);
   }
-  .window-bar {
-    background: rgba(255, 255, 255, 0.07);
+  .meter > span {
+    display: block;
+    height: 100%;
+    border-radius: 9999px;
+    background: var(--tone, var(--accent));
   }
+
+  /* Tables: column heads in small grey type, rows separated by hairlines. */
+  .tbl {
+    width: 100%;
+    text-align: left;
+  }
+  .tbl th {
+    border-bottom: 1px solid var(--line);
+    padding: 0.5rem 1rem 0.5rem 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .tbl td {
+    border-bottom: 1px solid var(--line);
+    padding: 0.7rem 1rem 0.7rem 0;
+    vertical-align: top;
+  }
+  .tbl tr:last-child td {
+    border-bottom: 0;
+  }
+  .tbl .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .tbl th:last-child,
+  .tbl td:last-child {
+    padding-right: 0;
+  }
+}
+
+/* The theme button shows the mode it would switch to. */
+.dark .when-light,
+html:not(.dark) .when-dark {
+  display: none;
 }
 
 /* Rendered Markdown (problem statements, hints and explanations). */
 .md {
-  font-size: 1.0625rem;
   line-height: 1.6;
 }
 .md > * + * {
-  margin-top: 1rem;
+  margin-top: 0.9rem;
 }
 .md h3 {
   font-weight: 600;
-  font-size: 1.2rem;
-  letter-spacing: -0.02em;
-  margin-top: 2rem;
+  font-size: 1.05rem;
+  margin-top: 1.75rem;
 }
 .md ul {
   list-style: disc;
@@ -268,24 +379,23 @@ body {
   padding-left: 1.3rem;
 }
 .md li + li {
-  margin-top: 0.3rem;
+  margin-top: 0.25rem;
 }
 .md code {
   font-family: var(--font-mono);
   font-size: 0.86em;
-  background: rgba(70, 60, 130, 0.1);
-  border-radius: 6px;
-  padding: 0.12em 0.4em;
-  letter-spacing: 0;
+  background: var(--paper);
+  border-radius: 5px;
+  padding: 0.1em 0.35em;
 }
 .md pre {
-  background: #1c1c1e;
-  color: #f5f5f7;
-  border-radius: 16px;
-  padding: 1rem 1.2rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
   overflow-x: auto;
   line-height: 1.55;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 .md pre code {
   background: none;
@@ -296,27 +406,24 @@ body {
   display: block;
   overflow-x: auto;
   border-collapse: collapse;
-  font-size: 0.92em;
+  font-size: 0.94em;
 }
 .md th,
 .md td {
-  border-bottom: 1px solid var(--color-line);
-  padding: 0.55rem 1rem 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0.45rem 1.25rem 0.45rem 0;
   text-align: left;
 }
 .md th {
-  font-weight: 600;
-  color: var(--color-muted);
-  font-size: 0.85em;
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.9em;
 }
 .md a {
-  color: var(--color-link);
+  color: var(--link);
 }
 .md a:hover {
   text-decoration: underline;
-}
-.md-compact {
-  font-size: 0.97rem;
 }
 
 .cm-editor {
@@ -325,15 +432,113 @@ body {
 }
 .cm-editor .cm-scroller {
   font-family: var(--font-mono);
-  letter-spacing: 0;
 }
 
-/* Blur is expensive on older school machines; this keeps the look without it. */
-@media (prefers-reduced-transparency: reduce) {
-  .glass,
-  .glass-nav {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    background: rgba(255, 255, 255, 0.94);
+/* Motion. Short, and only where something has actually changed: a page, a
+   result, a reveal. See DESIGN.md. */
+a,
+button {
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+.rise {
+  animation: rise 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* The breakpoint dot turning green when everything passes. */
+@keyframes dot-pass {
+  0% {
+    transform: scale(1);
+    background: var(--brand);
+  }
+  10% {
+    transform: scale(1.8);
+    background: #30d158;
+  }
+  28% {
+    transform: scale(1);
+  }
+  88% {
+    background: #30d158;
+  }
+  100% {
+    background: var(--brand);
+  }
+}
+@keyframes dot-ring {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(3.4);
+    opacity: 0;
+  }
+}
+.dot-pass {
+  animation: dot-pass 2.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.dot-pass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid #30d158;
+  animation: dot-ring 0.9s ease-out both;
+}
+
+/* Moving between pages: the old one fades, the new one rises into place. */
+::view-transition-old(.page-exit) {
+  animation: fade-out 0.1s ease-in both;
+}
+::view-transition-new(.page-enter) {
+  animation: rise 0.26s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .dot-pass,
+  .dot-pass::after {
+    animation: none;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation: none !important;
+  }
+}
+
+/* The sign-in sheet is printed to hand out, so only the page's own content goes on paper. */
+@media print {
+  header,
+  footer,
+  nav,
+  form,
+  .btn {
+    display: none !important;
+  }
+  .card {
+    background: none;
+    padding: 0;
+  }
+  body {
+    background: #fff;
+    color: #000;
   }
 }
