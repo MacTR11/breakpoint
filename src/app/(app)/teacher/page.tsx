@@ -24,7 +24,11 @@ export default async function TeacherStudentsPage({ searchParams }: PageProps<"/
 
   return (
     <>
-      <PageHeader path={[{ label: "teacher" }, { label: "students" }]} title="Students" intro="Everyone with an account. Select a student to read their submitted code or change their username and password.">
+      <PageHeader
+        path={[{ label: "teacher" }, { label: "students" }]}
+        title="Students"
+        intro="Everyone with an account. Select a student to read their submitted code or change their username and password."
+      >
         <div className="flex flex-wrap gap-3">
           <a href="/teacher/export" className={buttonStyle.secondary}>
             Download results

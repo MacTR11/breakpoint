@@ -14,11 +14,7 @@ export default async function HomeworkPage() {
 
   return (
     <Sheet width="max-w-3xl">
-      <PageHeader
-        path={[{ label: "homework" }]}
-        title="Homework"
-        intro="Challenges your teacher has set, with a date to finish them by. Anything you solved before it was set already counts."
-      />
+      <PageHeader path={[{ label: "homework" }]} title="Homework" intro="Challenges your teacher has set, with a date to finish them by. Anything you solved before it was set already counts." />
       {sets.length === 0 && <p className="border-y border-line py-6 text-muted">No homework has been set yet.</p>}
       {toDo.length > 0 && (
         <section>

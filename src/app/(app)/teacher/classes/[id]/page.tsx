@@ -4,7 +4,7 @@ import { ClassForm, DeleteClass, ResetClassPasswords } from "@/components/class-
 import { PageHeader, Tag, buttonStyle, formatDateTime, link, ordinal, signed, tone } from "@/components/ui";
 import { YEAR_LABEL, classStandings, topicGrid } from "@/lib/classes";
 import { db } from "@/lib/db";
-import { duration, isFlagged, mightBeFlagged, pasteFlag } from "@/lib/integrity";
+import { duration, flagsByChallenge, mightBeFlagged, pasteFlag } from "@/lib/integrity";
 import { daysAgo } from "@/lib/scoring";
 import { getCurrentUser, requireTeacher } from "@/lib/session";
 
@@ -28,13 +28,25 @@ export default async function ClassPage({ params }: PageProps<"/teacher/classes/
     db.submission.findMany({
       where: { user: { classId: id, role: "STUDENT" }, ...mightBeFlagged },
       orderBy: { createdAt: "desc" },
-      take: 60,
-      select: { id: true, code: true, pastedChars: true, largestPaste: true, typedChars: true, seconds: true, createdAt: true, user: { select: { id: true, name: true } }, problem: { select: { title: true } } },
+      take: 200,
+      select: {
+        id: true,
+        userId: true,
+        problemId: true,
+        code: true,
+        pastedChars: true,
+        largestPaste: true,
+        typedChars: true,
+        seconds: true,
+        createdAt: true,
+        user: { select: { id: true, name: true } },
+        problem: { select: { title: true } },
+      },
     }),
   ]);
   const standing = standings.find((c) => c.id === id);
   const thisWeek = week.find((c) => c.id === id);
-  const flagged = suspicious.filter(isFlagged).slice(0, 15);
+  const flagged = flagsByChallenge(suspicious).slice(0, 15);
   const color = standing?.color ?? "#8e8e93";
 
   return (
@@ -141,8 +153,8 @@ export default async function ClassPage({ params }: PageProps<"/teacher/classes/
       <section className="mt-10">
         <h2 className="text-lg font-semibold">Paste flags</h2>
         <p className="mt-1 mb-4 max-w-2xl text-sm text-muted">
-          Submissions where a large piece of code was pasted in from outside the editor. A flag is a reason for a conversation, not proof: code can be retyped from another screen, and pasting
-          your own work back is not counted.
+          Challenges where a large piece of code was pasted in from outside the editor, with the latest flagged submission. A flag is a reason for a conversation, not proof: code can be retyped from
+          another screen, and pasting your own work back is not counted.
         </p>
         {flagged.length === 0 ? (
           <p className="border-y border-line py-5 text-muted">Nothing flagged in this class.</p>

@@ -30,6 +30,24 @@ export function pasteFlag(submission: { code: string; pastedChars: number; large
 
 export const isFlagged = (submission: { code: string; pastedChars: number; largestPaste: number }) => pasteFlag(submission) !== null;
 
+type Counted = { userId: string; problemId: string; createdAt: Date; code: string; pastedChars: number; largestPaste: number };
+
+/**
+ * One flag per student per challenge, keeping the latest flagged submission.
+ * The counts build up over a draft, so every later submission of the same
+ * pasted code would otherwise count again. Newest first.
+ */
+export function flagsByChallenge<T extends Counted>(submissions: T[]): T[] {
+  const latest = new Map<string, T>();
+  for (const submission of submissions) {
+    if (!isFlagged(submission)) continue;
+    const key = `${submission.userId}:${submission.problemId}`;
+    const seen = latest.get(key);
+    if (!seen || submission.createdAt > seen.createdAt) latest.set(key, submission);
+  }
+  return [...latest.values()].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+}
+
 /** Narrows the submissions worth checking with `isFlagged` in the database first. */
 export const mightBeFlagged = { OR: [{ largestPaste: { gte: LARGE_PASTE } }, { pastedChars: { gte: 80 } }] };
 

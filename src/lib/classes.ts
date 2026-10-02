@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { isFlagged, mightBeFlagged } from "./integrity";
+import { flagsByChallenge, mightBeFlagged } from "./integrity";
 import { practiceFilter } from "./problems";
 import { TRACKS } from "./tracks";
 
@@ -98,7 +98,7 @@ export async function topicGrid(classId: string) {
         username: true,
         lastSeenAt: true,
         solves: { select: { problemId: true, points: true, solvedAt: true } },
-        submissions: { where: mightBeFlagged, select: { code: true, pastedChars: true, largestPaste: true } },
+        submissions: { where: mightBeFlagged, select: { userId: true, problemId: true, createdAt: true, code: true, pastedChars: true, largestPaste: true } },
       },
     }),
     db.problem.findMany({ where: practiceFilter(), select: { id: true, track: true } }),
@@ -124,7 +124,7 @@ export async function topicGrid(classId: string) {
       cells: tracks.map((t) => solvedIn.get(t.id) ?? 0),
       solved: student.solves.length,
       points: student.solves.reduce((sum, s) => sum + s.points, 0) - (lost.get(student.id) ?? 0),
-      flags: student.submissions.filter(isFlagged).length,
+      flags: flagsByChallenge(student.submissions).length,
     };
   });
   // The class's average share of each topic, for the bottom row.

@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { isFlagged, mightBeFlagged } from "./integrity";
+import { flagsByChallenge, mightBeFlagged } from "./integrity";
 
 /** Every student with their totals, for the teacher dashboard and CSV export. */
 export async function studentSummaries() {
@@ -12,12 +12,12 @@ export async function studentSummaries() {
     db.solve.groupBy({ by: ["userId"], _sum: { points: true }, _count: { _all: true } }),
     db.submission.groupBy({ by: ["userId"], _max: { createdAt: true }, _count: { _all: true }, _sum: { penalty: true } }),
     // Narrowed in the database, then decided by the same rule the teacher pages use.
-    db.submission.findMany({ where: mightBeFlagged, select: { userId: true, code: true, pastedChars: true, largestPaste: true } }),
+    db.submission.findMany({ where: mightBeFlagged, select: { userId: true, problemId: true, createdAt: true, code: true, pastedChars: true, largestPaste: true } }),
   ]);
   const solveBy = new Map(solves.map((s) => [s.userId, s]));
   const activityBy = new Map(activity.map((a) => [a.userId, a]));
   const flagsBy = new Map<string, number>();
-  for (const paste of pastes) if (isFlagged(paste)) flagsBy.set(paste.userId, (flagsBy.get(paste.userId) ?? 0) + 1);
+  for (const flag of flagsByChallenge(pastes)) flagsBy.set(flag.userId, (flagsBy.get(flag.userId) ?? 0) + 1);
   return students.map((student) => ({
     ...student,
     className: student.class?.name ?? "",

@@ -27,7 +27,11 @@ export default async function AwardsPage() {
 
   return (
     <Page>
-      <PageHeader path={[{ label: "awards" }]} title="Awards" intro="Stickers to collect. Each one fills with its colour once you have done what it asks, and a few are secret until you stumble on them." />
+      <PageHeader
+        path={[{ label: "awards" }]}
+        title="Awards"
+        intro="Stickers to collect. Each one fills with its colour once you have done what it asks, and a few are secret until you stumble on them."
+      />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <section className="card flex flex-col justify-between gap-5">

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { db } from "./db";
 import { practiceFilter } from "./problems";
 
@@ -23,8 +24,12 @@ export function stateOf(dueAt: Date, solvedAt: (Date | undefined)[], now = new D
   return now > dueAt ? "overdue" : "open";
 }
 
-/** The homework set for a student's class or for everyone, newest due date last, with their progress. */
-export async function homeworkFor(user: { id: string; classId: string | null }) {
+/**
+ * The homework set for a student's class or for everyone, newest due date
+ * last, with their progress. Cached for the request, as the top bar and Home
+ * both ask.
+ */
+export const homeworkFor = cache(async (user: { id: string; classId: string | null }) => {
   const [sets, solves] = await Promise.all([
     db.homework.findMany({
       where: { OR: [{ classId: null }, ...(user.classId ? [{ classId: user.classId }] : [])] },
@@ -51,13 +56,12 @@ export async function homeworkFor(user: { id: string; classId: string | null }) 
       state: stateOf(set.dueAt, times, now),
     };
   });
-}
+});
 
 export type StudentHomework = Awaited<ReturnType<typeof homeworkFor>>[number];
 
 /** What belongs on Home: anything not yet due, and anything overdue in the last fortnight. */
-export const current = (sets: StudentHomework[], now = new Date()) =>
-  sets.filter((h) => h.dueAt > now || (h.state === "overdue" && h.dueAt.getTime() > now.getTime() - 14 * 86_400_000));
+export const current = (sets: StudentHomework[], now = new Date()) => sets.filter((h) => h.dueAt > now || (h.state === "overdue" && h.dueAt.getTime() > now.getTime() - 14 * 86_400_000));
 
 /** Every student a piece of homework is for, and when (if ever) they solved each challenge. */
 export async function homeworkProgress(id: string) {

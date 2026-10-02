@@ -64,10 +64,10 @@ export function StudentTable({ rows, classes }: { rows: StudentRow[]; classes: {
               </th>
               <th>Student</th>
               <th>Class</th>
-              <th>Username</th>
+              <th className="hidden sm:table-cell">Username</th>
               <th className="num">Points</th>
               <th className="num">Solved</th>
-              <th className="num">Submissions</th>
+              <th className="num hidden sm:table-cell">Submissions</th>
               <th className="num">Flags</th>
               <th>Last active</th>
             </tr>
@@ -92,12 +92,12 @@ export function StudentTable({ rows, classes }: { rows: StudentRow[]; classes: {
                   </Link>
                 </td>
                 <td className="whitespace-nowrap">{s.className || <span className="text-muted">None</span>}</td>
-                <td className="font-mono text-sm text-muted">{s.username}</td>
+                <td className="hidden font-mono text-sm text-muted sm:table-cell">{s.username}</td>
                 <td className="num">{signed(s.points)}</td>
                 <td className="num">{s.solved}</td>
-                <td className="num">{s.submissions}</td>
+                <td className="num hidden sm:table-cell">{s.submissions}</td>
                 <td className="num">{s.flags > 0 ? <Tag color="var(--warn)">{s.flags}</Tag> : <span className="text-muted">0</span>}</td>
-                <td className="whitespace-nowrap text-muted">{s.lastActive}</td>
+                <td className="whitespace-nowrap text-sm text-muted">{s.lastActive}</td>
               </tr>
             ))}
           </tbody>

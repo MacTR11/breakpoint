@@ -59,7 +59,11 @@ export default async function MockPaperPage({ params }: PageProps<"/mock/[id]">)
               </span>
             </span>
             {running ? (
-              part.scored === part.marks && part.attempted ? <Tag color="var(--pass)">Done</Tag> : part.attempted ? <Tag color="var(--warn)">Started</Tag> : null
+              part.scored === part.marks && part.attempted ? (
+                <Tag color="var(--pass)">Done</Tag>
+              ) : part.attempted ? (
+                <Tag color="var(--warn)">Started</Tag>
+              ) : null
             ) : (
               <span className="text-sm font-semibold tabular-nums">
                 {part.scored} / {part.marks}

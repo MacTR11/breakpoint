@@ -25,9 +25,7 @@ export default async function NewStudentsPage() {
             <code className="font-mono text-ink">surname</code>), and optionally <code className="font-mono text-ink">class</code>, <code className="font-mono text-ink">username</code> and{" "}
             <code className="font-mono text-ink">password</code>.
           </p>
-          <p>
-            A class that does not exist yet is made for you: names with 13 or U6 in them go in the upper sixth, the rest in the lower sixth (you can change that on the Classes page).
-          </p>
+          <p>A class that does not exist yet is made for you: names with 13 or U6 in them go in the upper sixth, the rest in the lower sixth (you can change that on the Classes page).</p>
           <p>
             A missing username is made from the name (Ada Lovelace becomes <code className="font-mono text-ink">alovelace</code>). A missing password is made up for you. Passwords need at least{" "}
             {MIN_PASSWORD} characters. Up to {MAX_IMPORT} rows at a time.

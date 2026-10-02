@@ -10,12 +10,14 @@ export function ClassBoard({ rows, mine }: { rows: ClassStanding[]; mine?: strin
       {rows.map((row) => (
         <li key={row.id} className={`flex items-center gap-4 py-3.5 ${row.id === mine ? "font-semibold" : ""}`}>
           <span className="w-6 font-display text-xl font-extrabold tabular-nums">{row.rank}</span>
-          <span className="icon !w-12 !text-sm" style={tone(row.color)} aria-hidden="true">
+          <span className="icon !hidden !w-12 !text-sm sm:!grid" style={tone(row.color)} aria-hidden="true">
             {row.name.slice(0, 4)}
           </span>
           <span className="min-w-0 flex-1">
             <span className="flex flex-wrap items-baseline gap-x-2">
-              <span className="font-semibold">{row.name}</span>
+              <span className="font-semibold" style={{ color: `color-mix(in oklab, ${row.color} var(--topic-keep), var(--topic-mix))` }}>
+                {row.name}
+              </span>
               <span className="text-sm font-normal text-muted">{YEAR_LABEL[row.year]}</span>
               {row.id === mine && <Tag color="var(--accent)">Your class</Tag>}
             </span>
@@ -26,7 +28,7 @@ export function ClassBoard({ rows, mine }: { rows: ClassStanding[]; mine?: strin
               {row.averageSolved} solved each · {row.active} of {row.students} scored
             </span>
           </span>
-          <span className="w-28 shrink-0 text-right">
+          <span className="w-20 shrink-0 text-right sm:w-28">
             <span className="figure block text-2xl">{signed(row.averagePoints)}</span>
             <span className="text-[13px] font-normal text-muted">points each</span>
           </span>

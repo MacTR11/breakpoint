@@ -17,3 +17,17 @@ export function suggestedPoints(kind: string, style: string | undefined, difficu
   const column = kind === "PUZZLE" ? "puzzle" : style === "FIX" ? "fix" : "write";
   return POINTS[column][(difficulty as Level) in POINTS[column] ? (difficulty as Level) : "EASY"];
 }
+
+/** The marks an exam-style question carries, from the bold "[4 marks]" in its description. */
+export function marksIn(description: string): number | null {
+  const found = /\*\*\[(\d+) marks?\]\*\*/.exec(description);
+  return found ? Number(found[1]) : null;
+}
+
+/** What a challenge file should be worth: the table, or the First steps and exam-style rules. */
+export function expectedPoints(problem: { kind: string; style?: string; difficulty: string; track: string; description: string }) {
+  if (problem.track === "warmup") return FIRST_STEPS_POINTS;
+  const marks = marksIn(problem.description);
+  if (problem.track === "exam" && marks) return marks * POINTS_PER_MARK;
+  return suggestedPoints(problem.kind, problem.style, problem.difficulty);
+}

@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { current, homeworkFor } from "./homework";
-import { isFlagged, mightBeFlagged } from "./integrity";
+import { flagsByChallenge, mightBeFlagged } from "./integrity";
 import { daysAgo } from "./scoring";
 
 /** Something worth a look, for the bell in the top bar. `at` decides whether it is new to the viewer. */
@@ -20,7 +20,10 @@ export async function noticesFor(user: { id: string; role: string; classId: stri
     user.role === "STUDENT" ? homeworkFor(user) : Promise.resolve([]),
     db.contest.findMany({ where: { startsAt: { lte: soon }, endsAt: { gt: now } }, orderBy: { startsAt: "asc" } }),
     user.role === "TEACHER"
-      ? db.submission.findMany({ where: { createdAt: { gte: daysAgo(7) }, user: { role: "STUDENT" }, ...mightBeFlagged }, select: { code: true, pastedChars: true, largestPaste: true, createdAt: true } })
+      ? db.submission.findMany({
+          where: { createdAt: { gte: daysAgo(7) }, user: { role: "STUDENT" }, ...mightBeFlagged },
+          select: { userId: true, problemId: true, code: true, pastedChars: true, largestPaste: true, createdAt: true },
+        })
       : Promise.resolve([]),
   ]);
 
@@ -46,14 +49,14 @@ export async function noticesFor(user: { id: string; role: string; classId: stri
       tone: live ? "var(--fail)" : "var(--warn)",
     });
   }
-  const flags = flagged.filter(isFlagged);
+  const flags = flagsByChallenge(flagged);
   if (flags.length > 0) {
     notices.push({
       id: "flags",
       title: `${flags.length} paste flag${flags.length === 1 ? "" : "s"} this week`,
       detail: "Large pastes into the code editor",
       href: "/teacher/classes",
-      at: flags.reduce((latest, f) => (f.createdAt > latest ? f.createdAt : latest), flags[0].createdAt).toISOString(),
+      at: flags[0].createdAt.toISOString(),
       tone: "var(--warn)",
     });
   }

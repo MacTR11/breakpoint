@@ -11,6 +11,7 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "verify": "tsx scripts/verify-problems.ts",
+    "check": "tsx scripts/logic-check.ts",
     "setup": "prisma db push && tsx prisma/seed.ts"
   },
   "dependencies": {

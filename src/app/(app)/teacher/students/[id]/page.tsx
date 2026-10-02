@@ -6,7 +6,7 @@ import { PageHeader, Tag, buttonStyle, formatDateTime, link, signed } from "@/co
 import { allClasses } from "@/lib/classes";
 import { db } from "@/lib/db";
 import { homeworkFor, homeworkStateLabel } from "@/lib/homework";
-import { duration, pasteFlag } from "@/lib/integrity";
+import { duration, flagsByChallenge, pasteFlag } from "@/lib/integrity";
 import { papersOf } from "@/lib/mock";
 import { MAX_PUZZLE_ATTEMPTS, parseOptions } from "@/lib/problems";
 import { requireTeacher } from "@/lib/session";
@@ -28,7 +28,7 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
   });
   if (!student || student.role !== "STUDENT") notFound();
   const [classes, homework, papers] = await Promise.all([allClasses(), homeworkFor(student), papersOf(student.id)]);
-  const flags = student.submissions.filter((s) => s.problem.kind === "CODE" && pasteFlag(s)).length;
+  const flags = flagsByChallenge(student.submissions.filter((s) => s.problem.kind === "CODE")).length;
 
   const penalties = student.submissions.reduce((sum, s) => sum + s.penalty, 0);
   const points = student.solves.reduce((sum, s) => sum + s.points, 0) - penalties;
@@ -46,7 +46,12 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
   return (
     <>
       <PageHeader
-        path={[{ label: "teacher" }, { label: "students", href: "/teacher" }, ...(student.class ? [{ label: student.class.name, href: `/teacher/classes/${student.class.id}` }] : []), { label: student.username }]}
+        path={[
+          { label: "teacher" },
+          { label: "students", href: "/teacher" },
+          ...(student.class ? [{ label: student.class.name, href: `/teacher/classes/${student.class.id}` }] : []),
+          { label: student.username },
+        ]}
         title={student.name}
       >
         <Link href={`/teacher/students/${student.id}/report`} className={buttonStyle.secondary}>

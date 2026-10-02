@@ -17,7 +17,13 @@ export async function saveHomework(_previous: HomeworkFormState, formData: FormD
   await assertTeacher();
   const id = text(formData, "id");
   const problemIds = [...new Set(formData.getAll("problemIds").map(String))];
-  const values = { title: text(formData, "title").slice(0, 100), note: text(formData, "note").slice(0, 2000), classId: text(formData, "classId"), dueAt: text(formData, "dueAt"), problemIds: problemIds.join(",") };
+  const values = {
+    title: text(formData, "title").slice(0, 100),
+    note: text(formData, "note").slice(0, 2000),
+    classId: text(formData, "classId"),
+    dueAt: text(formData, "dueAt"),
+    problemIds: problemIds.join(","),
+  };
   const errors: string[] = [];
   if (!values.title) errors.push("Give the homework a title.");
   const dueAt = londonToDate(values.dueAt);
@@ -32,9 +38,7 @@ export async function saveHomework(_previous: HomeworkFormState, formData: FormD
 
   const data = { title: values.title, note: values.note, classId: values.classId || null, dueAt };
   const problems = { create: problemIds.map((problemId, sortOrder) => ({ problemId, sortOrder })) };
-  const saved = id
-    ? await db.homework.update({ where: { id }, data: { ...data, problems: { deleteMany: {}, ...problems } } })
-    : await db.homework.create({ data: { ...data, problems } });
+  const saved = id ? await db.homework.update({ where: { id }, data: { ...data, problems: { deleteMany: {}, ...problems } } }) : await db.homework.create({ data: { ...data, problems } });
   revalidatePath("/", "layout");
   redirect(`/teacher/homework/${saved.id}`);
 }

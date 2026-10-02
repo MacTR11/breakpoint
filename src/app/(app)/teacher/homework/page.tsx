@@ -63,9 +63,7 @@ export default async function TeacherHomeworkPage() {
       </PageHeader>
 
       <section>
-        <h2 className="mb-2 flex items-center gap-2 text-lg font-semibold">
-          Coming up {upcoming.length > 0 && <Tag color="var(--accent)">{upcoming.length}</Tag>}
-        </h2>
+        <h2 className="mb-2 flex items-center gap-2 text-lg font-semibold">Coming up {upcoming.length > 0 && <Tag color="var(--accent)">{upcoming.length}</Tag>}</h2>
         {upcoming.length === 0 ? <p className="border-y border-line py-5 text-muted">Nothing set at the moment.</p> : table(upcoming)}
       </section>
       {past.length > 0 && (

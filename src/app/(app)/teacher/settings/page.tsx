@@ -18,16 +18,14 @@ export default async function SettingsPage() {
         <h2 className="text-lg font-semibold">Pasting into the code editor</h2>
         <div className="mt-1 space-y-2 text-sm text-muted">
           <p>
-            The editor counts what each student types and what they paste in from outside it, and keeps the counts with every submission. Moving their own code around inside the editor is not
-            counted. A single paste of {LARGE_PASTE} characters or more, or a submission that is mostly pasted, is flagged on the{" "}
+            The editor counts what each student types and what they paste in from outside it, and keeps the counts with every submission. Moving their own code around inside the editor is not counted.
+            A single paste of {LARGE_PASTE} characters or more, or a submission that is mostly pasted, is flagged on the{" "}
             <Link href="/teacher/classes" className={link}>
               class pages
             </Link>{" "}
             and the student&apos;s page.
           </p>
-          <p>
-            Neither setting can stop a student retyping an answer from another screen, so treat a flag as a reason for a conversation rather than proof. Teachers are never blocked.
-          </p>
+          <p>Neither setting can stop a student retyping an answer from another screen, so treat a flag as a reason for a conversation rather than proof. Teachers are never blocked.</p>
         </div>
 
         <form action={savePasteMode} className="mt-5 space-y-4">
@@ -44,9 +42,7 @@ export default async function SettingsPage() {
               </label>
             </div>
           </fieldset>
-          <p className="text-sm text-muted">
-            Now: {mode === "block" ? "large pastes are refused, and the student is asked to type their solution." : "large pastes are allowed and noted for you."}
-          </p>
+          <p className="text-sm text-muted">Now: {mode === "block" ? "large pastes are refused, and the student is asked to type their solution." : "large pastes are allowed and noted for you."}</p>
           <button className="btn btn-primary">Save</button>
         </form>
       </section>

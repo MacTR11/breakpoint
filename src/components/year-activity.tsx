@@ -18,7 +18,13 @@ export function YearActivity({ grid }: { grid: ActivityDay[][] }) {
     <div>
       {/* Right to left outside, left to right inside: starts scrolled to the latest week. */}
       <div dir="rtl" className="overflow-x-auto pb-1 [scrollbar-width:thin]">
-        <div dir="ltr" className="grid min-w-[44rem] gap-[3px]" style={{ gridTemplateColumns: `1.75rem repeat(${grid.length}, minmax(0, 1fr))` }} role="img" aria-label="Challenges solved each day over the last year">
+        <div
+          dir="ltr"
+          className="grid min-w-[44rem] gap-[3px]"
+          style={{ gridTemplateColumns: `1.75rem repeat(${grid.length}, minmax(0, 1fr))` }}
+          role="img"
+          aria-label="Challenges solved each day over the last year"
+        >
           <span />
           {months.map((label, i) => (
             <span key={grid[i][0].day} className="h-4 overflow-visible text-[11px] leading-none whitespace-nowrap text-muted">

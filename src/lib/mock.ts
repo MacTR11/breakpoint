@@ -1,16 +1,14 @@
 import type { MockPaper, Problem } from "@prisma/client";
 import { db } from "./db";
+import { POINTS_PER_MARK, marksIn } from "./points";
 import { practiceFilter } from "./problems";
 
 // A mock paper is a timed sitting of exam-style questions, chosen a scenario
 // at a time (Cinema (a), (b), (c)...). Nothing about the marks is stored: they
 // are worked out from the submissions made while the paper was running.
 
-/** A question's marks, from the "[4 marks]" in its description. */
-export function marksOf(problem: Pick<Problem, "description" | "points">) {
-  const found = /\*\*\[(\d+) marks?\]\*\*/.exec(problem.description);
-  return found ? Number(found[1]) : Math.max(1, Math.round(problem.points / 5));
-}
+/** A question's marks, from the "[4 marks]" in its description, or else from its points. */
+export const marksOf = (problem: Pick<Problem, "description" | "points">) => marksIn(problem.description) ?? Math.max(1, Math.round(problem.points / POINTS_PER_MARK));
 
 /** "Cinema (a): count the free seats" is part of "Cinema". */
 const partOf = (title: string) => title.split(" (")[0].trim();

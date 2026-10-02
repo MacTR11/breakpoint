@@ -2,6 +2,7 @@
 // checks every problem is well formed. Run with: npm run verify
 import { loadContent, loadContests } from "../prisma/content";
 import { judge } from "../src/lib/judge";
+import { expectedPoints } from "../src/lib/points";
 import { SPEC_REFS } from "../src/lib/spec";
 import { TRACK_IDS } from "../src/lib/tracks";
 import { bannedUse } from "../src/lib/types";
@@ -22,6 +23,7 @@ async function main() {
     if (p.contest && !contests.has(p.contest)) problems.push(`contest "${p.contest}" is not in content/contests.json`);
     if (!["EASY", "MEDIUM", "HARD"].includes(p.difficulty)) problems.push("difficulty must be EASY, MEDIUM or HARD");
     if (p.hints.length === 0) problems.push("needs a hints section with at least one hint");
+    if (p.points !== expectedPoints(p)) problems.push(`points should be ${expectedPoints(p)} (see src/lib/points.ts), not ${p.points}`);
 
     if (p.kind === "CODE") {
       if (!p.functionName || !p.tests?.length || !p.solution || !p.starter) {

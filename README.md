@@ -86,7 +86,7 @@ Teacher → Classes. Add your classes there (for example 12A and 12B in the lowe
 
 ## Paste tracking
 
-The code editor counts what each student types and what they paste or drop in from outside it, and how long the editor was open, and stores the counts with each submission. Moving their own code around inside the editor is not counted. A submission is **flagged** when a single paste is 120 characters or more, or when most of the code was pasted; flags show on the Students page, the class page and the student's page, beside the code.
+The code editor counts what each student types and what they paste or drop in from outside it, and how long the editor was open, and stores the counts with each submission. Moving their own code around inside the editor is not counted. A challenge is **flagged** for a student when a single paste is 120 characters or more, or most of the code was pasted. Each flagged challenge counts once, however many times it was submitted afterwards. Flags show on the Students page, the class page and the student's page, beside the code.
 
 Teacher → Settings switches between **recording** large pastes (the default) and **recording and blocking** them, in which case a student who pastes a large block is asked to type it instead. Teachers are never blocked.
 
@@ -156,7 +156,7 @@ You can also build a competition from any problems in the bank. The form warns y
 **As files:** each file in `content/problems/` is one problem. Copy an existing one, edit it, then run:
 
 ```bash
-npm run verify    # runs every reference solution through the real judge
+npm run verify    # runs every reference solution through the real judge, and checks the points
 npm run db:seed   # loads the files into the database
 ```
 
@@ -260,4 +260,4 @@ A few things are hidden for students to find. None of them changes a score.
 - Look under the Home greeting on Ada Lovelace Day, Programmers' Day (the 256th day of the year), pi day and a few other dates.
 - Six secret awards (see `src/lib/awards.ts`).
 
-Useful commands: `npm run verify`, `python3 scripts/check-puzzles.py`, `npx tsx scripts/judge-smoke.ts` (checks the judge copes with broken and hostile code), `npm run lint`.
+Useful commands: `npm run verify`, `npm run check` (homework states, paste flags, points and marks), `python3 scripts/check-puzzles.py`, `npx tsx scripts/judge-smoke.ts` (checks the judge copes with broken and hostile code), `npm run lint`.
