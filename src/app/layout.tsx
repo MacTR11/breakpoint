@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Nunito } from "next/font/google";
 import { siteName } from "@/lib/config";
 import { themeScript } from "@/lib/theme-script";
@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   title: { default: siteName, template: `%s · ${siteName}` },
   description: "Python challenges for A Level Computer Science: write it, fix it, read it.",
 };
+
+// "cover" lets the phone tab bar sit in the safe area above the home indicator.
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

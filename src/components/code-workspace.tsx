@@ -147,7 +147,7 @@ export function CodeWorkspace({
   };
 
   return (
-    <main className="grid flex-1 grid-cols-1 gap-4 p-4 lg:h-[calc(100vh-3.25rem)] lg:grid-cols-2">
+    <main className="grid flex-1 grid-cols-1 gap-4 p-4 lg:h-[calc(100dvh-3.5rem-1px)] lg:grid-cols-2">
       <section className="card min-w-0 px-5 py-6 sm:px-8 sm:py-7 lg:overflow-y-auto">
         {header}
         {solved && (
