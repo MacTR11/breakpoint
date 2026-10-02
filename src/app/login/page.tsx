@@ -3,7 +3,7 @@ import { Wordmark } from "@/components/brand";
 import { CodeLine } from "@/components/code-text";
 import { LoginForm } from "@/components/login-form";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { teacherLogin } from "@/lib/config";
+import { MIN_TEACHER_PASSWORD, teacherLogin } from "@/lib/config";
 import { getCurrentUser } from "@/lib/session";
 
 export const metadata = { title: "Sign in" };
@@ -32,7 +32,7 @@ export default async function LoginPage() {
             <p className="mt-4 text-sm text-muted">Your teacher gives you your username and password. If you have lost them, ask your teacher to set a new password.</p>
             {!teacherLogin() && (
               <p className="mt-6 border-t border-line pt-4 text-sm text-warn">
-                The teacher account is not set up yet. Add <code className="font-mono">TEACHER_USERNAME</code> and <code className="font-mono">TEACHER_PASSWORD</code> (8 characters or more) to{" "}
+                The teacher account is not set up yet. Add <code className="font-mono">TEACHER_USERNAME</code> and <code className="font-mono">TEACHER_PASSWORD</code>{MIN_TEACHER_PASSWORD > 1 ? ` (${MIN_TEACHER_PASSWORD} characters or more)` : ""} to{" "}
                 <code className="font-mono">.env</code>, then restart the site. The README explains how.
               </p>
             )}

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { signOut } from "@/auth";
 import { db } from "@/lib/db";
 import { hintWallet, parseHints } from "@/lib/hints";
@@ -14,7 +15,8 @@ const MAX_CODE_LENGTH = 20_000;
 const MIN_GAP_MS = 2_000;
 
 export async function signOutAction() {
-  await signOut({ redirectTo: "/login" });
+  await signOut({ redirect: false });
+  redirect("/login");
 }
 
 export type CodeSubmitResult =
