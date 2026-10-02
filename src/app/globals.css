@@ -623,4 +623,13 @@ button {
     background: #fff;
     color: #000;
   }
+  /* Reports: one student to a page, keeping their colours. */
+  .report {
+    break-inside: avoid;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .report + .report {
+    break-before: page;
+  }
 }
