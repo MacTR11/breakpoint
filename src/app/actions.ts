@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { hintWallet, parseHints } from "@/lib/hints";
 import { cleanTelemetry, type Telemetry } from "@/lib/integrity";
 import { judge } from "@/lib/judge";
+import { paperUsing } from "@/lib/mock";
 import { findViewableProblem, isLive, MAX_PUZZLE_ATTEMPTS, parseBanned, parseOptions, parseTests, pointsFor, puzzlePenalty } from "@/lib/problems";
 import { getCurrentUser } from "@/lib/session";
 import { noRewards, recordSolve, type Rewards } from "@/lib/solve";
@@ -127,6 +128,8 @@ export async function unlockHint(slug: string): Promise<HintResult> {
   const isTeacher = user.role === "TEACHER";
   const problem = await findViewableProblem(slug, isTeacher);
   if (!problem) return { ok: false, message: "This problem is not available." };
+
+  if (!isTeacher && (await paperUsing(user.id, problem.id))) return { ok: false, message: "Hints are off while you sit a mock paper." };
 
   const hints = parseHints(problem);
   const index = await db.hintUnlock.count({ where: { userId: user.id, problemId: problem.id } });

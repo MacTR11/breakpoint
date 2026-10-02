@@ -32,6 +32,7 @@ export function CodeWorkspace({
   points,
   isFix,
   blockPastes,
+  draftScope = "",
   solved: initiallySolved,
   header,
   description,
@@ -52,6 +53,8 @@ export function CodeWorkspace({
   isFix: boolean;
   /** The teacher has chosen to refuse large pastes from outside the editor. */
   blockPastes: boolean;
+  /** Keeps a separate draft, such as one per mock paper, so earlier work does not appear. */
+  draftScope?: string;
   solved: boolean;
   header: React.ReactNode;
   description: React.ReactNode;
@@ -60,7 +63,7 @@ export function CodeWorkspace({
 }) {
   const router = useRouter();
   // Keyed by user so classmates sharing a computer never see each other's work.
-  const draftKey = `draft:${userId}:${slug}`;
+  const draftKey = `draft:${userId}:${slug}${draftScope && `:${draftScope}`}`;
   // A draft in this browser is always newer than the last submission.
   const draft = useSyncExternalStore(
     subscribeToDrafts,
@@ -82,7 +85,7 @@ export function CodeWorkspace({
 
   // What was typed and what was pasted in from outside is counted beside the
   // draft and sent with each submission (see src/lib/integrity.ts).
-  const countsKey = `counts:${userId}:${slug}`;
+  const countsKey = `counts:${userId}:${slug}${draftScope && `:${draftScope}`}`;
   const [pasteNote, setPasteNote] = useState<string | null>(null);
   const tracking = useMemo(() => trackingExtensions(countsKey, blockPastes, setPasteNote), [countsKey, blockPastes]);
   const allExtensions = useMemo(() => [...extensions, ...tracking], [tracking]);

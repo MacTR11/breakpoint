@@ -4,6 +4,7 @@ import { ChallengeList } from "@/components/challenge-list";
 import { Countdown } from "@/components/countdown";
 import { SolveCalendar } from "@/components/solve-calendar";
 import { Page, Tag, TopicTile, kindLabel, levelLabel, link, ordinal, signed, tone } from "@/components/ui";
+import { HomeworkTasks } from "@/components/homework-list";
 import { YourClass } from "@/components/your-class";
 import { activity } from "@/lib/activity";
 import { awardsFor } from "@/lib/awards";
@@ -11,6 +12,7 @@ import { classStandings } from "@/lib/classes";
 import { dailyChallenge } from "@/lib/daily";
 import { db } from "@/lib/db";
 import { hintWallet } from "@/lib/hints";
+import { current, homeworkFor } from "@/lib/homework";
 import { dateToLondonInput, londonDay, londonDayStart, shiftDay } from "@/lib/london";
 import { practiceFilter, standings } from "@/lib/problems";
 import { leaderboard, pointsOf } from "@/lib/scoring";
@@ -22,7 +24,7 @@ export default async function HomePage() {
   const user = await requireUser();
   const now = new Date();
 
-  const [problems, statusOf, points, wallet, board, history, daily, awards, liveContests, upcoming, classes] = await Promise.all([
+  const [problems, statusOf, points, wallet, board, history, daily, awards, liveContests, upcoming, classes, homework] = await Promise.all([
     db.problem.findMany({
       where: practiceFilter(),
       orderBy: [{ sortOrder: "asc" }],
@@ -38,7 +40,9 @@ export default async function HomePage() {
     db.contest.findMany({ where: { startsAt: { lte: now }, endsAt: { gt: now } }, orderBy: { endsAt: "asc" } }),
     db.contest.findFirst({ where: { startsAt: { gt: now } }, orderBy: { startsAt: "asc" } }),
     user.classId ? classStandings() : Promise.resolve([]),
+    homeworkFor(user),
   ]);
+  const dueHomework = current(homework, now);
 
   const rank = board.find((row) => row.userId === user.id)?.rank;
   const solvedInPractice = problems.filter((p) => statusOf(p.id) === "solved").length;
@@ -105,7 +109,9 @@ export default async function HomePage() {
               </span>
             </span>
             <span className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-              <span className="btn btn-on-tile">{dailyStatus === "solved" ? "Solved · hint earned" : dailyStatus === "locked" ? "Locked" : dailyStatus === "failing" ? "Carry on · earn a hint" : "Start · earn a hint"}</span>
+              <span className="btn btn-on-tile">
+                {dailyStatus === "solved" ? "Solved · hint earned" : dailyStatus === "locked" ? "Locked" : dailyStatus === "failing" ? "Carry on · earn a hint" : "Start · earn a hint"}
+              </span>
             </span>
           </Link>
         ) : (
@@ -139,17 +145,35 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <section className="card">
-          <div className="flex items-baseline justify-between">
-            <h2 className="cap">Try next</h2>
-            <Link href="/problems" className={`text-sm font-medium ${link}`}>
-              All challenges
-            </Link>
-          </div>
-          <div className="mt-1">
-            {next.length === 0 ? <p className="py-4 text-muted">You have worked through everything in practice.</p> : <ChallengeList problems={next} statusOf={statusOf} />}
-          </div>
-        </section>
+        <div className="flex flex-col gap-4">
+          {dueHomework.length > 0 && (
+            <section className="card">
+              <div className="flex items-baseline justify-between">
+                <h2 className="cap">Homework</h2>
+                <Link href="/homework" className={`text-sm font-medium ${link}`}>
+                  All homework
+                </Link>
+              </div>
+              <ul className="mt-2 space-y-5">
+                {dueHomework.slice(0, 3).map((set) => (
+                  <li key={set.id}>
+                    <HomeworkTasks set={set} compact />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <section className="card">
+            <div className="flex items-baseline justify-between">
+              <h2 className="cap">Try next</h2>
+              <Link href="/problems" className={`text-sm font-medium ${link}`}>
+                All challenges
+              </Link>
+            </div>
+            <div className="mt-1">{next.length === 0 ? <p className="py-4 text-muted">You have worked through everything in practice.</p> : <ChallengeList problems={next} statusOf={statusOf} />}</div>
+          </section>
+        </div>
 
         <div className="flex flex-col gap-4">
           {user.classId && classes.length > 1 && <YourClass standings={classes} classId={user.classId} />}

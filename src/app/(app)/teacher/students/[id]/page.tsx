@@ -4,7 +4,9 @@ import { EditStudent } from "@/components/student-forms";
 import { PageHeader, Tag, buttonStyle, formatDateTime, link, signed } from "@/components/ui";
 import { allClasses } from "@/lib/classes";
 import { db } from "@/lib/db";
+import { homeworkFor, homeworkStateLabel } from "@/lib/homework";
 import { duration, pasteFlag } from "@/lib/integrity";
+import { papersOf } from "@/lib/mock";
 import { MAX_PUZZLE_ATTEMPTS, parseOptions } from "@/lib/problems";
 import { resetAttempts } from "../../actions";
 
@@ -22,7 +24,7 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
     },
   });
   if (!student || student.role !== "STUDENT") notFound();
-  const classes = await allClasses();
+  const [classes, homework, papers] = await Promise.all([allClasses(), homeworkFor(student), papersOf(student.id)]);
   const flags = student.submissions.filter((s) => s.problem.kind === "CODE" && pasteFlag(s)).length;
 
   const penalties = student.submissions.reduce((sum, s) => sum + s.penalty, 0);
@@ -87,6 +89,48 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
             <EditStudent student={{ id: student.id, name: student.name, username: student.username, classId: student.classId ?? "" }} classes={classes} />
             <p className="mt-3 text-sm text-muted">Last signed in: {student.lastSeenAt ? formatDateTime(student.lastSeenAt) : "never"}.</p>
           </section>
+
+          {homework.length > 0 && (
+            <section>
+              <h2 className="mb-3 text-lg font-semibold">Homework</h2>
+              <ul className="border-y border-line divide-y divide-line">
+                {homework.map((set) => (
+                  <li key={set.id} className="flex items-baseline justify-between gap-3 py-2.5">
+                    <span>
+                      <Link href={`/teacher/homework/${set.id}`} className={link}>
+                        {set.title}
+                      </Link>
+                      <span className="block text-sm text-muted">
+                        {set.done} of {set.problems.length} · due {formatDateTime(set.dueAt)}
+                      </span>
+                    </span>
+                    <Tag color={homeworkStateLabel[set.state][1]}>{homeworkStateLabel[set.state][0]}</Tag>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {papers.length > 0 && (
+            <section>
+              <h2 className="mb-3 text-lg font-semibold">Mock papers</h2>
+              <ul className="border-y border-line divide-y divide-line">
+                {papers.map(({ paper, result }) => (
+                  <li key={paper.id} className="flex items-baseline justify-between gap-3 py-2.5">
+                    <Link href={`/mock/${paper.id}`} className={link}>
+                      {formatDateTime(paper.startedAt)}
+                    </Link>
+                    <span className="text-sm tabular-nums">
+                      <span className="font-semibold">
+                        {result.scored} / {result.marks}
+                      </span>{" "}
+                      <span className="text-muted">({result.percent}%)</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section>
             <h2 className="mb-3 text-lg font-semibold">Solved</h2>

@@ -1,12 +1,14 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodeWorkspace } from "@/components/code-workspace";
 import { Countdown } from "@/components/countdown";
 import { HintPanel } from "@/components/hint-panel";
 import { Markdown } from "@/components/markdown";
 import { PuzzleCard } from "@/components/puzzle-card";
-import { KindIcon, Path, Sheet, TopicName, kindLabel, levelLabel } from "@/components/ui";
+import { KindIcon, Path, Sheet, TopicName, kindLabel, levelLabel, link } from "@/components/ui";
 import { db } from "@/lib/db";
 import { hintWallet, parseHints } from "@/lib/hints";
+import { paperUsing } from "@/lib/mock";
 import { findViewableProblem, isLive, MAX_PUZZLE_ATTEMPTS, parseBanned, parseOptions, parseTests, pointsFor, puzzlePenalty } from "@/lib/problems";
 import { requireUser } from "@/lib/session";
 import { pasteMode } from "@/lib/settings";
@@ -26,9 +28,11 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
   if (!problem) notFound();
 
   const liveContest = problem.contests.map((c) => c.contest).find((c) => isLive(c));
+  // While a mock paper uses this question, it starts from a clean editor with no hints or answers.
+  const paper = isTeacher || problem.kind !== "CODE" ? null : await paperUsing(user.id, problem.id);
   const [solve, lastSubmission, wrong, unlockedCount, wallet] = await Promise.all([
     db.solve.findUnique({ where: { userId_problemId: { userId: user.id, problemId: problem.id } } }),
-    db.submission.findFirst({ where: { userId: user.id, problemId: problem.id }, orderBy: { createdAt: "desc" } }),
+    db.submission.findFirst({ where: { userId: user.id, problemId: problem.id, ...(paper ? { createdAt: { gte: paper.startedAt } } : {}) }, orderBy: { createdAt: "desc" } }),
     db.submission.findMany({ where: { userId: user.id, problemId: problem.id, status: "WRONG" }, select: { code: true } }),
     db.hintUnlock.count({ where: { userId: user.id, problemId: problem.id } }),
     hintWallet(user.id),
@@ -40,7 +44,9 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
   // challenge is over for them (solved or locked) the rest are free.
   const hints = parseHints(problem);
   const finished = Boolean(solve) || locked;
-  const hintPanel = (
+  const hintPanel = paper ? (
+    <p className="mt-8 border-t border-line pt-5 text-sm text-muted">Hints are off during a mock paper.</p>
+  ) : (
     <HintPanel
       slug={problem.slug}
       total={hints.length}
@@ -53,6 +59,17 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
 
   const header = (
     <div>
+      {paper && (
+        <p className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-[14px] bg-paper px-3.5 py-2 text-sm">
+          <span className="font-semibold">Mock paper</span>
+          <span>
+            <Countdown to={paper.endsAt.toISOString()} className="font-semibold tabular-nums" /> left
+          </span>
+          <Link href={`/mock/${paper.id}`} className={`ml-auto font-medium ${link}`}>
+            Back to the paper
+          </Link>
+        </p>
+      )}
       <Path
         parts={
           liveContest
@@ -80,7 +97,7 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
     const tests = parseTests(problem);
     // The mark scheme and a model answer appear once the challenge is solved,
     // and never while a live competition is using it. Teachers always see them.
-    const showAnswer = isTeacher || (Boolean(solve) && !liveContest);
+    const showAnswer = isTeacher || (Boolean(solve) && !liveContest && !paper);
     const modelAnswer =
       showAnswer && (problem.explanation || problem.solution) ? (
         <section className="mt-9 border-t border-line pt-5" aria-label="Mark scheme and model answer">
@@ -115,7 +132,8 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
         points={problem.points}
         isFix={problem.style === "FIX"}
         blockPastes={!isTeacher && (await pasteMode()) === "block"}
-        solved={Boolean(solve)}
+        draftScope={paper ? `mock-${paper.id}` : ""}
+        solved={Boolean(solve) && !paper}
         header={header}
         description={<Markdown>{problem.description}</Markdown>}
         hints={hintPanel}
