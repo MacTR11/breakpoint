@@ -31,16 +31,14 @@ export function HintPanel({ slug, total, unlocked, balance, untilNext, free }: {
   };
 
   return (
-    <section className="mt-10 border-t border-line pt-5" aria-label="Hints">
-      <h2 className="font-semibold">Hints</h2>
+    <section className="mt-9 border-t border-line pt-5" aria-label="Hints">
+      <h2 className="cap">Hints</h2>
 
       {hints.length > 0 && (
         <ol className="mt-3 space-y-3">
           {hints.map((hint, index) => (
-            <li key={index} className="flex gap-4">
-              <span className="w-10 shrink-0 pt-0.5 font-mono text-[13px] text-warn">
-                {index + 1}/{total}
-              </span>
+            <li key={index} className="rise flex gap-4">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-[8px] bg-hint font-display text-sm font-extrabold text-white">{index + 1}</span>
               <Markdown>{hint}</Markdown>
             </li>
           ))}

@@ -1,5 +1,5 @@
 import { ChallengeList } from "@/components/challenge-list";
-import { FilterRow, PageHeader } from "@/components/ui";
+import { FilterRow, Page, PageHeader } from "@/components/ui";
 import { db } from "@/lib/db";
 import { difficultyLabel, MAX_PUZZLE_ATTEMPTS, practiceFilter, standings } from "@/lib/problems";
 import { requireUser } from "@/lib/session";
@@ -43,35 +43,41 @@ export default async function ProblemsPage({ searchParams }: PageProps<"/problem
   };
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
+    <Page>
       <PageHeader
         path={[{ label: "practice" }]}
         title="Practice"
         intro={`Code is marked automatically and can be retried freely. Puzzles give you ${MAX_PUZZLE_ATTEMPTS} attempts, and a wrong answer costs points.`}
       />
 
-      <div className="mb-6 space-y-1.5">
+      <div className="mb-5 space-y-3">
+        <div className="flex flex-wrap gap-3">
         <FilterRow label="type" options={TYPES.map((t) => ({ label: t.label, href: href({ type: t.value }), active: filters.type === t.value }))} />
         <FilterRow
           label="level"
           options={[
-            { label: "Any", href: href({ difficulty: "" }), active: !filters.difficulty },
+            { label: "Any level", href: href({ difficulty: "" }), active: !filters.difficulty },
             ...DIFFICULTIES.map((d) => ({ label: difficultyLabel[d], href: href({ difficulty: d }), active: filters.difficulty === d })),
           ]}
         />
+        </div>
         <FilterRow
           label="topic"
           options={[
-            { label: "Any", href: href({ track: "" }), active: !filters.track },
-            ...tracksInUse.map((track) => ({ label: track.title, href: href({ track: track.id }), active: filters.track === track.id })),
+            { label: "All topics", href: href({ track: "" }), active: !filters.track },
+            ...tracksInUse.map((track) => ({ label: track.title, href: href({ track: track.id }), active: filters.track === track.id, track: track.id })),
           ]}
         />
       </div>
 
-      <p className="mb-2 font-mono text-[13px] text-muted">
-        {problems.length} challenge{problems.length === 1 ? "" : "s"}, {solved} solved
-      </p>
-      {problems.length === 0 ? <p className="border-y border-line py-6 text-muted">No challenges match those filters.</p> : <ChallengeList problems={problems} statusOf={statusOf} showTrack={!filters.track} />}
-    </main>
+      <div className="card">
+        <p className="cap">
+          {problems.length} challenge{problems.length === 1 ? "" : "s"} · {solved} solved
+        </p>
+        <div className="mt-1">
+          {problems.length === 0 ? <p className="py-5 text-muted">No challenges match those filters.</p> : <ChallengeList problems={problems} statusOf={statusOf} showTrack={!filters.track} />}
+        </div>
+      </div>
+    </Page>
   );
 }

@@ -6,7 +6,7 @@ export function FormErrors({ state }: { state: { errors: string[] } | null }) {
   if (!state?.errors.length) return null;
   return (
     <div role="alert" className="border-y border-fail py-3 text-sm text-fail">
-      <p className="font-mono font-semibold">FAIL not saved</p>
+      <p className="font-semibold">Not saved</p>
       <ul className="mt-1 list-disc space-y-1 pl-5">
         {state.errors.map((error) => (
           <li key={error} className="whitespace-pre-wrap">

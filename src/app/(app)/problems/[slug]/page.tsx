@@ -4,7 +4,7 @@ import { Countdown } from "@/components/countdown";
 import { HintPanel } from "@/components/hint-panel";
 import { Markdown } from "@/components/markdown";
 import { PuzzleCard } from "@/components/puzzle-card";
-import { Path, kindLabel, levelLabel } from "@/components/ui";
+import { KindIcon, Path, Sheet, TopicName, kindLabel, levelLabel } from "@/components/ui";
 import { db } from "@/lib/db";
 import { hintWallet, parseHints } from "@/lib/hints";
 import { findViewableProblem, isLive, MAX_PUZZLE_ATTEMPTS, parseBanned, parseOptions, parseTests, pointsFor, puzzlePenalty } from "@/lib/problems";
@@ -56,16 +56,19 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
         parts={
           liveContest
             ? [{ label: "competitions", href: "/contests" }, { label: liveContest.title, href: `/contests/${liveContest.id}` }, { label: fileName }]
-            : [{ label: "practice", href: "/problems" }, { label: problem.track, href: `/problems?track=${problem.track}` }, { label: fileName }]
+            : [{ label: "practice", href: "/problems" }, { label: trackTitle(problem.track), href: `/problems?track=${problem.track}` }, { label: fileName }]
         }
       />
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight">{problem.title}</h1>
+      <div className="flex items-center gap-3">
+        <KindIcon kind={problem.kind} style={problem.style} track={problem.track} />
+        <h1 className="font-display text-3xl font-extrabold tracking-tight">{problem.title}</h1>
+      </div>
       <p className="mt-2 text-sm text-muted">
-        {kindLabel(problem.kind, problem.style)} · {levelLabel(problem.difficulty)} · {problem.points} points · {trackTitle(problem.track)}
+        {kindLabel(problem.kind, problem.style)} · {levelLabel(problem.difficulty)} · {problem.points} points · <TopicName track={problem.track} />
         {!problem.published && " · unpublished"}
         {liveContest && (
           <>
-            {" · "}competition ends in <Countdown to={liveContest.endsAt!.toISOString()} className="font-mono text-ink" />
+            {" · "}competition ends in <Countdown to={liveContest.endsAt!.toISOString()} className="font-semibold tabular-nums text-ink" />
           </>
         )}
       </p>
@@ -74,6 +77,29 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
 
   if (problem.kind === "CODE") {
     const tests = parseTests(problem);
+    // The mark scheme and a model answer appear once the challenge is solved,
+    // and never while a live competition is using it. Teachers always see them.
+    const showAnswer = isTeacher || (Boolean(solve) && !liveContest);
+    const modelAnswer =
+      showAnswer && (problem.explanation || problem.solution) ? (
+        <section className="mt-9 border-t border-line pt-5" aria-label="Mark scheme and model answer">
+          {problem.explanation && (
+            <>
+              <h2 className="cap">Mark scheme</h2>
+              <div className="mt-3">
+                <Markdown>{problem.explanation}</Markdown>
+              </div>
+            </>
+          )}
+          {problem.solution && (
+            <details className={problem.explanation ? "mt-5" : ""}>
+              <summary className="cursor-pointer text-sm font-semibold text-link">Compare with a model answer{isTeacher && !solve ? " (teachers see this before solving)" : ""}</summary>
+              <pre className="mt-3 overflow-x-auto rounded-[14px] bg-paper p-4 font-mono text-sm">{problem.solution}</pre>
+              <p className="mt-2 text-sm text-muted">There is more than one right answer. If yours passed every test, it is correct too.</p>
+            </details>
+          )}
+        </section>
+      ) : null;
     return (
       <CodeWorkspace
         userId={user.id}
@@ -91,14 +117,7 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
         header={header}
         description={<Markdown>{problem.description}</Markdown>}
         hints={hintPanel}
-        teacherNotes={
-          isTeacher && problem.solution ? (
-            <details className="mt-10 border-t border-line pt-4">
-              <summary className="cursor-pointer text-sm font-medium">Reference solution (teachers only)</summary>
-              <pre className="mt-3 overflow-x-auto rounded-md border border-line bg-paper p-4 font-mono text-sm">{problem.solution}</pre>
-            </details>
-          ) : null
-        }
+        teacherNotes={modelAnswer}
       />
     );
   }
@@ -107,7 +126,7 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
   const reveal = locked && !liveContest ? { answer: problem.answer ?? "", explanation: problem.explanation } : null;
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
+    <Sheet width="max-w-3xl">
       {header}
       <div className="mt-7">
         <Markdown>{problem.description}</Markdown>
@@ -125,6 +144,6 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
         reveal={reveal}
       />
       {hintPanel}
-    </main>
+    </Sheet>
   );
 }

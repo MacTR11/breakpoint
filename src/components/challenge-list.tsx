@@ -1,29 +1,34 @@
 import Link from "next/link";
-import { Status, kindLabel, levelLabel, type ProblemStatus } from "@/components/ui";
-import { trackTitle } from "@/lib/tracks";
+import { KindIcon, Status, TopicName, kindLabel, levelLabel, type ProblemStatus } from "@/components/ui";
 
 export type ChallengeRow = { id: string; slug: string; title: string; kind: string; style: string; difficulty: string; points: number; track: string };
 
-/** The one way challenges are listed anywhere: status, title, what it is, points. */
+/** The one way challenges are listed anywhere: icon, title, what it is, where the student stands, points. */
 export function ChallengeList({ problems, statusOf, showTrack = true, numbered = false }: { problems: ChallengeRow[]; statusOf: (id: string) => ProblemStatus; showTrack?: boolean; numbered?: boolean }) {
   return (
-    <ul className="border-y border-line divide-y divide-line">
+    <ul className="divide-y divide-line">
       {problems.map((p, index) => (
-        <li key={p.id} className="flex items-baseline gap-4 py-2.5">
-          <span className="w-10 shrink-0">
-            <Status status={statusOf(p.id)} />
-          </span>
-          <div className="min-w-0 flex-1 sm:flex sm:items-baseline sm:gap-4">
-            <Link href={`/problems/${p.slug}`} className="text-link hover:underline">
-              {numbered && <span className="mr-2 font-mono text-[13px] text-muted">{index + 1}</span>}
-              {p.title}
-            </Link>
-            <span className="block text-sm text-muted sm:ml-auto sm:whitespace-nowrap">
-              {kindLabel(p.kind, p.style)} · {levelLabel(p.difficulty)}
-              {showTrack && ` · ${trackTitle(p.track)}`}
+        <li key={p.id}>
+          <Link href={`/problems/${p.slug}`} className="-mx-2 flex items-center gap-3.5 rounded-[14px] px-2 py-3 transition-colors duration-150 hover:bg-paper">
+            <KindIcon kind={p.kind} style={p.style} track={p.track} />
+            <span className="min-w-0 flex-1">
+              <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-semibold">
+                {numbered && <span className="text-muted">{index + 1}.</span>}
+                {p.title}
+                <Status status={statusOf(p.id)} />
+              </span>
+              <span className="block text-[13px] text-muted">
+                {kindLabel(p.kind, p.style)} · {levelLabel(p.difficulty)}
+                {showTrack && (
+                  <>
+                    {" · "}
+                    <TopicName track={p.track} />
+                  </>
+                )}
+              </span>
             </span>
-          </div>
-          <span className="w-8 shrink-0 text-right font-mono text-sm tabular-nums">{p.points}</span>
+            <span className="shrink-0 text-sm font-semibold tabular-nums text-muted">{p.points}</span>
+          </Link>
         </li>
       ))}
     </ul>

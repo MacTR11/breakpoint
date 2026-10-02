@@ -2,7 +2,7 @@ import { signed } from "@/components/ui";
 import type { LeaderboardRow } from "@/lib/scoring";
 
 export function LeaderboardTable({ rows, currentUserId, emptyMessage }: { rows: LeaderboardRow[]; currentUserId: string; emptyMessage: string }) {
-  if (rows.length === 0) return <p className="border-y border-line py-6 text-muted">{emptyMessage}</p>;
+  if (rows.length === 0) return <p className="py-4 text-muted">{emptyMessage}</p>;
   return (
     <table className="tbl">
       <thead>
@@ -18,10 +18,14 @@ export function LeaderboardTable({ rows, currentUserId, emptyMessage }: { rows: 
           const me = row.userId === currentUserId;
           return (
             <tr key={row.userId} className={me ? "font-semibold" : undefined}>
-              <td className="font-mono text-sm tabular-nums">{row.rank}</td>
+              <td className="font-display font-extrabold tabular-nums">{row.rank}</td>
               <td>
                 {row.name}
-                {me && <span className="ml-2 font-mono text-[13px] font-normal text-muted">you</span>}
+                {me && (
+                  <span className="tag ml-2" style={{ "--tone": "var(--accent)" } as React.CSSProperties}>
+                    You
+                  </span>
+                )}
               </td>
               <td className="num">{row.solved}</td>
               <td className="num">{signed(row.points)}</td>

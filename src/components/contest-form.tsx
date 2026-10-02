@@ -67,7 +67,7 @@ export function ContestForm({ values: saved, problems }: { values: ContestFormVa
                   <span className="hidden whitespace-nowrap text-sm text-muted sm:inline">
                     {kindLabel(p.kind, p.style)} · {levelLabel(p.difficulty)}
                   </span>
-                  <span className="w-8 text-right font-mono text-sm tabular-nums">{p.points}</span>
+                  <span className="w-8 text-right text-sm font-semibold tabular-nums text-muted">{p.points}</span>
                 </label>
               </li>
             ))}

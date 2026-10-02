@@ -2,58 +2,53 @@ import Link from "next/link";
 import { signOutAction } from "@/app/actions";
 import { Wordmark } from "@/components/brand";
 import { NavLinks } from "@/components/nav-links";
-import { signed } from "@/components/ui";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { activity } from "@/lib/activity";
 import { siteName } from "@/lib/config";
 import { hintWallet } from "@/lib/hints";
-import { pointsOf } from "@/lib/scoring";
 import { requireUser } from "@/lib/session";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const user = await requireUser();
-  const [wallet, points] = await Promise.all([hintWallet(user.id), pointsOf(user.id)]);
+  const [wallet, history] = await Promise.all([hintWallet(user.id), activity(user.id, 1)]);
   const links = [
     { href: "/", label: "Home" },
     { href: "/problems", label: "Practice" },
     { href: "/syllabus", label: "Course map" },
     { href: "/contests", label: "Competitions" },
     { href: "/leaderboard", label: "Leaderboard" },
+    { href: "/awards", label: "Awards" },
     ...(user.role === "TEACHER" ? [{ href: "/teacher", label: "Teacher" }] : []),
   ];
 
   return (
     <>
-      <header className="sticky top-0 z-20 border-b border-line bg-white">
-        <div className="mx-auto flex h-12 max-w-5xl items-center gap-6 px-4 sm:px-6">
-          <Link href="/" aria-label={siteName}>
+      <header className="sticky top-0 z-20 border-b border-line bg-card">
+        {/* On a phone the links drop to a second row, which scrolls sideways. */}
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 px-4 sm:px-6 md:h-[3.25rem] md:flex-nowrap">
+          <Link href="/" aria-label={siteName} className="flex h-12 items-center md:h-auto">
             <Wordmark />
           </Link>
-          <div className="min-w-0 flex-1">
+          <div className="order-last w-full min-w-0 pb-2.5 md:order-none md:w-auto md:flex-1 md:pb-0">
             <NavLinks links={links} />
           </div>
-          <form action={signOutAction}>
-            <button className="cursor-pointer whitespace-nowrap text-sm text-muted hover:text-ink">Sign out</button>
-          </form>
+          <div className="ml-auto flex items-center gap-4 text-sm">
+            {/* Always in view: the streak (amber until today's solve is done) and hints to spend. */}
+            <span className="hidden whitespace-nowrap text-muted lg:inline" title={history.solvedToday ? "You have solved something today" : "Solve something today to keep your streak"}>
+              <span className={`font-display font-extrabold ${history.solvedToday ? "text-streak" : "text-muted"}`}>{history.streak}</span> day streak
+            </span>
+            <span className="hidden whitespace-nowrap text-muted lg:inline" title={`Next hint after ${wallet.untilNext} more solve${wallet.untilNext === 1 ? "" : "s"}`}>
+              <span className="font-display font-extrabold text-hint">{wallet.balance}</span> hint{wallet.balance === 1 ? "" : "s"}
+            </span>
+            <ThemeToggle />
+            <form action={signOutAction} className="flex">
+              <button className="cursor-pointer whitespace-nowrap text-muted hover:text-ink">Sign out</button>
+            </form>
+          </div>
         </div>
       </header>
 
-      <div className="flex flex-1 flex-col pb-7">{children}</div>
-
-      {/* The status bar: like an editor's, it always says where you stand. */}
-      <footer className="fixed inset-x-0 bottom-0 z-20 flex h-7 items-center gap-5 overflow-hidden whitespace-nowrap bg-editor px-4 font-mono text-xs text-[#f6f8fa]">
-        <span>{signed(points)} pts</span>
-        <span>{wallet.solved} solved</span>
-        <span>
-          {wallet.balance} hint{wallet.balance === 1 ? "" : "s"}
-          <span className="hidden text-[#9198a1] sm:inline">
-            {" "}
-            (+1 in {wallet.untilNext} solve{wallet.untilNext === 1 ? "" : "s"})
-          </span>
-        </span>
-        <span className="ml-auto truncate text-[#9198a1]">
-          {user.name}
-          {user.role === "TEACHER" && " · teacher"}
-        </span>
-      </footer>
+      <div className="flex flex-1 flex-col">{children}</div>
     </>
   );
 }

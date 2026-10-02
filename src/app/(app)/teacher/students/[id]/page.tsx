@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { EditStudent } from "@/components/student-forms";
 import { PageHeader, formatDateTime, link, signed } from "@/components/ui";
 import { db } from "@/lib/db";
 import { MAX_PUZZLE_ATTEMPTS, parseOptions } from "@/lib/problems";
 import { resetAttempts } from "../../actions";
 
-const statusWord: Record<string, [string, string]> = { ACCEPTED: ["PASS", "text-pass"], WRONG: ["FAIL", "text-fail"], ERROR: ["ERR ", "text-fail"], TIMEOUT: ["SLOW", "text-warn"] };
+const statusWord: Record<string, [string, string]> = { ACCEPTED: ["Passed", "text-pass"], WRONG: ["Failed", "text-fail"], ERROR: ["Error", "text-fail"], TIMEOUT: ["Too slow", "text-warn"] };
 
 export default async function StudentPage({ params }: PageProps<"/teacher/students/[id]">) {
   const { id } = await params;
@@ -17,7 +18,7 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
       _count: { select: { hintUnlocks: true } },
     },
   });
-  if (!student) notFound();
+  if (!student || student.role !== "STUDENT") notFound();
 
   const penalties = student.submissions.reduce((sum, s) => sum + s.penalty, 0);
   const points = student.solves.reduce((sum, s) => sum + s.points, 0) - penalties;
@@ -34,12 +35,12 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
 
   return (
     <>
-      <PageHeader path={[{ label: "teacher" }, { label: "students", href: "/teacher" }, { label: student.email }]} title={student.name} />
-      <p className="-mt-4 mb-10 font-mono text-sm">
+      <PageHeader path={[{ label: "teacher" }, { label: "students", href: "/teacher" }, { label: student.username }]} title={student.name} />
+      <p className="-mt-3 mb-9 text-sm text-muted">
         {signed(points)} pts · {student.solves.length} solved · {penalties} lost to wrong puzzle answers · {student._count.hintUnlocks} hints used
       </p>
 
-      <div className="grid gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+      <div className="grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <div className="space-y-10">
           {locked.length > 0 && (
             <section>
@@ -59,6 +60,12 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
               <p className="mt-2 text-sm text-muted">Reopening a puzzle clears the student&apos;s attempts on it and refunds the penalty.</p>
             </section>
           )}
+
+          <section>
+            <h2 className="mb-3 text-lg font-semibold">Account</h2>
+            <EditStudent student={{ id: student.id, name: student.name, username: student.username }} />
+            <p className="mt-3 text-sm text-muted">Last signed in: {student.lastSeenAt ? formatDateTime(student.lastSeenAt) : "never"}.</p>
+          </section>
 
           <section>
             <h2 className="mb-3 text-lg font-semibold">Solved</h2>
@@ -95,9 +102,9 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
                   <li key={submission.id}>
                     <details>
                       <summary className="flex cursor-pointer flex-wrap items-baseline gap-x-3 py-2.5">
-                        <span className={`font-mono text-[13px] font-semibold ${color}`}>{word}</span>
+                        <span className={`w-16 text-sm font-medium ${color}`}>{word}</span>
                         <span>{submission.problem.title}</span>
-                        <span className="font-mono text-[13px] text-muted">
+                        <span className="text-[13px] tabular-nums text-muted">
                           {!isPuzzle && `${submission.passed}/${submission.total}`}
                           {submission.penalty > 0 && ` −${submission.penalty} pts`}
                         </span>
@@ -106,7 +113,7 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
                       {isPuzzle ? (
                         <p className="pb-3 text-sm">Answered: {options[Number(submission.code)] ?? submission.code}</p>
                       ) : (
-                        <pre className="mb-3 overflow-x-auto rounded-md border border-line bg-paper p-4 font-mono text-sm">{submission.code}</pre>
+                        <pre className="mb-3 overflow-x-auto rounded-[14px] bg-paper p-4 font-mono text-sm">{submission.code}</pre>
                       )}
                     </details>
                   </li>

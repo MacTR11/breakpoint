@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PageHeader, buttonStyle, formatDateTime, link, signed } from "@/components/ui";
+import { ButtonLink, PageHeader, buttonStyle, formatDateTime, link, signed } from "@/components/ui";
 import { db } from "@/lib/db";
 import { daysAgo } from "@/lib/scoring";
 import { studentSummaries } from "@/lib/students";
@@ -16,25 +16,28 @@ export default async function TeacherStudentsPage() {
 
   return (
     <>
-      <PageHeader path={[{ label: "teacher" }, { label: "students" }]} title="Students" intro="Everyone who has signed in. Select a student to read their submitted code.">
-        <a href="/teacher/export" className={buttonStyle.secondary}>
-          Download CSV
-        </a>
+      <PageHeader path={[{ label: "teacher" }, { label: "students" }]} title="Students" intro="Everyone with an account. Select a student to read their submitted code or change their username and password.">
+        <div className="flex flex-wrap gap-3">
+          <a href="/teacher/export" className={buttonStyle.secondary}>
+            Download results
+          </a>
+          <ButtonLink href="/teacher/students/new">Add students</ButtonLink>
+        </div>
       </PageHeader>
 
-      <p className="mb-6 font-mono text-sm">
-        {students.length} students · this week: {active} active, {weekSubmissions} submissions, {weekSolves} solved
+      <p className="mb-5 text-sm text-muted">
+        {students.length} student{students.length === 1 ? "" : "s"} · this week: {active} active, {weekSubmissions} submissions, {weekSolves} solved
       </p>
 
       {ranked.length === 0 ? (
-        <p className="border-y border-line py-6 text-muted">No students have signed in yet. Share the site address with your class to get started.</p>
+        <p className="border-y border-line py-6 text-muted">There are no students yet. Choose Add students to import your class from a CSV file.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="tbl">
             <thead>
               <tr>
                 <th>Student</th>
-                <th>Email</th>
+                <th>Username</th>
                 <th className="num">Points</th>
                 <th className="num">Solved</th>
                 <th className="num">Submissions</th>
@@ -49,7 +52,7 @@ export default async function TeacherStudentsPage() {
                       {s.name}
                     </Link>
                   </td>
-                  <td className="text-muted">{s.email}</td>
+                  <td className="font-mono text-sm text-muted">{s.username}</td>
                   <td className="num">{signed(s.points)}</td>
                   <td className="num">{s.solved}</td>
                   <td className="num">{s.submissions}</td>

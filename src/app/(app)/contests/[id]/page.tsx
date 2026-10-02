@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { ChallengeList } from "@/components/challenge-list";
 import { AutoRefresh, Countdown } from "@/components/countdown";
 import { LeaderboardTable } from "@/components/leaderboard-table";
-import { ButtonLink, PageHeader, formatDateTime } from "@/components/ui";
+import { ButtonLink, Page, PageHeader, Tag, formatDateTime } from "@/components/ui";
 import { db } from "@/lib/db";
 import { standings } from "@/lib/problems";
 import { contestState, leaderboard } from "@/lib/scoring";
@@ -38,7 +38,7 @@ export default async function ContestPage({ params }: PageProps<"/contests/[id]"
   const totalPoints = problems.reduce((sum, p) => sum + p.points, 0);
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
+    <Page>
       {state === "LIVE" && <AutoRefresh seconds={30} />}
       <PageHeader path={[{ label: "competitions", href: "/contests" }, { label: contest.title }]} title={contest.title} intro={contest.description || undefined}>
         {isTeacher && (
@@ -48,45 +48,45 @@ export default async function ContestPage({ params }: PageProps<"/contests/[id]"
         )}
       </PageHeader>
 
-      <dl className="mb-10 font-mono text-sm leading-7">
+      <dl className="card mb-4 text-[15px] leading-8">
         <div className="flex gap-4">
-          <dt className="w-20 text-muted">status</dt>
+          <dt className="w-24 shrink-0 text-muted">Status</dt>
           <dd>
             {state === "LIVE" && (
               <>
-                <span className="font-semibold text-fail">LIVE</span>, ends in <Countdown to={contest.endsAt!.toISOString()} />
+                <Tag color="var(--fail)">Live</Tag> ends in <Countdown to={contest.endsAt!.toISOString()} className="font-semibold tabular-nums" />
               </>
             )}
             {state === "UPCOMING" && (
               <>
-                starts in <Countdown to={contest.startsAt!.toISOString()} />
+                <Tag color="var(--warn)">Upcoming</Tag> starts in <Countdown to={contest.startsAt!.toISOString()} className="font-semibold tabular-nums" />
               </>
             )}
-            {state === "FINISHED" && "finished"}
-            {state === "DRAFT" && "not scheduled"}
+            {state === "FINISHED" && "Finished"}
+            {state === "DRAFT" && "Not scheduled"}
           </dd>
         </div>
         {state !== "DRAFT" && (
           <div className="flex gap-4">
-            <dt className="w-20 text-muted">runs</dt>
+            <dt className="w-24 shrink-0 text-muted">Runs</dt>
             <dd>
               {formatDateTime(contest.startsAt!)} to {formatDateTime(contest.endsAt!)}
             </dd>
           </div>
         )}
         <div className="flex gap-4">
-          <dt className="w-20 text-muted">available</dt>
+          <dt className="w-24 shrink-0 text-muted">Available</dt>
           <dd>
             {totalPoints} points in {problems.length} challenges
           </dd>
         </div>
       </dl>
 
-      <div className="grid gap-x-12 gap-y-10 lg:grid-cols-2">
-        <section>
-          <h2 className="mb-3 text-lg font-semibold">Challenges</h2>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <section className="card">
+          <h2 className="cap mb-1">Challenges</h2>
           {!showProblems ? (
-            <p className="border-y border-line py-6 text-muted">The challenges will appear here when the competition starts.</p>
+            <p className="py-4 text-muted">The challenges will appear here when the competition starts.</p>
           ) : (
             <>
               {!started && <p className="mb-2 text-sm text-warn">Only teachers can see these until the competition starts.</p>}
@@ -95,12 +95,12 @@ export default async function ContestPage({ params }: PageProps<"/contests/[id]"
           )}
         </section>
 
-        <section>
-          <h2 className="mb-3 text-lg font-semibold">{state === "FINISHED" ? "Final standings" : "Standings"}</h2>
+        <section className="card">
+          <h2 className="cap mb-1">{state === "FINISHED" ? "Final standings" : "Standings"}</h2>
           <LeaderboardTable rows={rows} currentUserId={user.id} emptyMessage={started ? "No points scored yet." : "Standings will appear once the competition starts."} />
           <p className="mt-3 text-sm text-muted">Ranked by points, less penalties for wrong puzzle answers. Where points are equal, whoever reached that score first places higher.</p>
         </section>
       </div>
-    </main>
+    </Page>
   );
 }

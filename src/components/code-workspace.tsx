@@ -6,9 +6,12 @@ import CodeMirror from "@uiw/react-codemirror";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore, useTransition } from "react";
 import { submitCode } from "@/app/actions";
+import { RewardLines } from "@/components/rewards";
 import { TestResults } from "@/components/test-results";
+import { celebrate } from "@/lib/celebrate";
 import { readDraft, subscribeToDrafts, writeDraft } from "@/lib/drafts";
 import { runInBrowser, warmUp } from "@/lib/py-runner";
+import type { Rewards } from "@/lib/solve";
 import { bannedUse, type JudgeOutcome, type TestCase } from "@/lib/types";
 
 const extensions = [python(), indentUnit.of("    ")];
@@ -62,10 +65,12 @@ export function CodeWorkspace({
   );
   const code = draft ?? savedCode ?? starterCode;
   const [state, setState] = useState<RunState>(null);
+  // Counts runs, so each new set of results is a fresh element and animates in.
+  const [runs, setRuns] = useState(0);
   const [busy, setBusy] = useState<"run" | "submit" | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [solved, setSolved] = useState(initiallySolved);
-  const [justSolved, setJustSolved] = useState<{ hintEarned: boolean } | null>(null);
+  const [justSolved, setJustSolved] = useState<Rewards | null>(null);
   const [, startTransition] = useTransition();
 
   // Start fetching Python straight away so the first Run is quick.
@@ -80,6 +85,7 @@ export function CodeWorkspace({
     const notAllowed = bannedUse(code, banned);
     const outcome: JudgeOutcome = notAllowed ? { status: "ERROR", loadError: notAllowed, results: [] } : await runInBrowser(code, functionName, visibleTests);
     setState({ source: "run", outcome });
+    setRuns((n) => n + 1);
     setBusy(null);
   };
 
@@ -94,9 +100,13 @@ export function CodeWorkspace({
           setMessage(result.message);
         } else {
           setState({ source: "submit", outcome: result.outcome });
-          if (result.outcome.status === "ACCEPTED") setSolved(true);
+          setRuns((n) => n + 1);
+          if (result.outcome.status === "ACCEPTED") {
+            setSolved(true);
+            celebrate();
+          }
           if (result.newlySolved) {
-            setJustSolved({ hintEarned: result.hintEarned });
+            setJustSolved(result.rewards);
             router.refresh();
           }
         }
@@ -115,12 +125,14 @@ export function CodeWorkspace({
   };
 
   return (
-    <main className="grid flex-1 lg:h-[calc(100vh-4.75rem)] lg:grid-cols-2">
-      <section className="px-4 py-8 sm:px-8 lg:overflow-y-auto">
+    <main className="grid flex-1 grid-cols-1 gap-4 p-4 lg:h-[calc(100vh-3.25rem)] lg:grid-cols-2">
+      <section className="card min-w-0 px-5 py-6 sm:px-8 sm:py-7 lg:overflow-y-auto">
         {header}
         {solved && (
-          <p className="mt-3 font-mono text-sm">
-            <span className="font-semibold text-pass">PASS</span> solved
+          <p className="mt-3">
+            <span className="tag" style={{ "--tone": "var(--pass)" } as React.CSSProperties}>
+              Solved
+            </span>
           </p>
         )}
         <div className="mt-7">{description}</div>
@@ -128,9 +140,9 @@ export function CodeWorkspace({
         {teacherNotes}
       </section>
 
-      <section className="flex min-h-[36rem] flex-col bg-[#21252b] text-[#f6f8fa] lg:min-h-0">
+      <section className="flex min-h-[36rem] min-w-0 flex-col overflow-hidden rounded-[22px] bg-[#21252b] text-[#f6f8fa] lg:min-h-0">
         <div className="flex items-end gap-4 px-4 pt-2 font-mono text-[13px]">
-          <span className="rounded-t-md bg-[#282c34] px-4 py-1.5">{fileName}</span>
+          <span className="rounded-t-[10px] bg-[#282c34] px-4 py-1.5">{fileName}</span>
           {isFix && <span className="pb-1.5 text-[#e5a50a]">this code has bugs</span>}
         </div>
 
@@ -161,14 +173,8 @@ export function CodeWorkspace({
 
         <div className="max-h-[45%] min-h-28 overflow-y-auto border-t border-white/10 px-4 py-3 font-mono text-[13px] leading-6" aria-live="polite">
           {message && <p className="text-[#ff7b72]">{message}</p>}
-          {justSolved && (
-            <p>
-              <span className="font-semibold text-[#3fb950]">PASS</span> solved, +{points} points
-              {justSolved.hintEarned && <span className="text-[#e5a50a]"> · you earned a hint</span>}
-            </p>
-          )}
           {state ? (
-            <TestResults state={state} tests={visibleTests} functionName={functionName} />
+            <TestResults key={runs} state={state} tests={visibleTests} functionName={functionName} />
           ) : (
             !message && (
               <p className="text-[#9198a1]">
@@ -177,6 +183,14 @@ export function CodeWorkspace({
                 Submit: marks it against those plus {hiddenCount} hidden test{hiddenCount === 1 ? "" : "s"}.
               </p>
             )
+          )}
+          {justSolved && (
+            <div className="mt-2 text-sm">
+              <p className="rise" style={{ animationDelay: "200ms" }}>
+                <span className="font-semibold text-[#3fb950]">Solved</span> +{points} points
+              </p>
+              <RewardLines rewards={justSolved} dark />
+            </div>
           )}
         </div>
       </section>

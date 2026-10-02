@@ -3,10 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { signOut } from "@/auth";
 import { db } from "@/lib/db";
-import { earnsHint, hintWallet, parseHints } from "@/lib/hints";
+import { hintWallet, parseHints } from "@/lib/hints";
 import { judge } from "@/lib/judge";
 import { findViewableProblem, isLive, MAX_PUZZLE_ATTEMPTS, parseBanned, parseOptions, parseTests, pointsFor, puzzlePenalty } from "@/lib/problems";
 import { getCurrentUser } from "@/lib/session";
+import { noRewards, recordSolve, type Rewards } from "@/lib/solve";
 import { bannedUse, type JudgeOutcome } from "@/lib/types";
 
 const MAX_CODE_LENGTH = 20_000;
@@ -18,7 +19,7 @@ export async function signOutAction() {
 
 export type CodeSubmitResult =
   | { ok: false; message: string }
-  | { ok: true; outcome: JudgeOutcome; newlySolved: boolean; points: number; hintEarned: boolean };
+  | { ok: true; outcome: JudgeOutcome; newlySolved: boolean; points: number; rewards: Rewards };
 
 export async function submitCode(slug: string, code: string): Promise<CodeSubmitResult> {
   const user = await getCurrentUser();
@@ -47,32 +48,27 @@ export async function submitCode(slug: string, code: string): Promise<CodeSubmit
   });
 
   let newlySolved = false;
-  let hintEarned = false;
+  let rewards = noRewards;
   if (outcome.status === "ACCEPTED") {
     const existing = await db.solve.findUnique({ where: { userId_problemId: { userId: user.id, problemId: problem.id } } });
     if (!existing) {
       const attempts = await db.submission.count({ where: { userId: user.id, problemId: problem.id } });
-      await db.solve.upsert({
-        where: { userId_problemId: { userId: user.id, problemId: problem.id } },
-        create: { userId: user.id, problemId: problem.id, points: problem.points, attempts },
-        update: {},
-      });
+      rewards = await recordSolve(user.id, problem.id, problem.points, attempts);
       newlySolved = true;
-      hintEarned = earnsHint(await db.solve.count({ where: { userId: user.id } }));
       revalidatePath("/", "layout");
     }
   }
 
   // Hidden tests report pass/fail only, so their inputs and answers stay secret.
   const results = outcome.results.map((r) => (r.hidden ? { index: r.index, status: r.status, hidden: true, ms: r.ms } : r));
-  return { ok: true, outcome: { ...outcome, results }, newlySolved, points: problem.points, hintEarned };
+  return { ok: true, outcome: { ...outcome, results }, newlySolved, points: problem.points, rewards };
 }
 
 export type PuzzleReveal = { answer: string; explanation: string | null };
 
 export type PuzzleSubmitResult =
   | { ok: false; message: string }
-  | { ok: true; correct: true; points: number; explanation: string | null; hintEarned: boolean }
+  | { ok: true; correct: true; points: number; explanation: string | null; rewards: Rewards }
   // `reveal` is set once the puzzle is locked, unless a live competition is using it.
   | { ok: true; correct: false; penalty: number; attemptsLeft: number; nextPoints: number; reveal: PuzzleReveal | null };
 
@@ -85,7 +81,7 @@ export async function submitPuzzle(slug: string, answer: string): Promise<Puzzle
 
   const key = { userId_problemId: { userId: user.id, problemId: problem.id } };
   const solved = await db.solve.findUnique({ where: key });
-  if (solved) return { ok: true, correct: true, points: solved.points, explanation: problem.explanation, hintEarned: false };
+  if (solved) return { ok: true, correct: true, points: solved.points, explanation: problem.explanation, rewards: noRewards };
 
   const wrongBefore = await db.submission.count({ where: { userId: user.id, problemId: problem.id, status: "WRONG" } });
   if (wrongBefore >= MAX_PUZZLE_ATTEMPTS) return { ok: false, message: "You have used both attempts on this puzzle." };
@@ -114,9 +110,8 @@ export async function submitPuzzle(slug: string, answer: string): Promise<Puzzle
   }
 
   const points = pointsFor(problem, wrongBefore);
-  await db.solve.upsert({ where: key, create: { userId: user.id, problemId: problem.id, points, attempts: wrongBefore + 1 }, update: {} });
-  const hintEarned = earnsHint(await db.solve.count({ where: { userId: user.id } }));
-  return { ok: true, correct: true, points, explanation: problem.explanation, hintEarned };
+  const rewards = await recordSolve(user.id, problem.id, points, wrongBefore + 1);
+  return { ok: true, correct: true, points, explanation: problem.explanation, rewards };
 }
 
 export type HintResult = { ok: false; message: string } | { ok: true; hint: string; balance: number };
