@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { submitPuzzle, type PuzzleReveal } from "@/app/actions";
-import { HintCoin } from "@/components/brand";
 import { Markdown } from "@/components/markdown";
 
 type Solved = { points: number; answer: string; explanation: string | null };
@@ -69,19 +68,19 @@ export function PuzzleCard({
   };
 
   return (
-    <section className="mt-10">
+    <section className="mt-8">
       {isChoice ? (
-        <div role="radiogroup" aria-label="Answers" className="grid gap-3 sm:grid-cols-2">
+        <div role="radiogroup" aria-label="Answers" className="border-y border-line divide-y divide-line">
           {options.map((option, index) => {
             const value = String(index);
             const isCorrect = correctAnswer === value;
             const isWrong = wrong.includes(value);
             const selected = choice === value;
-            let style = "border border-white/65 bg-white/50 hover:bg-white/80";
-            if (isCorrect) style = "bg-[#30d158]/20 ring-2 ring-[#30d158]";
-            else if (isWrong) style = "bg-[#ff453a]/14 text-[#c4271b] line-through";
-            else if (selected) style = "bg-white ring-2 ring-accent";
-            else if (finished) style = "border border-white/50 bg-white/35 opacity-55";
+            let style = "hover:bg-paper";
+            if (isCorrect) style = "font-medium text-pass";
+            else if (isWrong) style = "text-fail";
+            else if (selected) style = "bg-paper font-medium";
+            else if (finished) style = "text-muted";
             return (
               <button
                 key={value}
@@ -90,17 +89,18 @@ export function PuzzleCard({
                 aria-checked={selected || isCorrect}
                 disabled={finished || isWrong || pending}
                 onClick={() => setChoice(value)}
-                className={`flex items-center gap-3 rounded-2xl px-5 py-4 text-left font-medium transition-colors enabled:cursor-pointer ${style}`}
+                className={`flex w-full items-baseline gap-4 px-2 py-3 text-left enabled:cursor-pointer ${style}`}
               >
-                <span className="font-mono text-sm text-muted">{String.fromCharCode(65 + index)}</span>
-                {option}
-                {isCorrect && <span className="ml-auto text-[#1a7f37]">✓</span>}
+                <span className="w-8 shrink-0 font-mono text-[13px]">{selected ? `(${String.fromCharCode(65 + index)})` : ` ${String.fromCharCode(65 + index)}`}</span>
+                <span className={`flex-1 ${isWrong ? "line-through" : ""}`}>{option}</span>
+                {isCorrect && <span className="font-mono text-[13px] font-semibold">PASS</span>}
+                {isWrong && <span className="font-mono text-[13px] font-semibold">FAIL</span>}
               </button>
             );
           })}
         </div>
       ) : finished ? (
-        correctAnswer !== undefined && <p className="rounded-2xl bg-[#e3f6e8] px-5 py-4 font-medium">Answer: {correctAnswer}</p>
+        correctAnswer !== undefined && <p className="font-medium text-pass">Answer: {correctAnswer}</p>
       ) : (
         <input
           value={choice}
@@ -108,20 +108,17 @@ export function PuzzleCard({
           onKeyDown={(event) => event.key === "Enter" && submit()}
           placeholder="Type your answer"
           aria-label="Your answer"
-          className="field py-4 font-medium"
+          className="field"
         />
       )}
 
       {solved && (
-        <div className="mt-8 rounded-2xl border border-[#30d158]/35 bg-[#30d158]/15 p-6">
-          <p className="text-lg font-semibold text-[#14632b]">
-            Correct. {solved.points === fullPoints ? `+${plural(solved.points)}` : `+${plural(solved.points)} on your second attempt`}
+        <div className="mt-7">
+          <p className="font-mono text-sm">
+            <span className="font-semibold text-pass">PASS</span> +{plural(solved.points)}
+            {solved.points !== fullPoints && " (second attempt)"}
+            {hintEarned && <span className="text-warn"> · you earned a hint</span>}
           </p>
-          {hintEarned && (
-            <p className="mt-2 flex items-center gap-2 text-sm font-medium text-[#7a4a00]">
-              <HintCoin size={18} /> You earned a hint.
-            </p>
-          )}
           {explanation && (
             <div className="mt-4">
               <Markdown>{explanation}</Markdown>
@@ -131,12 +128,11 @@ export function PuzzleCard({
       )}
 
       {locked && !solved && (
-        <div className="mt-8 rounded-2xl border border-white/60 bg-white/45 p-6">
-          <p className="text-lg font-semibold">No attempts left</p>
-          <p className="mt-1 text-muted">
-            Two wrong answers cost you {plural(penalty * maxAttempts)} on this puzzle.{" "}
-            {reveal ? "Here is how it works, so the next one goes better." : "The answer will be shown here once the competition has finished."}
+        <div className="mt-7">
+          <p className="font-mono text-sm">
+            <span className="font-semibold text-fail">LOCK</span> no attempts left, −{plural(penalty * maxAttempts)}
           </p>
+          <p className="mt-2 text-muted">{reveal ? "Here is how it works, so the next one goes better." : "The answer will be shown here once the competition has finished."}</p>
           {explanation && (
             <div className="mt-4">
               <Markdown>{explanation}</Markdown>
@@ -148,25 +144,25 @@ export function PuzzleCard({
       {!finished && (
         <>
           {wrong.length > 0 && (
-            <p role="alert" className="mt-6 rounded-2xl border border-[#ff453a]/30 bg-[#ff453a]/12 px-5 py-4 text-[#a51d13]">
-              <strong>Not quite: −{plural(penalty)}.</strong> You have {maxAttempts - wrong.length} attempt left, so reason it through before you answer again.
+            <p role="alert" className="mt-5 font-mono text-sm">
+              <span className="font-semibold text-fail">FAIL</span> −{plural(penalty)}, {maxAttempts - wrong.length} attempt left
             </p>
           )}
-          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
-            <button type="button" onClick={submit} disabled={!choice.trim() || pending} className="btn btn-primary px-6 py-2.5 text-base">
+          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <button type="button" onClick={submit} disabled={!choice.trim() || pending} className="btn btn-primary">
               {pending ? "Checking…" : "Check answer"}
             </button>
             <p className="text-sm text-muted">
               {wrong.length === 0
                 ? `Worth ${plural(fullPoints)}. A wrong answer costs ${plural(penalty)}, and you only get ${maxAttempts} attempts.`
-                : `A correct answer is now worth ${plural(secondTryPoints)}. Another wrong one costs ${plural(penalty)} more.`}
+                : `A correct answer is now worth ${plural(secondTryPoints)}. Another wrong one costs ${plural(penalty)} more, so reason it through.`}
             </p>
           </div>
         </>
       )}
 
       {message && (
-        <p role="alert" className="mt-4 rounded-2xl border border-[#ff453a]/30 bg-[#ff453a]/12 px-5 py-4 text-sm text-[#a51d13]">
+        <p role="alert" className="mt-4 text-sm text-fail">
           {message}
         </p>
       )}

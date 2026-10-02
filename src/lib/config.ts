@@ -4,7 +4,7 @@ const list = (value: string | undefined) =>
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean);
 
-export const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bitwise";
+export const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Breakpoint";
 
 export const allowedDomains = () => list(process.env.ALLOWED_EMAIL_DOMAINS);
 export const teacherEmails = () => list(process.env.TEACHER_EMAILS);

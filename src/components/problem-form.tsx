@@ -49,7 +49,7 @@ export function ProblemForm({ values: saved }: { values: ProblemFormValues }) {
 
   return (
     <>
-      <form action={action} className="space-y-7 max-w-3xl">
+      <form action={action} className="max-w-3xl space-y-6">
         {values.id && <input type="hidden" name="id" value={values.id} />}
         <input type="hidden" name="slug" value={values.slug} />
 
@@ -60,7 +60,7 @@ export function ProblemForm({ values: saved }: { values: ProblemFormValues }) {
               ["CODE", "Python challenge", "Students write or repair a function or class; it is marked automatically."],
               ["PUZZLE", "Puzzle", "A question with one answer. Wrong answers cost points."],
             ].map(([value, name, text]) => (
-              <label key={value} className={`glass cursor-pointer rounded-2xl p-5 ring-2 transition-shadow ${kind === value ? "ring-accent" : "ring-transparent"}`}>
+              <label key={value} className={`cursor-pointer rounded-md border p-4 ${kind === value ? "border-accent outline outline-2 outline-accent/25" : "border-line"}`}>
                 <input type="radio" name="kind" value={value} checked={kind === value} onChange={() => setKind(value)} className="sr-only" />
                 <span className="block font-semibold">{name}</span>
                 <span className="block text-sm text-muted">{text}</span>
@@ -203,14 +203,14 @@ export function ProblemForm({ values: saved }: { values: ProblemFormValues }) {
         )}
 
         <label className="flex items-center gap-3 font-medium">
-          <input type="checkbox" name="published" defaultChecked={values.published} className="h-4 w-4 accent-accent" />
+          <input type="checkbox" name="published" defaultChecked={values.published} className="h-4 w-4" />
           Published
           <span className="font-normal text-muted">Unpublished problems are only visible to teachers.</span>
         </label>
 
         <FormErrors state={state} />
 
-        <button disabled={pending} className="btn btn-primary px-6 py-2.5 text-base">
+        <button disabled={pending} className="btn btn-primary">
           {pending ? (kind === "CODE" ? "Checking tests…" : "Saving…") : "Save problem"}
         </button>
       </form>
@@ -224,7 +224,7 @@ export function ProblemForm({ values: saved }: { values: ProblemFormValues }) {
           className="mt-12 max-w-3xl border-t border-line pt-6"
         >
           <input type="hidden" name="id" value={values.id} />
-          <button className="text-sm text-[#c4271b] hover:underline cursor-pointer">Delete this problem</button>
+          <button className="cursor-pointer text-sm text-fail hover:underline">Delete this problem</button>
         </form>
       )}
     </>

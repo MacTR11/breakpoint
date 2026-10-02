@@ -1,4 +1,4 @@
-# Bitwise
+# Breakpoint
 
 A Python practice and competition platform for A Level Computer Science.
 
@@ -11,7 +11,7 @@ A Python practice and competition platform for A Level Computer Science.
 - **Teacher dashboard**: every student's progress and submitted code, a problem editor, a competition scheduler and a CSV export.
 - **Google sign-in**, restricted to your school or college domain.
 
-The name shown on the site is set by `NEXT_PUBLIC_SITE_NAME` in `.env`.
+The name shown on the site is set by `NEXT_PUBLIC_SITE_NAME` in `.env`. The look is described in [DESIGN.md](DESIGN.md).
 
 ## Run it on your computer
 
@@ -23,6 +23,8 @@ cp .env.example .env   # skip if .env already exists
 npm run setup          # creates the database and loads the starter problems
 npm run dev
 ```
+
+If the project folder is inside iCloud Drive, OneDrive or Dropbox (a Mac's Desktop and Documents folders often are), add `NEXT_DIST_DIR=".next.nosync"` to `.env`. Sync clients duplicate files inside the build folder, which crashes the dev server. Better still, keep the project somewhere that is not synced.
 
 Open <http://localhost:3000>. Until Google sign-in is configured, the sign-in page shows a **Local testing only** form: sign in with any email to act as a student, or with an email listed in `TEACHER_EMAILS` (in `.env`) to act as a teacher. That form is switched off automatically on the live site.
 

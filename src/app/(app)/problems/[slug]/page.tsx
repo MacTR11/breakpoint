@@ -1,11 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodeWorkspace } from "@/components/code-workspace";
 import { Countdown } from "@/components/countdown";
 import { HintPanel } from "@/components/hint-panel";
 import { Markdown } from "@/components/markdown";
 import { PuzzleCard } from "@/components/puzzle-card";
-import { DifficultyBadge, KindBadge, backLink } from "@/components/ui";
+import { Path, kindLabel, levelLabel } from "@/components/ui";
 import { db } from "@/lib/db";
 import { hintWallet, parseHints } from "@/lib/hints";
 import { findViewableProblem, isLive, MAX_PUZZLE_ATTEMPTS, parseBanned, parseOptions, parseTests, pointsFor, puzzlePenalty } from "@/lib/problems";
@@ -34,6 +33,7 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
     hintWallet(user.id),
   ]);
   const locked = problem.kind === "PUZZLE" && !solve && wrong.length >= MAX_PUZZLE_ATTEMPTS;
+  const fileName = problem.kind === "CODE" ? `${problem.functionName}.py` : problem.slug;
 
   // Only hints the student has paid for are sent to the browser. Once the
   // challenge is over for them (solved or locked) the rest are free.
@@ -52,27 +52,23 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
 
   const header = (
     <div>
-      {liveContest ? (
-        <Link href={`/contests/${liveContest.id}`} className={`inline-flex flex-wrap items-center gap-x-2 ${backLink}`}>
-          ‹ {liveContest.title}
-          <span className="text-muted">
-            ends in <Countdown to={liveContest.endsAt!.toISOString()} className="font-mono" />
-          </span>
-        </Link>
-      ) : (
-        <Link href="/problems" className={backLink}>
-          ‹ Practice
-        </Link>
-      )}
-      <h1 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight">{problem.title}</h1>
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <KindBadge kind={problem.kind} style={problem.style} />
-        <DifficultyBadge difficulty={problem.difficulty} />
-        <span className="text-sm text-muted">
-          {problem.points} points · {trackTitle(problem.track)}
-        </span>
-        {!problem.published && <span className="badge bg-black/10">Unpublished</span>}
-      </div>
+      <Path
+        parts={
+          liveContest
+            ? [{ label: "competitions", href: "/contests" }, { label: liveContest.title, href: `/contests/${liveContest.id}` }, { label: fileName }]
+            : [{ label: "practice", href: "/problems" }, { label: problem.track, href: `/problems?track=${problem.track}` }, { label: fileName }]
+        }
+      />
+      <h1 className="mt-2 text-3xl font-semibold tracking-tight">{problem.title}</h1>
+      <p className="mt-2 text-sm text-muted">
+        {kindLabel(problem.kind, problem.style)} · {levelLabel(problem.difficulty)} · {problem.points} points · {trackTitle(problem.track)}
+        {!problem.published && " · unpublished"}
+        {liveContest && (
+          <>
+            {" · "}competition ends in <Countdown to={liveContest.endsAt!.toISOString()} className="font-mono text-ink" />
+          </>
+        )}
+      </p>
     </div>
   );
 
@@ -82,6 +78,7 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
       <CodeWorkspace
         userId={user.id}
         slug={problem.slug}
+        fileName={fileName}
         functionName={problem.functionName ?? ""}
         starterCode={problem.starterCode ?? ""}
         savedCode={lastSubmission?.code ?? null}
@@ -96,9 +93,9 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
         hints={hintPanel}
         teacherNotes={
           isTeacher && problem.solution ? (
-            <details className="mt-10 rounded-2xl border border-white/60 bg-white/45 p-5">
+            <details className="mt-10 border-t border-line pt-4">
               <summary className="cursor-pointer text-sm font-medium">Reference solution (teachers only)</summary>
-              <pre className="mt-4 overflow-x-auto rounded-xl bg-[#1c1c1e] p-4 text-sm text-[#f5f5f7] font-mono">{problem.solution}</pre>
+              <pre className="mt-3 overflow-x-auto rounded-md border border-line bg-paper p-4 font-mono text-sm">{problem.solution}</pre>
             </details>
           ) : null
         }
@@ -110,26 +107,24 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
   const reveal = locked && !liveContest ? { answer: problem.answer ?? "", explanation: problem.explanation } : null;
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 sm:px-6 py-12">
-      <div className="glass rounded-[2rem] p-6 sm:p-10">
-        {header}
-        <div className="mt-8">
-          <Markdown>{problem.description}</Markdown>
-        </div>
-        <PuzzleCard
-          slug={problem.slug}
-          options={parseOptions(problem)}
-          fullPoints={problem.points}
-          secondTryPoints={pointsFor(problem, 1)}
-          penalty={puzzlePenalty(problem)}
-          maxAttempts={MAX_PUZZLE_ATTEMPTS}
-          wrongAnswers={wrong.map((w) => w.code)}
-          solved={solve ? { points: solve.points, answer: problem.answer ?? "", explanation: problem.explanation } : null}
-          locked={locked}
-          reveal={reveal}
-        />
-        {hintPanel}
+    <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
+      {header}
+      <div className="mt-7">
+        <Markdown>{problem.description}</Markdown>
       </div>
+      <PuzzleCard
+        slug={problem.slug}
+        options={parseOptions(problem)}
+        fullPoints={problem.points}
+        secondTryPoints={pointsFor(problem, 1)}
+        penalty={puzzlePenalty(problem)}
+        maxAttempts={MAX_PUZZLE_ATTEMPTS}
+        wrongAnswers={wrong.map((w) => w.code)}
+        solved={solve ? { points: solve.points, answer: problem.answer ?? "", explanation: problem.explanation } : null}
+        locked={locked}
+        reveal={reveal}
+      />
+      {hintPanel}
     </main>
   );
 }

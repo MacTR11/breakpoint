@@ -1,14 +1,10 @@
-import Link from "next/link";
 import { ProblemForm } from "@/components/problem-form";
-import { backLink } from "@/components/ui";
+import { PageHeader } from "@/components/ui";
 
 export default function NewProblemPage() {
   return (
     <>
-      <Link href="/teacher/problems" className={backLink}>
-        ‹ Problems
-      </Link>
-      <h1 className="mt-4 mb-10 text-4xl font-semibold tracking-tight">New problem</h1>
+      <PageHeader path={[{ label: "teacher" }, { label: "problems", href: "/teacher/problems" }, { label: "new" }]} title="New problem" />
       <ProblemForm
         values={{
           title: "",

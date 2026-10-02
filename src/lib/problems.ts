@@ -73,14 +73,23 @@ export function puzzlePenalty(problem: Pick<Problem, "points" | "options">) {
   return Math.ceil(problem.points / Math.max(options > 1 ? options - 1 : 4, 1));
 }
 
-/** How a student stands on each puzzle they have got wrong: used to show locked puzzles. */
-export async function lockedPuzzleIds(userId: string): Promise<Set<string>> {
-  const [wrong, solved] = await Promise.all([
-    db.submission.groupBy({ by: ["problemId"], where: { userId, status: "WRONG", problem: { kind: "PUZZLE" } }, _count: { _all: true } }),
+export type Standing = "solved" | "failing" | "locked" | "open";
+
+/** Where a student stands on every challenge they have touched; anything else is "open". */
+export async function standings(userId: string): Promise<(problemId: string) => Standing> {
+  const [solved, attempts] = await Promise.all([
     db.solve.findMany({ where: { userId }, select: { problemId: true } }),
+    db.submission.groupBy({ by: ["problemId", "status"], where: { userId }, _count: { _all: true } }),
   ]);
   const solvedIds = new Set(solved.map((s) => s.problemId));
-  return new Set(wrong.filter((w) => w._count._all >= MAX_PUZZLE_ATTEMPTS && !solvedIds.has(w.problemId)).map((w) => w.problemId));
+  const kinds = new Map((await db.problem.findMany({ where: { id: { in: attempts.map((a) => a.problemId) } }, select: { id: true, kind: true } })).map((p) => [p.id, p.kind]));
+  const state = new Map<string, Standing>();
+  for (const attempt of attempts) {
+    if (solvedIds.has(attempt.problemId)) continue;
+    const locked = kinds.get(attempt.problemId) === "PUZZLE" && attempt.status === "WRONG" && attempt._count._all >= MAX_PUZZLE_ATTEMPTS;
+    if (locked || state.get(attempt.problemId) !== "locked") state.set(attempt.problemId, locked ? "locked" : "failing");
+  }
+  return (problemId) => (solvedIds.has(problemId) ? "solved" : (state.get(problemId) ?? "open"));
 }
 
 export const difficultyLabel: Record<string, string> = { EASY: "Easy", MEDIUM: "Medium", HARD: "Hard" };

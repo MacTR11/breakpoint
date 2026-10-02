@@ -6,7 +6,6 @@ import CodeMirror from "@uiw/react-codemirror";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore, useTransition } from "react";
 import { submitCode } from "@/app/actions";
-import { HintCoin } from "@/components/brand";
 import { TestResults } from "@/components/test-results";
 import { readDraft, subscribeToDrafts, writeDraft } from "@/lib/drafts";
 import { runInBrowser, warmUp } from "@/lib/py-runner";
@@ -19,6 +18,7 @@ export type RunState = { source: "run" | "submit"; outcome: JudgeOutcome } | nul
 export function CodeWorkspace({
   userId,
   slug,
+  fileName,
   functionName,
   starterCode,
   savedCode,
@@ -35,6 +35,7 @@ export function CodeWorkspace({
 }: {
   userId: string;
   slug: string;
+  fileName: string;
   functionName: string;
   starterCode: string;
   savedCode: string | null;
@@ -114,24 +115,26 @@ export function CodeWorkspace({
   };
 
   return (
-    <main className="flex-1 grid gap-3 p-3 lg:grid-cols-2 lg:h-[calc(100vh-4rem)]">
-      <section className="glass rounded-[1.75rem] lg:overflow-y-auto px-5 sm:px-9 py-9">
+    <main className="grid flex-1 lg:h-[calc(100vh-4.75rem)] lg:grid-cols-2">
+      <section className="px-4 py-8 sm:px-8 lg:overflow-y-auto">
         {header}
         {solved && (
-          <p className="badge mt-5 inline-flex items-center gap-1.5 bg-[#30d158]/20 px-3 py-1 text-sm text-[#126b2d]">✓ Solved</p>
+          <p className="mt-3 font-mono text-sm">
+            <span className="font-semibold text-pass">PASS</span> solved
+          </p>
         )}
-        <div className="mt-8">{description}</div>
+        <div className="mt-7">{description}</div>
         {hints}
         {teacherNotes}
       </section>
 
-      <section className="window flex min-h-[38rem] flex-col overflow-hidden rounded-[1.75rem] lg:min-h-0">
-        <div className="window-bar flex items-center gap-2 px-5 py-2.5">
-          <span className="font-mono text-xs text-[#aeaeb2]">solution.py</span>
-          {isFix && <span className="ml-auto rounded-full bg-[#bf5af2]/25 px-2.5 py-0.5 text-xs font-medium text-[#e3c2ff]">This code has bugs</span>}
+      <section className="flex min-h-[36rem] flex-col bg-[#21252b] text-[#f6f8fa] lg:min-h-0">
+        <div className="flex items-end gap-4 px-4 pt-2 font-mono text-[13px]">
+          <span className="rounded-t-md bg-[#282c34] px-4 py-1.5">{fileName}</span>
+          {isFix && <span className="pb-1.5 text-[#e5a50a]">this code has bugs</span>}
         </div>
 
-        <div className="flex-1 min-h-0 overflow-hidden bg-[#282c34]">
+        <div className="min-h-0 flex-1 overflow-hidden bg-[#282c34]">
           <CodeMirror
             value={code}
             onChange={edit}
@@ -144,38 +147,34 @@ export function CodeWorkspace({
           />
         </div>
 
-        <div className="window-bar flex flex-wrap items-center gap-3 px-5 py-3">
+        <div className="flex flex-wrap items-center gap-3 px-4 py-3">
           <button type="button" onClick={run} disabled={busy !== null} className="btn btn-on-dark">
-            {busy === "run" ? "Running…" : "▶ Run examples"}
+            {busy === "run" ? "Running…" : "Run examples"}
           </button>
           <button type="button" onClick={submit} disabled={busy !== null} className="btn btn-primary">
             {busy === "submit" ? "Marking…" : "Submit"}
           </button>
-          <button type="button" onClick={reset} disabled={busy !== null} className="ml-auto text-sm text-[#aeaeb2] hover:text-white enabled:cursor-pointer">
+          <button type="button" onClick={reset} disabled={busy !== null} className="ml-auto text-sm text-[#9198a1] hover:text-white enabled:cursor-pointer">
             Reset
           </button>
         </div>
 
-        <div className="max-h-[45%] min-h-28 overflow-y-auto px-5 py-4 text-[#f5f5f7]" aria-live="polite">
-          {message && <p className="mb-3 rounded-xl bg-[#ff453a]/15 px-4 py-3 text-sm text-[#ff9f99]">{message}</p>}
+        <div className="max-h-[45%] min-h-28 overflow-y-auto border-t border-white/10 px-4 py-3 font-mono text-[13px] leading-6" aria-live="polite">
+          {message && <p className="text-[#ff7b72]">{message}</p>}
           {justSolved && (
-            <p className="mb-3 flex flex-wrap items-center gap-2 rounded-xl bg-[#30d158]/15 px-4 py-3 text-sm font-medium text-[#30d158]">
-              Solved. +{points} points
-              {justSolved.hintEarned && (
-                <span className="flex items-center gap-1.5 text-[#ffd60a]">
-                  <HintCoin size={16} /> You earned a hint.
-                </span>
-              )}
+            <p>
+              <span className="font-semibold text-[#3fb950]">PASS</span> solved, +{points} points
+              {justSolved.hintEarned && <span className="text-[#e5a50a]"> · you earned a hint</span>}
             </p>
           )}
           {state ? (
             <TestResults state={state} tests={visibleTests} functionName={functionName} />
           ) : (
             !message && (
-              <p className="text-sm text-[#a1a1a6]">
-                <strong className="font-medium text-[#f5f5f7]">Run examples</strong> tries {isFix ? "the code" : "your code"} on the {visibleTests.length} example
-                {visibleTests.length === 1 ? "" : "s"} from the question. <strong className="font-medium text-[#f5f5f7]">Submit</strong> marks it against those plus{" "}
-                {hiddenCount} hidden test{hiddenCount === 1 ? "" : "s"}.
+              <p className="text-[#9198a1]">
+                Run examples: tries {isFix ? "the code" : "your code"} on the {visibleTests.length} example{visibleTests.length === 1 ? "" : "s"} from the question.
+                <br />
+                Submit: marks it against those plus {hiddenCount} hidden test{hiddenCount === 1 ? "" : "s"}.
               </p>
             )
           )}

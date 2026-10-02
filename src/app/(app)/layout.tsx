@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { signOutAction } from "@/app/actions";
-import { HintCoin, Logo } from "@/components/brand";
+import { Wordmark } from "@/components/brand";
 import { NavLinks } from "@/components/nav-links";
-import { Avatar } from "@/components/ui";
+import { signed } from "@/components/ui";
 import { siteName } from "@/lib/config";
 import { hintWallet } from "@/lib/hints";
+import { pointsOf } from "@/lib/scoring";
 import { requireUser } from "@/lib/session";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const user = await requireUser();
-  const wallet = await hintWallet(user.id);
+  const [wallet, points] = await Promise.all([hintWallet(user.id), pointsOf(user.id)]);
   const links = [
     { href: "/", label: "Home" },
     { href: "/problems", label: "Practice" },
@@ -21,33 +22,38 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
 
   return (
     <>
-      <header className="sticky top-0 z-30 px-3 pt-3">
-        <div className="glass-nav mx-auto flex h-13 max-w-6xl items-center gap-3 rounded-full pl-3 pr-4 sm:gap-5">
-          <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap" aria-label={siteName}>
-            <Logo size={30} />
-            <span className="hidden text-[17px] font-semibold tracking-tight md:inline">{siteName}</span>
+      <header className="sticky top-0 z-20 border-b border-line bg-white">
+        <div className="mx-auto flex h-12 max-w-5xl items-center gap-6 px-4 sm:px-6">
+          <Link href="/" aria-label={siteName}>
+            <Wordmark />
           </Link>
           <div className="min-w-0 flex-1">
             <NavLinks links={links} />
           </div>
-          <div className="flex items-center gap-3">
-            <span
-              className="flex items-center gap-1.5 rounded-full bg-[#ffd60a]/30 py-1 pl-1.5 pr-2.5 text-[13px] font-semibold tabular-nums"
-              title={`${wallet.balance} hint${wallet.balance === 1 ? "" : "s"} to spend. Next one in ${wallet.untilNext} solve${wallet.untilNext === 1 ? "" : "s"}.`}
-            >
-              <HintCoin size={18} />
-              {wallet.balance}
-            </span>
-            <span className="hidden sm:inline-flex" title={user.name}>
-              <Avatar name={user.name} image={user.image} size={28} />
-            </span>
-            <form action={signOutAction}>
-              <button className="text-[13px] text-ink/70 hover:text-ink cursor-pointer whitespace-nowrap">Sign out</button>
-            </form>
-          </div>
+          <form action={signOutAction}>
+            <button className="cursor-pointer whitespace-nowrap text-sm text-muted hover:text-ink">Sign out</button>
+          </form>
         </div>
       </header>
-      <div className="flex-1 flex flex-col">{children}</div>
+
+      <div className="flex flex-1 flex-col pb-7">{children}</div>
+
+      {/* The status bar: like an editor's, it always says where you stand. */}
+      <footer className="fixed inset-x-0 bottom-0 z-20 flex h-7 items-center gap-5 overflow-hidden whitespace-nowrap bg-editor px-4 font-mono text-xs text-[#f6f8fa]">
+        <span>{signed(points)} pts</span>
+        <span>{wallet.solved} solved</span>
+        <span>
+          {wallet.balance} hint{wallet.balance === 1 ? "" : "s"}
+          <span className="hidden text-[#9198a1] sm:inline">
+            {" "}
+            (+1 in {wallet.untilNext} solve{wallet.untilNext === 1 ? "" : "s"})
+          </span>
+        </span>
+        <span className="ml-auto truncate text-[#9198a1]">
+          {user.name}
+          {user.role === "TEACHER" && " · teacher"}
+        </span>
+      </footer>
     </>
   );
 }

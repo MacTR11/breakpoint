@@ -12,7 +12,7 @@ const tabs = [
 export function TeacherTabs() {
   const pathname = usePathname();
   return (
-    <nav className="glass mb-10 inline-flex rounded-full p-1">
+    <nav aria-label="Teacher" className="mb-8 flex gap-5 border-b border-line text-sm">
       {tabs.map((tab) => {
         const active = tab.href === "/teacher" ? pathname === "/teacher" || pathname.startsWith("/teacher/students") : pathname.startsWith(tab.href);
         return (
@@ -20,9 +20,7 @@ export function TeacherTabs() {
             key={tab.href}
             href={tab.href}
             aria-current={active ? "page" : undefined}
-            className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
-              active ? "bg-white/85 font-medium text-ink" : "text-ink-soft hover:text-ink"
-            }`}
+            className={`-mb-px border-b-2 pb-2 ${active ? "border-ink font-semibold text-ink" : "border-transparent text-muted hover:text-ink"}`}
           >
             {tab.label}
           </Link>

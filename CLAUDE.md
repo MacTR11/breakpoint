@@ -1,6 +1,6 @@
 @AGENTS.md
 
-# Bitwise
+# Breakpoint
 
 A Python practice and competition platform for A Level Computer Science (see README.md). The focus is programming: writing code, fixing broken code and reading code. Theory content was deliberately removed.
 
@@ -15,4 +15,4 @@ A Python practice and competition platform for A Level Computer Science (see REA
 - A contest with null dates is an unscheduled pack: use `isLive` / `isPending` from `src/lib/problems.ts` rather than comparing dates directly.
 - A challenge is `kind` CODE or PUZZLE; a CODE challenge has `style` WRITE or FIX (the starter code is deliberately broken). Every challenge needs a `track` and at least one hint.
 - Every challenge must be original. Do not copy Bebras, LeetCode or exam-board questions.
-- The visual design is under review (2026-10-02): the owner found the glass-and-gradient look generic. Do not extend it; ask which direction was chosen before doing design work.
+- Design follows DESIGN.md, a direction the owner chose after rejecting several generic looks. Read it before any UI work, and do not add shadows, gradients, blur, pill badges, cards or rounded-everything.
