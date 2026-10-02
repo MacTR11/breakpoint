@@ -605,6 +605,147 @@ body {
   }
 }
 
+/* Easter egg: terminal mode, after the Konami code (src/components/easter-eggs.tsx).
+   Only the colour variables change, so every page follows. */
+html.terminal {
+  color-scheme: dark;
+  --page: #020802;
+  --card: #071207;
+  --paper: #0c1d0c;
+  --ink: #3dff6e;
+  --ink-soft: #33db5d;
+  --muted: #1f9d43;
+  --line: #15451f;
+  --link: #8dffaa;
+  --accent: #2fd657;
+  --accent-dark: #3dff6e;
+  --pass: #3dff6e;
+  --fail: #ff5f56;
+  --warn: #ffbd2e;
+  --brand: #3dff6e;
+  --streak: #ffbd2e;
+  --hint: #8dffaa;
+  --field: #020802;
+  --raised: #15451f;
+  --cal-0: #0c1d0c;
+  --cal-1: #14532d;
+  --cal-2: #1f9d43;
+  --cal-3: #3dff6e;
+  --topic-mix: #3dff6e;
+  --topic-keep: 15%;
+  --tint: 20%;
+}
+html.terminal body {
+  font-family: var(--font-mono);
+}
+html.terminal .tile,
+html.terminal .icon,
+html.terminal .cell[data-done] {
+  background: color-mix(in srgb, var(--tone) 30%, #071207);
+  color: var(--ink);
+}
+html.terminal .btn-primary,
+html.terminal .round-button.avatar,
+html.terminal .tab-bar a[aria-current] .tab-glyph {
+  color: #020802;
+}
+
+/* Easter eggs: the letters of the name falling, or floating away. */
+[data-wordmark] .letter {
+  display: inline-block;
+}
+.letter[data-moving="fall"] {
+  animation: letter-fall 3.6s both;
+}
+.letter[data-moving="float"] {
+  animation: letter-float 4.2s ease-in-out both;
+}
+@keyframes letter-fall {
+  0% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.5);
+  }
+  28% {
+    transform: translate(var(--drift), var(--drop)) rotate(var(--spin));
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  36% {
+    transform: translate(var(--drift), calc(var(--drop) - 34px)) rotate(var(--spin));
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
+  }
+  44% {
+    transform: translate(var(--drift), var(--drop)) rotate(var(--spin));
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  48% {
+    transform: translate(var(--drift), calc(var(--drop) - 9px)) rotate(var(--spin));
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
+  }
+  52%,
+  76% {
+    transform: translate(var(--drift), var(--drop)) rotate(var(--spin));
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes letter-float {
+  0% {
+    transform: none;
+  }
+  50%,
+  62% {
+    transform: translate(var(--drift), var(--drop)) rotate(var(--spin));
+    opacity: 0;
+  }
+  63% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+/* How far down a long page you are, along the bottom of the top bar. */
+.scroll-progress {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: var(--accent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* A short message near the bottom of the screen, above the tab bar on a phone. */
+.toast {
+  position: fixed;
+  right: 0;
+  bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  left: 0;
+  z-index: 50;
+  width: fit-content;
+  max-width: min(92vw, 30rem);
+  margin-inline: auto;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  padding: 0.7rem 1rem;
+  font-size: 0.9375rem;
+  text-align: center;
+}
+@media (min-width: 1024px) {
+  .toast {
+    bottom: 1.5rem;
+  }
+}
+
 /* The theme button shows the mode it would switch to. */
 .dark .when-light,
 html:not(.dark) .when-dark {
@@ -794,6 +935,9 @@ button {
   }
   .nav-pill[data-ready] {
     transition: none;
+  }
+  .letter[data-moving] {
+    animation: none;
   }
   ::view-transition-old(*),
   ::view-transition-new(*),

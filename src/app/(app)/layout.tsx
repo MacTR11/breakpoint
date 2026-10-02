@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { AccountMenu, Bell, TabBar, TopLinks, type NavLink } from "@/components/app-nav";
 import { Wordmark } from "@/components/brand";
+import { EasterEggs } from "@/components/easter-eggs";
+import { ScrollProgress } from "@/components/scroll-progress";
 import { activity } from "@/lib/activity";
 import { siteName } from "@/lib/config";
 import { db } from "@/lib/db";
@@ -72,11 +74,13 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             <AccountMenu name={user.name} detail={teacher ? "Teacher" : [group?.name, streak, hints].filter(Boolean).join(" · ")} links={menu} />
           </div>
         </div>
+        <ScrollProgress />
       </header>
 
       {/* Room at the bottom for the tab bar on phones and tablets. */}
       <div className="flex flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">{children}</div>
       <TabBar links={tabs} />
+      <EasterEggs />
     </>
   );
 }

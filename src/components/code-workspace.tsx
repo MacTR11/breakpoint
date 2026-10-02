@@ -10,6 +10,7 @@ import { RewardLines } from "@/components/rewards";
 import { TestResults } from "@/components/test-results";
 import { celebrate } from "@/lib/celebrate";
 import { readDraft, subscribeToDrafts, writeDraft } from "@/lib/drafts";
+import { ANTIGRAVITY_EVENT, usesAntigravity } from "@/lib/eggs";
 import { runInBrowser, warmUp } from "@/lib/py-runner";
 import type { Rewards } from "@/lib/solve";
 import { bannedUse, type JudgeOutcome, type TestCase } from "@/lib/types";
@@ -100,6 +101,7 @@ export function CodeWorkspace({
   const edit = (value: string) => writeDraft(draftKey, value);
 
   const run = async () => {
+    if (usesAntigravity(code)) window.dispatchEvent(new Event(ANTIGRAVITY_EVENT));
     setBusy("run");
     setMessage(null);
     setJustSolved(null);

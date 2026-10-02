@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CodeBlock } from "@/components/code-block";
 import { EditStudent } from "@/components/student-forms";
 import { PageHeader, Tag, buttonStyle, formatDateTime, link, signed } from "@/components/ui";
 import { allClasses } from "@/lib/classes";
@@ -186,7 +187,9 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
                       {isPuzzle ? (
                         <p className="pb-3 text-sm">Answered: {options[Number(submission.code)] ?? submission.code}</p>
                       ) : (
-                        <pre className="mb-3 overflow-x-auto rounded-[14px] bg-paper p-4 font-mono text-sm">{submission.code}</pre>
+                        <div className="mb-3">
+                          <CodeBlock code={submission.code} fileName={`${submission.problem.functionName ?? "answer"}.py`} copy />
+                        </div>
                       )}
                     </details>
                   </li>

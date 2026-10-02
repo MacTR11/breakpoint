@@ -17,6 +17,7 @@ import { dateToLondonInput, londonDay, londonDayStart, shiftDay } from "@/lib/lo
 import { practiceFilter, standings } from "@/lib/problems";
 import { leaderboard, pointsOf } from "@/lib/scoring";
 import { requireUser } from "@/lib/session";
+import { specialDay } from "@/lib/special-days";
 import { TRACKS, trackColor, trackGlyph } from "@/lib/tracks";
 import { DIFFICULTIES } from "@/lib/types";
 
@@ -64,6 +65,7 @@ export default async function HomePage() {
   ];
 
   const firstName = user.name.split(" ")[0];
+  const today = specialDay(londonDay(now));
   const hour = Number(dateToLondonInput(now).slice(11, 13));
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
   const days = (n: number) => `${n} day${n === 1 ? "" : "s"}`;
@@ -91,6 +93,7 @@ export default async function HomePage() {
         {greeting}, {firstName}
       </h1>
       <p className="mt-1 text-muted">{nudge}</p>
+      {today && <p className="rise mt-2 text-sm font-medium text-hint">{today}</p>}
 
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,5fr)_minmax(0,4fr)]">
         {daily ? (

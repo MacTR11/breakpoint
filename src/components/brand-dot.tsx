@@ -12,5 +12,5 @@ export function BrandDot() {
     window.addEventListener(PASS_EVENT, onPass);
     return () => window.removeEventListener(PASS_EVENT, onPass);
   }, []);
-  return <span key={passes} aria-hidden="true" className={`relative inline-block h-[0.62em] w-[0.62em] rounded-full bg-brand ${passes > 0 ? "dot-pass" : ""}`} />;
+  return <span key={passes} aria-hidden="true" className={`brand-dot relative inline-block h-[0.62em] w-[0.62em] rounded-full bg-brand ${passes > 0 ? "dot-pass" : ""}`} />;
 }
