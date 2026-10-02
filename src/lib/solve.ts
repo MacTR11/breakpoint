@@ -4,7 +4,8 @@ import { db } from "./db";
 import { hintsEarned } from "./hints";
 
 /** What a student picked up, beyond the points, by solving a challenge. */
-export type Rewards = { hints: number; dailyBonus: boolean; awards: string[] };
+/** What else a solve earned. Each new award comes with its glyph and colour, to be shown as a sticker. */
+export type Rewards = { hints: number; dailyBonus: boolean; awards: { title: string; code: string; color: string }[] };
 
 export const noRewards: Rewards = { hints: 0, dailyBonus: false, awards: [] };
 
@@ -24,6 +25,6 @@ export async function recordSolve(userId: string, problemId: string, points: num
     db.problem.findUnique({ where: { id: problemId }, select: { difficulty: true } }),
     claimDailyBonus(userId, problemId),
   ]);
-  const awards = (await awardsFor(userId)).filter((a) => a.earned && !before.has(a.id)).map((a) => a.title);
+  const awards = (await awardsFor(userId)).filter((a) => a.earned && !before.has(a.id)).map(({ title, code, color }) => ({ title, code, color }));
   return { hints: hintsEarned(solvedNow, problem?.difficulty ?? ""), dailyBonus, awards };
 }

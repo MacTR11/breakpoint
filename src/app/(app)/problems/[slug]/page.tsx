@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodeBlock } from "@/components/code-block";
+import { CodeDiff } from "@/components/code-diff";
 import { CodeWorkspace } from "@/components/code-workspace";
 import { Countdown } from "@/components/countdown";
 import { HintPanel } from "@/components/hint-panel";
@@ -99,9 +100,24 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
     // The mark scheme and a model answer appear once the challenge is solved,
     // and never while a live competition is using it. Teachers always see them.
     const showAnswer = isTeacher || (Boolean(solve) && !liveContest && !paper);
+    // For a fix-the-bug challenge, what the student's accepted answer changed in the broken code.
+    const isFix = problem.style === "FIX" && Boolean(problem.starterCode);
+    const accepted =
+      showAnswer && isFix && solve
+        ? await db.submission.findFirst({ where: { userId: user.id, problemId: problem.id, status: "ACCEPTED" }, orderBy: { createdAt: "desc" }, select: { code: true } })
+        : null;
     const modelAnswer =
-      showAnswer && (problem.explanation || problem.solution) ? (
+      showAnswer && (problem.explanation || problem.solution || accepted) ? (
         <section className="mt-9 border-t border-line pt-5" aria-label="Mark scheme and model answer">
+          {accepted && (
+            <div className="mb-7">
+              <h2 className="cap">Your fix</h2>
+              <p className="mt-1 text-sm text-muted">What your accepted answer changed in the broken code.</p>
+              <div className="mt-3">
+                <CodeDiff before={problem.starterCode ?? ""} after={accepted.code} fileName={fileName} />
+              </div>
+            </div>
+          )}
           {problem.explanation && (
             <>
               <h2 className="cap">Mark scheme</h2>
@@ -114,7 +130,11 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
             <details className={problem.explanation ? "mt-5" : ""}>
               <summary className="cursor-pointer text-sm font-semibold text-link">Compare with a model answer{isTeacher && !solve ? " (teachers see this before solving)" : ""}</summary>
               <div className="mt-3">
-                <CodeBlock code={problem.solution} fileName={`model_${fileName}`} copy={isTeacher} />
+                {isFix ? (
+                  <CodeDiff before={problem.starterCode ?? ""} after={problem.solution} fileName={`model_${fileName}`} />
+                ) : (
+                  <CodeBlock code={problem.solution} fileName={`model_${fileName}`} copy={isTeacher} />
+                )}
               </div>
               <p className="mt-2 text-sm text-muted">There is more than one right answer. If yours passed every test, it is correct too.</p>
             </details>

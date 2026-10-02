@@ -32,7 +32,9 @@ The name is Breakpoint, and the mark is a breakpoint: the red dot an editor puts
 
 - The breakpoint dot celebrates a solve, and test results arrive one line at a time.
 - Code glyphs on tiles and awards, and `def` / `fix` / `?` on icons, keep it unmistakably about programming.
-- Awards are stickers: a block of colour with a glyph once earned, a grey card with a progress line until then. On the Awards page an earned sticker sits slightly askew. Secret awards are a grey card with a clue until found.
+- Awards are stickers: a block of colour with a glyph once earned, a grey card with a progress line until then. On the Awards page an earned sticker sits slightly askew, and a new award arrives under a solved challenge as a small sticker pressed on, once. Secret awards are a grey card with a clue until found.
+- A fix is shown as a diff: lines taken out on a red wash, lines put in on a green one, and the changed part of a line washed more strongly. A failed example washes where the value returned first differs from the one expected.
+- Search is a command palette (Ctrl K or ⌘K, or the round search button): a menu card centred under the top bar, results grouped under small grey headings, each with a coloured square like a challenge icon.
 - A missing page is a Python traceback (`KeyError` at line 404), and so is an error (`RuntimeError` at line 500).
 - Under the editor are three tabs drawn like its file tab: Results, Console and Debugger. In the debugger a breakpoint is the brand's red dot beside a line number, the line reached is washed amber, and a strip of bars shows how deep the calls go over the whole run (recursion rises and falls like a mountain range), with an amber line for where you are; it doubles as the scrubber. Variables that just changed are washed amber, and the trace table fills in as you step.
 - The Home page greets by time of day and says what would extend the streak.

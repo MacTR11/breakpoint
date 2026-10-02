@@ -19,7 +19,8 @@ A Python practice and competition platform for A Level Computer Science.
 - **Teacher dashboard**: every student's progress and submitted code, class pages with a topic grid, printable reports, a problem editor, a competition scheduler and a CSV export.
 - **Accounts you control**: one teacher account, and student accounts that you create, singly or by importing a CSV of your class. No Google or email accounts are involved.
 - **Light and dark**: the site follows the device, with a switch in the account menu (the initials in the top bar). On a phone or tablet the main pages are along the bottom of the screen, like an app.
-- **Model answers**: once a student has solved a coding challenge they can compare their code with a model answer.
+- **Model answers**: once a student has solved a coding challenge they can compare their code with a model answer. For a fix-the-bug challenge they see what their fix changed, line by line, beside the model fix.
+- **Search anywhere**: press Ctrl K (⌘K on a Mac), or the search button in the top bar, and type a few letters to jump to any page, challenge or competition. The teacher can also find any student, class or piece of homework.
 
 The name shown on the site is set by `NEXT_PUBLIC_SITE_NAME` in `.env`. The look is described in [DESIGN.md](DESIGN.md).
 
@@ -241,6 +242,8 @@ Nothing else needs setting up: there is no Google project or redirect address to
 | `src/lib/homework.ts`, `mock.ts` | Homework progress, and mock papers and their marks |
 | `src/lib/integrity.ts`, `typing-counts.ts`, `settings.ts` | Paste tracking: the flag rule, the editor's counting, and the record-or-block setting |
 | `src/lib/notifications.ts` | What the bell in the top bar lists |
+| `src/lib/palette.ts`, `src/app/api/palette/route.ts`, `src/components/command-palette.tsx` | The command palette: what it can find and how a search is ranked |
+| `src/lib/diff.ts`, `src/components/code-diff.tsx` | The line-by-line comparison shown for a fix |
 | `src/lib/debugger.ts`, `trace.ts`, `public/judge/tracer.mjs` | The debugger: breakpoints in the editor, what each step shows, and the recording of a run |
 | `src/components/code-workspace.tsx`, `debug-panel.tsx`, `console-panel.tsx` | The editor with its Results, Console and Debugger tabs |
 | `src/app/(app)/` | Student pages: home, practice, course map, competitions, leaderboard, awards, homework, mock papers |
@@ -265,4 +268,4 @@ A few things are hidden for students to find. None of them changes a score.
 - Look under the Home greeting on Ada Lovelace Day, Programmers' Day (the 256th day of the year), pi day and a few other dates.
 - Six secret awards (see `src/lib/awards.ts`).
 
-Useful commands: `npm run verify`, `npm run check` (homework states, paste flags, points and marks), `python3 scripts/check-puzzles.py`, `npx tsx scripts/judge-smoke.ts` (checks the judge copes with broken and hostile code), `npm run lint`.
+Useful commands: `npm run verify`, `npm run check` (homework states, paste flags, points and marks, the fix diff, palette search and debugger stepping), `python3 scripts/check-puzzles.py`, `npx tsx scripts/judge-smoke.ts` (checks the judge copes with broken and hostile code), `npm run lint`.

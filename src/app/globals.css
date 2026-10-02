@@ -553,6 +553,21 @@ body {
     padding: 0.6rem;
   }
 
+  /* The command palette (src/components/command-palette.tsx): a menu card centred under the top bar. */
+  .palette {
+    position: fixed;
+    top: 4.25rem;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    width: min(36rem, calc(100vw - 2rem));
+    margin-inline: auto;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--card);
+    padding: 0.7rem 0 0.4rem;
+  }
+
   /* Tables: column heads in small grey type, rows separated by hairlines. */
   .tbl {
     width: 100%;
@@ -831,6 +846,44 @@ html:not(.dark) .when-dark {
   font-family: var(--font-mono);
 }
 
+/* What a fix changed (src/components/code-diff.tsx): lines out on a red wash,
+   lines in on a green one, the changed part of a line washed more strongly. */
+.diff-line {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  padding-right: 1rem;
+}
+.diff-mark {
+  display: inline-block;
+  width: 2rem;
+  text-align: center;
+  color: var(--muted);
+  user-select: none;
+}
+.diff-line[data-kind="removed"] {
+  background: color-mix(in srgb, var(--fail) var(--tint), transparent);
+}
+.diff-line[data-kind="added"] {
+  background: color-mix(in srgb, var(--pass) var(--tint), transparent);
+}
+.diff-line[data-kind="removed"] .diff-mark {
+  color: var(--fail);
+}
+.diff-line[data-kind="added"] .diff-mark {
+  color: var(--pass);
+}
+.diff-line mark {
+  border-radius: 3px;
+  color: inherit;
+}
+.diff-line[data-kind="removed"] mark {
+  background: color-mix(in srgb, var(--fail) 30%, transparent);
+}
+.diff-line[data-kind="added"] mark {
+  background: color-mix(in srgb, var(--pass) 32%, transparent);
+}
+
 /* The debugger (src/lib/debugger.ts, src/components/debug-panel.tsx), in the
    editor's own dark colours. A breakpoint is the site's mark: a red dot beside
    the line. The line a step-through has reached is washed amber. */
@@ -998,6 +1051,25 @@ button {
   animation: dot-pass 2.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* A new award arrives as a sticker pressed onto the page, once. */
+.award-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 12px;
+  background: var(--tone);
+  color: #fff;
+  padding: 0.45rem 0.8rem 0.45rem 0.65rem;
+  transform: rotate(var(--tilt, 0deg));
+  animation: stick 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes stick {
+  from {
+    opacity: 0;
+    transform: scale(1.3) rotate(0deg);
+  }
+}
+
 /* The bell swings once when the page opens with something new under it. */
 @keyframes bell-swing {
   0%,
@@ -1042,6 +1114,7 @@ button {
   .rise,
   .dot-pass,
   .dot-pass::after,
+  .award-sticker,
   .round-button[data-ring] svg {
     animation: none;
   }

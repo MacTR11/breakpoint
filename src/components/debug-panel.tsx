@@ -206,6 +206,7 @@ export function DebugPanel({
             spellCheck={false}
             autoCapitalize="off"
             autoComplete="off"
+            placeholder="A call to your code, such as total([1, 2, 3])"
             className="min-w-0 flex-1 resize-none rounded-[10px] border border-white/10 bg-[#1c1f24] px-3 py-1.5 text-[#f6f8fa] outline-none focus:border-[#58a6ff]"
           />
           <button disabled={disabled || !source.trim()} className={`${small} shrink-0 !px-4 !py-1.5`}>

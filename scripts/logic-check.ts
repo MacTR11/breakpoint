@@ -3,11 +3,14 @@
 // Run with: npm run check
 import assert from "node:assert/strict";
 import { guessYear } from "../src/lib/classes";
+import { diffLines, folded } from "../src/lib/diff";
 import { current, homeworkState, openToStudents, stateOf, type StudentHomework } from "../src/lib/homework";
 import { cleanTelemetry, flagsByChallenge, isFlagged, LARGE_PASTE, pasteFlag } from "../src/lib/integrity";
 import { marksOf } from "../src/lib/mock";
+import { matchScore, search, type PaletteItem } from "../src/lib/palette";
 import { expectedPoints, marksIn } from "../src/lib/points";
 import { specialDay } from "../src/lib/special-days";
+import { callsIn, changed, describe, nextBreakpoint, stepOut, stepOver, traceTable, type TraceStep } from "../src/lib/trace";
 
 const checks: [string, () => void][] = [];
 const check = (name: string, run: () => void) => checks.push([name, run]);
@@ -132,6 +135,95 @@ check("special days", () => {
   assert.match(specialDay("2026-10-13")!, /Ada Lovelace Day/);
   assert.equal(specialDay("2026-10-06"), null);
   assert.match(specialDay("2027-10-31")!, /Oct 31 == Dec 25/);
+});
+
+check("fix diff: lines out and in, the changed part marked, long runs folded", () => {
+  const broken = "def total(n):\n    s = 0\n    for i in range(1, n):\n        s += i\n    return s";
+  const fixed = "def total(n):\n    s = 0\n    for i in range(1, n + 1):\n        s += i\n    return s\n";
+  const rows = diffLines(broken, fixed);
+  assert.deepEqual(
+    rows.map((r) => r.kind),
+    ["same", "same", "removed", "added", "same", "same"],
+  );
+  assert.equal(rows[3].text.slice(...rows[3].change!), " + 1");
+  assert.deepEqual(rows[2].change, [23, 23], "nothing was taken out of the old line, only added");
+  // A line rewritten completely is not marked within.
+  assert.equal(diffLines("x = 1", "print('hello')")[1].change, undefined);
+  assert.deepEqual(diffLines("a\nb", "a\nb").map((r) => r.kind), ["same", "same"]);
+  const long = Array.from({ length: 20 }, (_, i) => `line ${i}`);
+  const view = folded(diffLines(long.join("\n"), [...long.slice(0, 10), "new", ...long.slice(10)].join("\n")));
+  assert.deepEqual(
+    view.map((r) => (r.kind === "fold" ? `fold ${r.count}` : r.kind)),
+    ["fold 8", "same", "same", "added", "same", "same", "fold 8"],
+  );
+});
+
+check("command palette: whole words first, then initials, in group order", () => {
+  assert.ok(matchScore("lsrch", "Linear Search") !== null);
+  assert.equal(matchScore("xyz", "Linear Search"), null);
+  assert.ok(matchScore("search", "Linear Search")! > matchScore("srch", "Linear Search")!);
+  assert.ok(matchScore("lin", "Linear Search")! > matchScore("lin", "Spline curves")!);
+  const item = (group: PaletteItem["group"], title: string, detail = ""): PaletteItem => ({ group, title, detail, href: `/${title}`, icon: { text: "", color: "" } });
+  const items = [item("Challenges", "Binary search", "Searching"), item("Challenges", "Linear Search", "Searching"), item("Pages", "Leaderboard"), item("Challenges", "Bubble sort", "Sorting")];
+  assert.deepEqual(
+    search(items, "linear").map((i) => i.title),
+    ["Linear Search"],
+  );
+  assert.deepEqual(
+    search(items, "searching").map((i) => i.title),
+    ["Binary search", "Linear Search"],
+    "found by their topic",
+  );
+  const people = [item("Pages", "Leaderboard"), item("Challenges", "Is It a Real Date?"), item("Students", "Ada Lovelace", "alovelace · 12A")];
+  assert.deepEqual(
+    search(people, "ada").map((i) => i.title),
+    ["Ada Lovelace"],
+    "a name containing the query beats letters in order, which are then left out",
+  );
+  assert.deepEqual(
+    search(people, "ldbd").map((i) => i.title),
+    ["Leaderboard"],
+  );
+});
+
+check("debugger: step over, out, to a breakpoint, and the trace table", () => {
+  // factorial(2): two calls, as the tracer records them.
+  const frame = (id: number, line: number, locals: [string, string][]) => ({ id, fn: "factorial", line, locals });
+  const step = (event: TraceStep["event"], line: number, stack: ReturnType<typeof frame>[], value?: string, out = 0): TraceStep => ({ event, line, fn: "factorial", depth: stack.length, hidden: 0, stack, out, value });
+  const outer = (line: number, extra: [string, string][] = []) => frame(1, line, [["n", "2"], ...extra]);
+  const inner = (line: number) => frame(2, line, [["n", "1"]]);
+  const steps = [
+    step("call", 1, [outer(1)]),
+    step("line", 2, [outer(2)]),
+    step("line", 4, [outer(4)]),
+    step("call", 1, [inner(1), outer(4)]),
+    step("line", 2, [inner(2), outer(4)]),
+    step("line", 3, [inner(3), outer(4)]),
+    step("return", 3, [inner(3), outer(4)], "1"),
+    step("line", 5, [outer(5, [["smaller", "1"]])], undefined, 6),
+    step("return", 5, [outer(5, [["smaller", "1"]])], "2", 6),
+  ];
+  const calls = callsIn(steps);
+  assert.equal(describe(steps[0], calls), "Calling factorial(n=2)");
+  assert.equal(describe(steps[6], calls), "factorial(n=1) returns 1");
+  assert.equal(stepOver(steps, 2), 7, "over the call on line 4");
+  assert.equal(stepOver(steps, 6), 7, "from a return, on into the caller");
+  assert.equal(stepOut(steps, 4), 6, "to where the inner call returns");
+  assert.equal(nextBreakpoint(steps, 0, [3]), 5);
+  assert.equal(nextBreakpoint(steps, 5, [3]), 8, "no more: the end");
+  assert.deepEqual([...changed(steps, 7, 1)], ["smaller"]);
+  const table = traceTable(steps, "n is 1", 1, 8);
+  assert.deepEqual(table.columns, ["n", "smaller"]);
+  assert.deepEqual(
+    table.rows.map((r) => [r.line, Object.fromEntries(r.values), r.printed]),
+    [
+      [1, { n: "2" }, ""],
+      [2, {}, ""],
+      [4, { smaller: "1" }, "n is 1"],
+      [5, {}, ""],
+    ],
+  );
+  assert.equal(traceTable(steps, "", 1, 3).rows.length, 2, "only lines finished by the step reached");
 });
 
 let failed = 0;

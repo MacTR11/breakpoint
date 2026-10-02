@@ -12,12 +12,13 @@ export function dueLabel(dueAt: Date, now = new Date()) {
   return `${dueFormat.format(dueAt)} · ${when}`;
 }
 
-/** Why a challenge cannot be opened, or does not count, in a few words; null when neither. */
+/**
+ * Why a challenge cannot be opened, or does not count, in a few words; null when
+ * neither. Students are not told when it is because of a competition: which
+ * challenges a competition holds stays hidden until it starts.
+ */
 function challengeNote(p: StudentHomework["problems"][number], solved: boolean) {
-  if (!p.open) {
-    const why = p.held === "competition" ? "Held for a competition, so it cannot be opened yet." : "Not available at the moment.";
-    return solved || p.counts ? why : `${why} It does not count towards this homework.`;
-  }
+  if (!p.open) return solved || p.counts ? "Not available at the moment." : "Not available at the moment, so it does not count towards this homework.";
   return solved || p.counts ? null : "It could not be opened before the due date, so it does not count towards this homework.";
 }
 

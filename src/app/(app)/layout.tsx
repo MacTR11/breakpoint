@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AccountMenu, Bell, TabBar, TopLinks, type NavLink } from "@/components/app-nav";
 import { Wordmark } from "@/components/brand";
+import { CommandPalette } from "@/components/command-palette";
 import { EasterEggs } from "@/components/easter-eggs";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { activity } from "@/lib/activity";
@@ -45,6 +46,25 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         { href: "/syllabus", label: "Course map" },
         { href: "/awards", label: "Awards" },
       ];
+  // Everywhere the command palette can take you without searching for something in particular.
+  const pages = [
+    ...links,
+    ...(teacher
+      ? [
+          { href: "/teacher/classes", label: "Classes", glyph: "#" },
+          { href: "/teacher/homework", label: "Homework", glyph: "hw" },
+          { href: "/teacher/problems", label: "Problems", glyph: "def" },
+          { href: "/teacher/contests", label: "Competitions to schedule", glyph: "vs" },
+          { href: "/teacher/students/new", label: "Add students", glyph: "+" },
+          { href: "/teacher/homework/new", label: "Set homework", glyph: "hw+" },
+          { href: "/teacher/settings", label: "Settings", glyph: "cfg" },
+          { href: "/present", label: "Projector view", glyph: "[ ]" },
+        ]
+      : [
+          { href: "/homework", label: "Homework", glyph: "hw" },
+          { href: "/mock", label: "Mock papers", glyph: "[6]" },
+        ]),
+  ].map(({ href, label, glyph }) => ({ href, label, glyph }));
   const streak = `${history.streak} day streak`;
   const hints = `${wallet.balance} hint${wallet.balance === 1 ? "" : "s"}`;
 
@@ -70,6 +90,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
                 </span>
               </>
             )}
+            <CommandPalette pages={pages} />
             <Bell userId={user.id} notices={notices} />
             <AccountMenu name={user.name} detail={teacher ? "Teacher" : [group?.name, streak, hints].filter(Boolean).join(" · ")} links={menu} />
           </div>
