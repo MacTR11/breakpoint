@@ -49,7 +49,7 @@ TEACHER_PASSWORD="a long password of your own"
 TEACHER_NAME="Mr Example"
 ```
 
-The password needs at least 8 characters; make it long, and do not reuse one from elsewhere. To change your username or password, change these values and restart the site. `AUTH_SECRET` must also be set: it signs the sign-in cookies (`npx auth secret` makes one).
+On the live site the password needs at least 8 characters, or teacher sign-in is switched off; make it long, and do not reuse one from elsewhere. While running the site on your own computer with `npm run dev`, any password is accepted so you can try things quickly. To change your username or password, change these values and restart the site. `AUTH_SECRET` must also be set: it signs the sign-in cookies (`npx auth secret` makes one).
 
 ### Student accounts
 
