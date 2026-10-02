@@ -7,7 +7,6 @@ import { YEARS } from "@/lib/classes";
 import { db } from "@/lib/db";
 import { hashPassword } from "@/lib/passwords";
 import { assertTeacher } from "@/lib/session";
-import { setSetting } from "@/lib/settings";
 import type { EnrolState } from "../students/actions";
 
 export type ClassFormState = { errors: string[]; saved: boolean; values: Record<string, string> } | null;
@@ -53,11 +52,4 @@ export async function resetClassPasswords(_previous: EnrolState, formData: FormD
   await db.loginThrottle.deleteMany({ where: { username: { in: group.students.map((s) => s.username) } } });
   revalidatePath("/", "layout");
   return { errors: [], values: {}, logins: group.students.map((student, i) => ({ name: student.name, username: student.username, password: passwords[i], group: group.name, change: "updated" })) };
-}
-
-/** Whether large pastes into the editor are only recorded, or refused as well. */
-export async function savePasteMode(formData: FormData) {
-  await assertTeacher();
-  await setSetting("pasteMode", text(formData, "pasteMode") === "block" ? "block" : "record");
-  revalidatePath("/", "layout");
 }

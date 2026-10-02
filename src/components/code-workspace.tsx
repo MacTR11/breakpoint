@@ -14,7 +14,7 @@ import { ANTIGRAVITY_EVENT, usesAntigravity } from "@/lib/eggs";
 import { runInBrowser, warmUp } from "@/lib/py-runner";
 import type { Rewards } from "@/lib/solve";
 import { bannedUse, type JudgeOutcome, type TestCase } from "@/lib/types";
-import { addSeconds, readCounts, resetCounts, trackingExtensions } from "@/lib/typing-counts";
+import { addSeconds, readCounts, trackingExtensions } from "@/lib/typing-counts";
 
 const extensions = [python(), indentUnit.of("    ")];
 
@@ -145,7 +145,7 @@ export function CodeWorkspace({
     if (code !== starterCode && !window.confirm(question)) return;
     edit(starterCode);
     setState(null);
-    resetCounts(countsKey);
+    // The counts are kept: Reset can be undone, which would otherwise bring back pasted code uncounted.
   };
 
   return (

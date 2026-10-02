@@ -6,8 +6,9 @@ import { cleanTelemetry, LARGE_PASTE, noTelemetry, type Telemetry } from "./inte
 // each submission. See src/lib/integrity.ts for what the counts are for.
 
 const counts = new Map<string, Telemetry>();
-// The last thing copied, cut or dragged inside the editor: putting your own code back is not a paste.
-let copiedHere = "";
+// The last thing copied, cut or dragged inside each draft's editor: putting your own code back is
+// not a paste. Kept per draft, so code copied from one challenge's editor counts when pasted into another.
+const copiedHere = new Map<string, string>();
 
 function save(key: string) {
   try {
@@ -31,8 +32,6 @@ function change(key: string, update: (now: Telemetry) => Telemetry) {
   save(key);
 }
 
-export const resetCounts = (key: string) => change(key, () => noTelemetry);
-
 /** Called every few seconds while the page is in view. */
 export const addSeconds = (key: string, seconds: number) => change(key, (now) => ({ ...now, seconds: now.seconds + seconds }));
 
@@ -40,12 +39,12 @@ export const addSeconds = (key: string, seconds: number) => change(key, (now) =>
 export function trackingExtensions(key: string, block: boolean, onBlocked: (message: string) => void) {
   const remember = (_event: Event, view: EditorView) => {
     const { from, to } = view.state.selection.main;
-    copiedHere = view.state.sliceDoc(from, to);
+    copiedHere.set(key, view.state.sliceDoc(from, to));
     return false;
   };
   const incoming = (text: string, event: Event) => {
     const size = text.trim().length;
-    if (size === 0 || text === copiedHere) return false;
+    if (size === 0 || text === copiedHere.get(key)) return false;
     if (block && size >= LARGE_PASTE) {
       event.preventDefault();
       onBlocked("Pasting large blocks of code from outside the editor is switched off. Type your solution here.");

@@ -74,12 +74,23 @@ export function ResetClassPasswords({ id, name, students }: { id: string; name: 
   );
 }
 
-export function DeleteClass({ id, name }: { id: string; name: string }) {
+/** `homework`: how many pieces of homework were set for this class, which go with it. */
+export function DeleteClass({ id, name, homework }: { id: string; name: string; homework: number }) {
   return (
     <form action={deleteClass} className="flex flex-wrap items-center gap-x-4 gap-y-2">
       <input type="hidden" name="id" value={id} />
       <HoldButton>Hold to delete {name}</HoldButton>
-      <span className="text-sm text-muted">The students stay, without a class, and keep all their work.</span>
+      <span className="max-w-xl text-sm text-muted">
+        The students stay, without a class, and keep everything they have solved.
+        {homework > 0 && (
+          <>
+            {" "}
+            <span className="font-semibold text-fail">
+              The {homework === 1 ? "piece" : `${homework} pieces`} of homework set for {name} {homework === 1 ? "is" : "are"} deleted too.
+            </span>
+          </>
+        )}
+      </span>
     </form>
   );
 }

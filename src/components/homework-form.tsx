@@ -7,7 +7,8 @@ import { HoldButton } from "@/components/hold-button";
 import { KindIcon, kindLabel, levelLabel, tone } from "@/components/ui";
 import { TRACKS } from "@/lib/tracks";
 
-type ChallengeOption = { id: string; title: string; kind: string; style: string; track: string; difficulty: string; points: number };
+/** `held`: already in this homework, but since put into a competition, so it cannot be added anew. */
+type ChallengeOption = { id: string; title: string; kind: string; style: string; track: string; difficulty: string; points: number; held?: boolean };
 
 /** `dueAt` is a datetime-local string in UK time; `classId` is empty for every student. */
 export type HomeworkFormValues = { id?: string; title: string; note: string; classId: string; dueAt: string; problemIds: string[] };
@@ -98,6 +99,7 @@ export function HomeworkForm({ values: saved, classes, challenges }: { values: H
                   <span className="block font-medium">{c.title}</span>
                   <span className="block text-[13px] text-muted">
                     {kindLabel(c.kind, c.style)} · {levelLabel(c.difficulty)}
+                    {c.held && " · held for a competition: it stays if left ticked, but cannot be added again once removed"}
                   </span>
                 </span>
                 <span className="text-sm font-semibold tabular-nums text-muted">{c.points}</span>

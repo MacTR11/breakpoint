@@ -28,6 +28,19 @@ export function HomeworkTasks({ set, compact = false }: { set: StudentHomework; 
       <ul className="mt-2">
         {set.problems.map((p) => {
           const solved = set.solvedIds.includes(p.id);
+          // Put into a competition since it was set: students cannot open it until the competition starts.
+          if (!p.open && !solved) {
+            return (
+              <li key={p.id} className="-mx-2 flex items-center gap-3 px-2 py-1.5">
+                <span className="task-check" data-held="" aria-label="Not open yet" role="img" />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[15px] text-muted">{p.title}</span>
+                  <span className="block text-[13px] text-muted">Held for a competition, so not open yet. It does not count until it is.</span>
+                </span>
+                <span className="shrink-0 text-sm font-semibold tabular-nums text-muted">{p.points}</span>
+              </li>
+            );
+          }
           return (
             <li key={p.id}>
               <Link href={`/problems/${p.slug}`} className="-mx-2 flex items-center gap-3 rounded-[12px] px-2 py-1.5 transition-colors duration-150 hover:bg-paper">

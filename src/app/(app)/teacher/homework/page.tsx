@@ -34,7 +34,10 @@ export default async function TeacherHomeworkPage() {
               </td>
               <td>{h.className ?? "Every class"}</td>
               <td className="whitespace-nowrap text-muted">{formatDateTime(h.dueAt)}</td>
-              <td className="num">{h.challenges}</td>
+              <td className="num">
+                {h.challenges}
+                {h.held > 0 && <span className="block text-xs font-normal text-warn">{h.held} held</span>}
+              </td>
               <td>
                 <span className="flex items-center gap-3">
                   <span className="meter w-24" style={{ "--tone": "var(--pass)" } as React.CSSProperties} aria-hidden="true">

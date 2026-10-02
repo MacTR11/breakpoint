@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { PageHeader, link } from "@/components/ui";
 import { LARGE_PASTE } from "@/lib/integrity";
+import { teacherSessionHours } from "@/lib/config";
 import { requireTeacher } from "@/lib/session";
 import { pasteMode } from "@/lib/settings";
-import { savePasteMode } from "../classes/actions";
+import { savePasteMode, signOutEverywhere } from "./actions";
 
 export const metadata = { title: "Settings" };
 
 export default async function SettingsPage() {
   await requireTeacher();
   const mode = await pasteMode();
+  const hours = teacherSessionHours();
   return (
     <>
       <PageHeader path={[{ label: "teacher" }, { label: "settings" }]} title="Settings" />
@@ -44,6 +46,21 @@ export default async function SettingsPage() {
           </fieldset>
           <p className="text-sm text-muted">Now: {mode === "block" ? "large pastes are refused, and the student is asked to type their solution." : "large pastes are allowed and noted for you."}</p>
           <button className="btn btn-primary">Save</button>
+        </form>
+      </section>
+
+      <section className="mt-10 max-w-2xl border-t border-line pt-8">
+        <h2 className="text-lg font-semibold">Your sign-in</h2>
+        <div className="mt-1 space-y-2 text-sm text-muted">
+          <p>
+            Your account can see every student, so a teacher sign-in lasts {hours} hours and then asks again (set <code className="font-mono text-ink">TEACHER_SESSION_HOURS</code>{" "}
+            to change it). Changing <code className="font-mono text-ink">TEACHER_USERNAME</code> or <code className="font-mono text-ink">TEACHER_PASSWORD</code> signs you out
+            everywhere at once.
+          </p>
+          <p>Left signed in on a classroom computer? This signs you out on every device, this one included.</p>
+        </div>
+        <form action={signOutEverywhere} className="mt-4">
+          <button className="btn btn-secondary">Sign out everywhere</button>
         </form>
       </section>
     </>

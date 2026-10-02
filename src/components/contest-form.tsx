@@ -50,7 +50,7 @@ export function ContestForm({ values: saved, problems }: { values: ContestFormVa
           <legend className={labelStyle}>Problems</legend>
           <p className={hint}>
             Chosen problems are hidden from students until the competition starts, and join Practice when it ends. For a fair contest, pick problems students
-            have not seen: any they have already solved will not score again.
+            have not seen: any they have already solved will not score again. A problem set as homework cannot be opened for that homework until the competition starts.
           </p>
           <ul className="mt-3 border-y border-line divide-y divide-line">
             {problems.map((p) => (

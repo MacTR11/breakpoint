@@ -53,7 +53,7 @@ TEACHER_PASSWORD="a long password of your own"
 TEACHER_NAME="Mr Example"
 ```
 
-On the live site the password needs at least 8 characters, or teacher sign-in is switched off; make it long, and do not reuse one from elsewhere. While running the site on your own computer with `npm run dev`, any password is accepted so you can try things quickly. To change your username or password, change these values and restart the site. `AUTH_SECRET` must also be set: it signs the sign-in cookies (`npx auth secret` makes one).
+On the live site the password needs at least 8 characters, or teacher sign-in is switched off; make it long, and do not reuse one from elsewhere. Your sign-in lasts 12 hours, then asks again (`TEACHER_SESSION_HOURS` changes that). Changing your username or password signs you out everywhere, and if you leave yourself signed in on a classroom computer, Teacher → Settings → **Sign out everywhere** ends it. While running the site on your own computer with `npm run dev`, any password is accepted so you can try things quickly. To change your username or password, change these values and restart the site. `AUTH_SECRET` must also be set: it signs the sign-in cookies (`npx auth secret` makes one).
 
 ### Student accounts
 
@@ -76,7 +76,7 @@ Teacher → Classes. Add your classes there (for example 12A and 12B in the lowe
 - **The class page** shows the class's figures, a **topic grid** (a square per student per topic, filling with the topic's colour as they solve its challenges), recent paste flags, and buttons to rename the class, **give the whole class new passwords** (with the sign-in sheet to hand out) and **print a report** for every student.
 - **Projector view.** Teacher → Classes → **Projector view** (or `/present`) fills a classroom screen with the classes, this week's top ten (as first name and initial) and any live competition, and refreshes itself every 20 seconds.
 - **Reports.** A student's page and each class page have a printable report: points and position in the class, progress in each topic, the last 15 weeks, homework, mock papers, awards and lines for a comment. Paste flags are left off reports.
-- Deleting a class (press and hold the button) keeps its students and their work; they are simply left without a class.
+- Deleting a class (press and hold the button) keeps its students and everything they have solved; they are simply left without a class. Homework set for that class is deleted with it (the button says how many).
 
 ## Homework and mock papers
 
@@ -160,7 +160,7 @@ npm run verify    # runs every reference solution through the real judge, and ch
 npm run db:seed   # loads the files into the database
 ```
 
-`db:seed` overwrites the database copy of any problem that also exists as a file, so pick one way of editing each problem. To put a file's problem in a pack, add `"contest": "<slug>"` to its meta, using a slug from `content/contests.json`. Deleting a file removes its problem at the next seed; problems made in the browser are never touched.
+`db:seed` overwrites the database copy of any problem that also exists as a file, so pick one way of editing each problem. Deleting or renaming a file removes its problem at the next seed, unless students have worked on it: then it is kept, unpublished, so nobody loses points, and the seed tells you which to delete or republish in Teacher → Problems. To put a file's problem in a pack, add `"contest": "<slug>"` to its meta, using a slug from `content/contests.json`. Problems made in the browser are never touched by the seed.
 
 Each file's meta also sets `"track"` (the course-map topic, from `src/lib/tracks.ts`) and, for a broken-code task, `"style": "FIX"`. A `--- hints` section lists the hints, one per line starting with `- `. A puzzle with `"check": "run"` has the first Python block in its question executed by `scripts/check-puzzles.py`, which must print the marked answer.
 

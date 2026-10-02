@@ -21,7 +21,7 @@ export default async function ClassPage({ params }: PageProps<"/teacher/classes/
   if (!group) notFound();
 
   const since = daysAgo(7);
-  const [grid, standings, week, suspicious] = await Promise.all([
+  const [grid, standings, week, suspicious, homeworkSet] = await Promise.all([
     topicGrid(id),
     classStandings(),
     classStandings({ from: since }),
@@ -43,6 +43,7 @@ export default async function ClassPage({ params }: PageProps<"/teacher/classes/
         problem: { select: { title: true } },
       },
     }),
+    db.homework.count({ where: { classId: id } }),
   ]);
   const standing = standings.find((c) => c.id === id);
   const thisWeek = week.find((c) => c.id === id);
@@ -195,7 +196,7 @@ export default async function ClassPage({ params }: PageProps<"/teacher/classes/
       </section>
 
       <section className="mt-10 border-t border-line pt-8">
-        <DeleteClass id={group.id} name={group.name} />
+        <DeleteClass id={group.id} name={group.name} homework={homeworkSet} />
       </section>
     </>
   );

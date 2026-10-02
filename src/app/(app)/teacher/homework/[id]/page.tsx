@@ -22,7 +22,8 @@ export default async function HomeworkPage({ params }: PageProps<"/teacher/homew
   const counts = { done: 0, late: 0, open: 0, overdue: 0 };
   for (const row of rows) counts[row.state]++;
   // Challenges since held back for a competition still need to be offered, so the form can keep them.
-  const options = [...challenges, ...problems.filter((p) => !challenges.some((c) => c.id === p.id))];
+  const options = [...challenges, ...problems.filter((p) => !challenges.some((c) => c.id === p.id)).map((p) => ({ ...p, held: true }))];
+  const held = problems.filter((p) => !p.open);
 
   return (
     <>
@@ -30,6 +31,14 @@ export default async function HomeworkPage({ params }: PageProps<"/teacher/homew
       <p className="-mt-3 mb-6 text-sm text-muted">
         For {set.class?.name ?? "every class"} · due {formatDateTime(set.dueAt)} · {problems.length} challenge{problems.length === 1 ? "" : "s"}
       </p>
+
+      {held.length > 0 && (
+        <p className="mb-4 max-w-2xl rounded-[14px] bg-paper px-3.5 py-2.5 text-sm">
+          <span className="font-semibold">{held.map((p) => p.title).join(", ")}</span> {held.length === 1 ? "is" : "are"} now in a competition that has not started, so students
+          cannot open {held.length === 1 ? "it" : "them"}. Until then {held.length === 1 ? "it does" : "they do"} not count towards this homework for anyone who has not already
+          solved {held.length === 1 ? "it" : "them"}.
+        </p>
+      )}
 
       <p className="mb-4 flex flex-wrap gap-2">
         {(Object.keys(counts) as (keyof typeof counts)[])
@@ -56,6 +65,7 @@ export default async function HomeworkPage({ params }: PageProps<"/teacher/homew
                     </span>
                     <span className="block text-xs tabular-nums" aria-hidden="true">
                       {i + 1}
+                      {!p.open && " held"}
                     </span>
                     <span className="sr-only">{p.title}</span>
                   </th>
@@ -103,6 +113,7 @@ export default async function HomeworkPage({ params }: PageProps<"/teacher/homew
             <Link href={`/problems/${p.slug}`} className={link}>
               {p.title}
             </Link>
+            {!p.open && " (held for a competition)"}
           </li>
         ))}
       </ol>

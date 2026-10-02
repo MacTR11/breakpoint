@@ -170,6 +170,7 @@ model Contest {
   startsAt    DateTime?
   endsAt      DateTime?
   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt // when it was last scheduled or changed, for the bell
 
   problems ContestProblem[]
 }

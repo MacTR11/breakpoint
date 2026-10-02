@@ -377,6 +377,9 @@ body {
     border-color: var(--pass);
     background: var(--pass);
   }
+  .task-check[data-held] {
+    border-style: dashed;
+  }
   .task-check[data-done]::after {
     content: "";
     width: 0.55rem;

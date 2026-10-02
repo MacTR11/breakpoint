@@ -3,7 +3,7 @@
 // Run with: npm run check
 import assert from "node:assert/strict";
 import { guessYear } from "../src/lib/classes";
-import { current, stateOf, type StudentHomework } from "../src/lib/homework";
+import { current, homeworkState, openToStudents, stateOf, type StudentHomework } from "../src/lib/homework";
 import { cleanTelemetry, flagsByChallenge, isFlagged, LARGE_PASTE, pasteFlag } from "../src/lib/integrity";
 import { marksOf } from "../src/lib/mock";
 import { expectedPoints, marksIn } from "../src/lib/points";
@@ -23,6 +23,30 @@ check("homework: done, late, open and overdue", () => {
   assert.equal(stateOf(due, [before, undefined], after), "overdue");
   // Solved before the homework was even set still counts.
   assert.equal(stateOf(due, [day("2025-01-01T00:00:00Z")], before), "done");
+});
+
+check("homework: a challenge held for a competition counts only once open or solved", () => {
+  const due = day("2026-10-09T08:30:00Z");
+  const before = day("2026-10-08T12:00:00Z");
+  const after = day("2026-10-10T12:00:00Z");
+  // The open one is solved and the held one is not: done, and not overdue after the due date.
+  assert.equal(homeworkState(due, [{ solvedAt: before, open: true }, { solvedAt: undefined, open: false }], after), "done");
+  // Everything held and nothing solved: still to do, never overdue.
+  assert.equal(homeworkState(due, [{ solvedAt: undefined, open: false }], after), "open");
+  // A held challenge already solved still counts.
+  assert.equal(homeworkState(due, [{ solvedAt: after, open: false }], after), "late");
+  assert.equal(homeworkState(due, [{ solvedAt: undefined, open: true }], after), "overdue");
+});
+
+check("homework: which challenges students can open", () => {
+  const now = day("2026-10-02T12:00:00Z");
+  const contest = (startsAt: string | null, endsAt: string | null) => ({ contest: { startsAt: startsAt ? day(startsAt) : null, endsAt: endsAt ? day(endsAt) : null } });
+  assert.equal(openToStudents({ published: true, contests: [] }, now), true);
+  assert.equal(openToStudents({ published: false, contests: [] }, now), false);
+  assert.equal(openToStudents({ published: true, contests: [contest(null, null)] }, now), false, "in an unscheduled pack");
+  assert.equal(openToStudents({ published: true, contests: [contest("2026-10-05T09:00:00Z", "2026-10-05T10:00:00Z")] }, now), false, "competition not started");
+  assert.equal(openToStudents({ published: true, contests: [contest("2026-10-02T11:00:00Z", "2026-10-02T13:00:00Z")] }, now), true, "competition running");
+  assert.equal(openToStudents({ published: true, contests: [contest("2026-09-01T09:00:00Z", "2026-09-01T10:00:00Z")] }, now), true, "competition over");
 });
 
 check("homework: Home shows what is not yet due and recent overdue work", () => {

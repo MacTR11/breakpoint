@@ -6,6 +6,9 @@ import { daysAgo } from "./scoring";
 /** Something worth a look, for the bell in the top bar. `at` decides whether it is new to the viewer. */
 export type Notice = { id: string; title: string; detail: string; href: string; at: string; tone: string };
 
+/** How far ahead a competition is announced. */
+const SOON = 3 * 86_400_000;
+
 const dueFormat = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/London" });
 
 /**
@@ -15,7 +18,7 @@ const dueFormat = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "num
  */
 export async function noticesFor(user: { id: string; role: string; classId: string | null }): Promise<Notice[]> {
   const now = new Date();
-  const soon = new Date(now.getTime() + 3 * 86_400_000);
+  const soon = new Date(now.getTime() + SOON);
   const [homework, contests, flagged] = await Promise.all([
     user.role === "STUDENT" ? homeworkFor(user) : Promise.resolve([]),
     db.contest.findMany({ where: { startsAt: { lte: soon }, endsAt: { gt: now } }, orderBy: { startsAt: "asc" } }),
@@ -29,12 +32,14 @@ export async function noticesFor(user: { id: string; role: string; classId: stri
 
   const notices: Notice[] = [];
   for (const set of current(homework, now).filter((h) => h.state === "open" || h.state === "overdue")) {
+    const overdue = set.state === "overdue";
     notices.push({
       id: `homework:${set.id}`,
-      title: set.state === "overdue" ? `Overdue: ${set.title}` : `Homework: ${set.title}`,
+      title: overdue ? `Overdue: ${set.title}` : `Homework: ${set.title}`,
       detail: `${set.done} of ${set.problems.length} done · due ${dueFormat.format(set.dueAt)}`,
       href: "/homework",
-      at: set.createdAt.toISOString(),
+      // New when it is set, and new again when it goes overdue.
+      at: (overdue ? set.dueAt : set.createdAt).toISOString(),
       tone: set.state === "overdue" ? "var(--fail)" : "var(--accent)",
     });
   }
@@ -45,7 +50,9 @@ export async function noticesFor(user: { id: string; role: string; classId: stri
       title: live ? `${contest.title} is live` : `${contest.title} starts soon`,
       detail: live ? `Ends ${dueFormat.format(contest.endsAt!)}` : `Starts ${dueFormat.format(contest.startsAt!)}`,
       href: `/contests/${contest.id}`,
-      at: (live ? contest.startsAt! : contest.createdAt).toISOString(),
+      // Live: new when it starts. Upcoming: new when it comes within three days of starting,
+      // or when it is scheduled, if that is later (packs are made long before they are scheduled).
+      at: (live ? contest.startsAt! : new Date(Math.max(contest.updatedAt.getTime(), contest.startsAt!.getTime() - SOON))).toISOString(),
       tone: live ? "var(--fail)" : "var(--warn)",
     });
   }

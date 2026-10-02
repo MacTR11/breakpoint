@@ -31,9 +31,19 @@ export async function saveHomework(_previous: HomeworkFormState, formData: FormD
   if (values.classId && !(await db.class.findUnique({ where: { id: values.classId } }))) errors.push("That class no longer exists.");
   if (problemIds.length === 0) errors.push("Tick at least one challenge.");
   if (problemIds.length > MAX_HOMEWORK_CHALLENGES) errors.push(`Choose at most ${MAX_HOMEWORK_CHALLENGES} challenges.`);
-  // Only challenges students can open: published and not held back for a competition.
-  const allowed = await db.problem.count({ where: { id: { in: problemIds }, ...practiceFilter() } });
-  if (problemIds.length > 0 && allowed !== problemIds.length) errors.push("Some of those challenges are not in Practice (unpublished, or held for a competition).");
+  const existing = id ? await db.homework.findUnique({ where: { id }, include: { problems: { select: { problemId: true } } } }) : null;
+  if (id && !existing) return { errors: ["That homework no longer exists."], values };
+  // New challenges must be ones students can open: published and not held back for a
+  // competition. Challenges already in this homework may stay even if they have since
+  // gone into a competition, so the homework can still be changed.
+  const kept = new Set(existing?.problems.map((p) => p.problemId) ?? []);
+  const added = problemIds.filter((problemId) => !kept.has(problemId));
+  const [allowed, found] = await Promise.all([
+    db.problem.count({ where: { id: { in: added }, ...practiceFilter() } }),
+    db.problem.count({ where: { id: { in: problemIds } } }),
+  ]);
+  if (found !== problemIds.length) errors.push("Some of those challenges have been deleted. Untick them and save again.");
+  else if (allowed !== added.length) errors.push("Some of those challenges are not in Practice (unpublished, or held for a competition).");
   if (errors.length > 0) return { errors, values };
 
   const data = { title: values.title, note: values.note, classId: values.classId || null, dueAt };
