@@ -55,7 +55,7 @@ export async function StudentReport({ studentId, summaries }: { studentId: strin
         <Figure label="Solved" value={String(student.solves.length)} note={`${topics.reduce((sum, t) => sum + t.solved, 0)} of ${practice.length} in practice`} />
         <Figure label="Best streak" value={String(history.best)} note={`day${history.best === 1 ? "" : "s"} in a row`} />
         <Figure label="Hints used" value={String(student._count.hintUnlocks)} note="" />
-        <Figure label="Awards" value={String(earned.length)} note={`of ${awards.length}`} />
+        <Figure label="Awards" value={String(earned.length)} note={`of ${awards.filter((a) => !a.secret).length}, plus secrets`} />
       </div>
 
       <div className="mt-7 grid grid-cols-1 gap-x-10 gap-y-7 sm:grid-cols-2">

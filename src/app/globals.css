@@ -161,6 +161,10 @@ body {
   a.tile:active {
     transform: scale(0.975);
   }
+  /* An earned award on the Awards page sits a touch askew, like a sticker. */
+  .sticker > .tile {
+    transform: rotate(var(--tilt, 0deg));
+  }
   /* The code glyph printed faintly in a tile's corner. */
   .glyph {
     position: absolute;

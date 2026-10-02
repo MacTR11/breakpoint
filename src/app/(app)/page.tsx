@@ -46,7 +46,9 @@ export default async function HomePage() {
 
   const rank = board.find((row) => row.userId === user.id)?.rank;
   const solvedInPractice = problems.filter((p) => statusOf(p.id) === "solved").length;
-  const earned = awards.filter((a) => a.earned).length;
+  // Secret awards appear once found.
+  const shownAwards = awards.filter((a) => !a.secret || a.earned);
+  const earned = shownAwards.filter((a) => a.earned).length;
   const tomorrow = londonDayStart(shiftDay(londonDay(now), 1)).toISOString();
 
   // Unfinished attempts first, then the easiest untouched challenge of each kind.
@@ -73,7 +75,7 @@ export default async function HomePage() {
         : `${days(history.streak)} in a row. Solve one today to make it ${history.streak + 1}.`;
 
   // Awards already won, then the three nearest to being won.
-  const nearest = awards
+  const nearest = shownAwards
     .filter((a) => !a.earned)
     .sort((a, b) => b.progress[0] / b.progress[1] - a.progress[0] / a.progress[1])
     .slice(0, 3);
@@ -222,11 +224,11 @@ export default async function HomePage() {
             <div className="flex items-baseline justify-between">
               <h2 className="cap">Awards</h2>
               <Link href="/awards" className={`text-sm font-medium ${link}`}>
-                {earned} of {awards.length} earned
+                {earned} of {shownAwards.length} earned
               </Link>
             </div>
             <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-2">
-              {[...awards.filter((a) => a.earned), ...nearest].slice(0, 6).map((award) => (
+              {[...shownAwards.filter((a) => a.earned), ...nearest].slice(0, 6).map((award) => (
                 <li key={award.id} className="grid">
                   <AwardTile award={award} compact />
                 </li>
