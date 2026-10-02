@@ -2,8 +2,10 @@ import Link from "next/link";
 import { ButtonLink, PageHeader, formatDateTime, link } from "@/components/ui";
 import { db } from "@/lib/db";
 import { contestState, contestStateLabel } from "@/lib/scoring";
+import { requireTeacher } from "@/lib/session";
 
 export default async function TeacherContestsPage() {
+  await requireTeacher();
   const contests = await db.contest.findMany({ orderBy: [{ startsAt: "desc" }, { title: "asc" }], include: { _count: { select: { problems: true } } } });
   return (
     <>

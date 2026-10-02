@@ -9,11 +9,13 @@ import { homeworkFor, homeworkStateLabel } from "@/lib/homework";
 import { duration, pasteFlag } from "@/lib/integrity";
 import { papersOf } from "@/lib/mock";
 import { MAX_PUZZLE_ATTEMPTS, parseOptions } from "@/lib/problems";
+import { requireTeacher } from "@/lib/session";
 import { resetAttempts } from "../../actions";
 
 const statusWord: Record<string, [string, string]> = { ACCEPTED: ["Passed", "text-pass"], WRONG: ["Failed", "text-fail"], ERROR: ["Error", "text-fail"], TIMEOUT: ["Too slow", "text-warn"] };
 
 export default async function StudentPage({ params }: PageProps<"/teacher/students/[id]">) {
+  await requireTeacher();
   const { id } = await params;
   const student = await db.user.findUnique({
     where: { id },

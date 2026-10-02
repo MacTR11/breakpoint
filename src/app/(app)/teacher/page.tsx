@@ -3,9 +3,11 @@ import { ButtonLink, FilterRow, PageHeader, buttonStyle, formatDateTime } from "
 import { allClasses } from "@/lib/classes";
 import { db } from "@/lib/db";
 import { daysAgo } from "@/lib/scoring";
+import { requireTeacher } from "@/lib/session";
 import { studentSummaries } from "@/lib/students";
 
 export default async function TeacherStudentsPage({ searchParams }: PageProps<"/teacher">) {
+  await requireTeacher();
   const { class: classFilter } = await searchParams;
   const since = daysAgo(7);
   const [students, classes, weekSubmissions, weekSolves] = await Promise.all([

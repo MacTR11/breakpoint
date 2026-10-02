@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { ButtonLink, PageHeader, Tag, formatDateTime, link } from "@/components/ui";
 import { homeworkSummaries } from "@/lib/homework";
+import { requireTeacher } from "@/lib/session";
 
 export const metadata = { title: "Homework" };
 
 export default async function TeacherHomeworkPage() {
+  await requireTeacher();
   const sets = await homeworkSummaries();
   const now = new Date();
   const upcoming = sets.filter((h) => h.dueAt > now).reverse();

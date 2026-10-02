@@ -1,7 +1,9 @@
 import { ProblemForm } from "@/components/problem-form";
 import { PageHeader } from "@/components/ui";
+import { requireTeacher } from "@/lib/session";
 
-export default function NewProblemPage() {
+export default async function NewProblemPage() {
+  await requireTeacher();
   return (
     <>
       <PageHeader path={[{ label: "teacher" }, { label: "problems", href: "/teacher/problems" }, { label: "new" }]} title="New problem" />

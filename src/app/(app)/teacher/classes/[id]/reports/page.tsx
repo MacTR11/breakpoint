@@ -3,12 +3,14 @@ import { PrintButton } from "@/components/print-button";
 import { StudentReport } from "@/components/student-report";
 import { Path } from "@/components/ui";
 import { db } from "@/lib/db";
+import { requireTeacher } from "@/lib/session";
 import { studentSummaries } from "@/lib/students";
 
 export const metadata = { title: "Reports" };
 
 /** A report for every student in a class, one to a printed page. */
 export default async function ClassReportsPage({ params }: PageProps<"/teacher/classes/[id]/reports">) {
+  await requireTeacher();
   const { id } = await params;
   const group = await db.class.findUnique({ where: { id }, include: { students: { where: { role: "STUDENT" }, orderBy: { name: "asc" }, select: { id: true } } } });
   if (!group) notFound();

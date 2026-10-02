@@ -5,13 +5,16 @@ import { KindIcon, PageHeader, Tag, formatDateTime, link } from "@/components/ui
 import { allClasses } from "@/lib/classes";
 import { homeworkChallenges, homeworkProgress, homeworkStateLabel } from "@/lib/homework";
 import { dateToLondonInput } from "@/lib/london";
+import { getCurrentUser, requireTeacher } from "@/lib/session";
 
 export async function generateMetadata({ params }: PageProps<"/teacher/homework/[id]">) {
+  if ((await getCurrentUser())?.role !== "TEACHER") return { title: "Homework" };
   const progress = await homeworkProgress((await params).id);
   return { title: progress?.set.title ?? "Homework" };
 }
 
 export default async function HomeworkPage({ params }: PageProps<"/teacher/homework/[id]">) {
+  await requireTeacher();
   const { id } = await params;
   const [progress, classes, challenges] = await Promise.all([homeworkProgress(id), allClasses(), homeworkChallenges()]);
   if (!progress) notFound();

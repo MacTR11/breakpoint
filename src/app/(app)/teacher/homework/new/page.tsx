@@ -3,10 +3,12 @@ import { PageHeader } from "@/components/ui";
 import { allClasses } from "@/lib/classes";
 import { homeworkChallenges } from "@/lib/homework";
 import { londonDay, shiftDay } from "@/lib/london";
+import { requireTeacher } from "@/lib/session";
 
 export const metadata = { title: "Set homework" };
 
 export default async function NewHomeworkPage({ searchParams }: PageProps<"/teacher/homework/new">) {
+  await requireTeacher();
   const { class: classId } = await searchParams;
   const [classes, challenges] = await Promise.all([allClasses(), homeworkChallenges()]);
   // A week today, first thing in the morning.

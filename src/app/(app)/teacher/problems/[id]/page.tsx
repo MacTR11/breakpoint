@@ -4,11 +4,13 @@ import { PageHeader } from "@/components/ui";
 import { db } from "@/lib/db";
 import { parseHints } from "@/lib/hints";
 import { parseBanned, parseOptions, parseTests } from "@/lib/problems";
+import { requireTeacher } from "@/lib/session";
 
 // One test per line keeps the JSON readable in the form.
 const formatTests = (tests: unknown[]) => (tests.length ? `[\n${tests.map((t) => `  ${JSON.stringify(t)}`).join(",\n")}\n]` : "");
 
 export default async function EditProblemPage({ params }: PageProps<"/teacher/problems/[id]">) {
+  await requireTeacher();
   const { id } = await params;
   const problem = await db.problem.findUnique({ where: { id } });
   if (!problem) notFound();

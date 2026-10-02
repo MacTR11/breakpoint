@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { PageHeader, link } from "@/components/ui";
 import { LARGE_PASTE } from "@/lib/integrity";
+import { requireTeacher } from "@/lib/session";
 import { pasteMode } from "@/lib/settings";
 import { savePasteMode } from "../classes/actions";
 
 export const metadata = { title: "Settings" };
 
 export default async function SettingsPage() {
+  await requireTeacher();
   const mode = await pasteMode();
   return (
     <>

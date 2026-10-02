@@ -6,13 +6,16 @@ import { YEAR_LABEL, classStandings, topicGrid } from "@/lib/classes";
 import { db } from "@/lib/db";
 import { duration, isFlagged, mightBeFlagged, pasteFlag } from "@/lib/integrity";
 import { daysAgo } from "@/lib/scoring";
+import { getCurrentUser, requireTeacher } from "@/lib/session";
 
 export async function generateMetadata({ params }: PageProps<"/teacher/classes/[id]">) {
+  if ((await getCurrentUser())?.role !== "TEACHER") return { title: "Class" };
   const group = await db.class.findUnique({ where: { id: (await params).id } });
   return { title: group?.name ?? "Class" };
 }
 
 export default async function ClassPage({ params }: PageProps<"/teacher/classes/[id]">) {
+  await requireTeacher();
   const { id } = await params;
   const group = await db.class.findUnique({ where: { id } });
   if (!group) notFound();

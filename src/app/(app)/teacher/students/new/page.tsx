@@ -2,10 +2,12 @@ import { AddStudent, ImportStudents } from "@/components/student-forms";
 import { PageHeader } from "@/components/ui";
 import { MAX_IMPORT, MIN_PASSWORD } from "@/lib/accounts";
 import { allClasses } from "@/lib/classes";
+import { requireTeacher } from "@/lib/session";
 
 export const metadata = { title: "Add students" };
 
 export default async function NewStudentsPage() {
+  await requireTeacher();
   const classes = await allClasses();
   return (
     <>

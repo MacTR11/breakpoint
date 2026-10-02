@@ -3,11 +3,13 @@ import { ClassForm } from "@/components/class-forms";
 import { PageHeader, Tag, buttonStyle, link, signed, tone } from "@/components/ui";
 import { YEAR_LABEL, classStandings } from "@/lib/classes";
 import { daysAgo } from "@/lib/scoring";
+import { requireTeacher } from "@/lib/session";
 import { studentSummaries } from "@/lib/students";
 
 export const metadata = { title: "Classes" };
 
 export default async function ClassesPage() {
+  await requireTeacher();
   const [allTime, week, students] = await Promise.all([classStandings(), classStandings({ from: daysAgo(7) }), studentSummaries()]);
   const weekOf = new Map(week.map((c) => [c.id, c]));
   const flagsOf = (classId: string) => students.filter((s) => s.classId === classId).reduce((sum, s) => sum + s.flags, 0);
