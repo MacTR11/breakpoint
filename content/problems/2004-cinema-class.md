@@ -1,5 +1,5 @@
 --- meta
-{"title": "Cinema (d): a Screen class", "kind": "CODE", "difficulty": "HARD", "topic": "Classes and 2D arrays", "points": 40, "track": "exam", "specRef": "1.2.4", "functionName": "Screen",
+{"title": "Cinema (d): a Screen class", "kind": "CODE", "difficulty": "HARD", "topic": "Classes and 2D arrays", "points": 45, "track": "exam", "specRef": "1.2.4", "functionName": "Screen",
   "tests": [
     {"steps": [["Screen", 2, 3], ["count_free"], ["book", 0, 1], ["book", 0, 1], ["count_free"], ["is_free", 0, 1], ["is_free", 1, 2]], "expected": [6, true, false, 5, false, true]},
     {"steps": [["Screen", 1, 2], ["book", 0, 0], ["book", 0, 1], ["count_free"], ["cancel", 0, 0], ["cancel", 0, 0], ["count_free"]], "expected": [true, true, 0, true, false, 1]},

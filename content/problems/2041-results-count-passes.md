@@ -1,5 +1,5 @@
 --- meta
-{"title": "Results file (a): count the passes", "kind": "CODE", "difficulty": "EASY", "topic": "String handling and files", "points": 10, "track": "exam", "specRef": "2.2.1", "functionName": "count_passes",
+{"title": "Results file (a): count the passes", "kind": "CODE", "difficulty": "EASY", "topic": "String handling and files", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "count_passes",
   "tests": [
     {"args": [["Ada,12A,71", "Ben,12B,39", "Cy,12A,40", "Di,12B,90"], 40], "expected": 3},
     {"args": [["Eve,13X,100"], 50], "expected": 1},

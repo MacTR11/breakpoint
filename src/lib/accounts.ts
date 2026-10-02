@@ -75,9 +75,10 @@ export function parseCsv(text: string): string[][] {
   return rows.map((cells) => cells.map((c) => c.trim())).filter((cells) => cells.some(Boolean));
 }
 
-export type ImportRow = { line: number; name: string; username: string; password: string };
+/** `group` is the name of the student's class, or "" to leave their class as it is. */
+export type ImportRow = { line: number; name: string; username: string; password: string; group: string };
 
-const HEADERS: Record<string, "name" | "first" | "last" | "username" | "password"> = {
+const HEADERS: Record<string, "name" | "first" | "last" | "username" | "password" | "group"> = {
   name: "name",
   "full name": "name",
   fullname: "name",
@@ -95,19 +96,25 @@ const HEADERS: Record<string, "name" | "first" | "last" | "username" | "password
   login: "username",
   password: "password",
   pass: "password",
+  class: "group",
+  group: "group",
+  form: "group",
+  set: "group",
+  "tutor group": "group",
+  "teaching group": "group",
 };
 
 /**
  * Read the student CSV. With a heading row the columns can be in any order
- * (name, or first name and surname; username; password). Without one they are
- * taken as name, username, password. Username and password may be left out.
+ * (name, or first name and surname; username; password; class). Without one
+ * they are taken as name, username, password, class. All but the name may be left out.
  */
 export function readStudentCsv(text: string): { rows: ImportRow[]; errors: string[] } {
   const table = parseCsv(text);
   if (table.length === 0) return { rows: [], errors: ["There is nothing to import."] };
   const heading = table[0].map((cell) => HEADERS[cell.toLowerCase()]);
   const hasHeading = heading.some(Boolean);
-  const column = (kind: string) => (hasHeading ? heading.indexOf(kind as never) : ["name", "username", "password"].indexOf(kind));
+  const column = (kind: string) => (hasHeading ? heading.indexOf(kind as never) : ["name", "username", "password", "group"].indexOf(kind));
   if (hasHeading && column("name") < 0 && column("first") < 0 && column("last") < 0) return { rows: [], errors: ['The heading row needs a "name" column (or "first name" and "surname").'] };
 
   const body = hasHeading ? table.slice(1) : table;
@@ -121,7 +128,7 @@ export function readStudentCsv(text: string): { rows: ImportRow[]; errors: strin
     const listed = /^([^,]+),([^,]+)$/.exec(at("name"));
     const name = (listed ? `${listed[2]} ${listed[1]}` : at("name") || `${at("first")} ${at("last")}`).replace(/\s+/g, " ").trim();
     if (!name) return errors.push(`Row ${line} has no name.`);
-    rows.push({ line, name: name.slice(0, 80), username: cleanUsername(at("username")), password: at("password") });
+    rows.push({ line, name: name.slice(0, 80), username: cleanUsername(at("username")), password: at("password"), group: at("group").slice(0, 40) });
   });
   return { rows, errors };
 }

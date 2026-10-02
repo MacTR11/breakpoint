@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Write a Quick Sort", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 20, "track": "sorting", "specRef": "2.3.1",
+  "title": "Write a Quick Sort", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 25, "track": "sorting", "specRef": "2.3.1",
   "functionName": "quick_sort", "banned": ["sorted(", ".sort("],
   "tests": [
     { "args": [[3, 1, 2]], "expected": [1, 2, 3] },

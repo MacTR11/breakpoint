@@ -1,5 +1,5 @@
 --- meta
-{"title": "Results file (b): the mean score for each class", "kind": "CODE", "difficulty": "HARD", "topic": "String handling and dictionaries", "points": 40, "track": "exam", "specRef": "2.2.1", "functionName": "class_means",
+{"title": "Results file (b): the mean score for each class", "kind": "CODE", "difficulty": "HARD", "topic": "String handling and dictionaries", "points": 35, "track": "exam", "specRef": "2.2.1", "functionName": "class_means",
   "tests": [
     {"args": [["Ada,12A,71", "Ben,12B,39", "Cy,12A,40", "Di,12B,90"]], "expected": {"12A": 55.5, "12B": 64.5}},
     {"args": [["Eve,13X,100"]], "expected": {"13X": 100.0}},

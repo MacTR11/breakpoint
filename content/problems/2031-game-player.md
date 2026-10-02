@@ -1,5 +1,5 @@
 --- meta
-{"title": "Adventure game (a): the Player class", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Classes and objects", "points": 20, "track": "exam", "specRef": "1.2.4", "functionName": "Player",
+{"title": "Adventure game (a): the Player class", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Classes and objects", "points": 35, "track": "exam", "specRef": "1.2.4", "functionName": "Player",
   "tests": [
     {"steps": [["Player", "Mo"], ["get_name"], ["get_health"], ["take_damage", 30], ["get_health"], ["is_alive"]], "expected": ["Mo", 100, null, 70, true]},
     {"steps": [["Player", "Ada"], ["take_damage", 60], ["take_damage", 60], ["get_health"], ["is_alive"], ["add_score", 5], ["get_score"]], "expected": [null, null, 0, false, null, 5]},

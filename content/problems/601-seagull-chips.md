@@ -1,5 +1,5 @@
 --- meta
-{ "title": "The Greedy Seagull", "kind": "PUZZLE", "difficulty": "HARD", "topic": "Algorithms", "points": 15, "track": "algorithms", "specRef": "2.2.2", "contest": "welcome",
+{ "title": "The Greedy Seagull", "kind": "PUZZLE", "difficulty": "HARD", "topic": "Algorithms", "points": 20, "track": "algorithms", "specRef": "2.2.2", "contest": "welcome",
   "options": ["21", "22", "23", "25"], "answer": 2 }
 --- description
 A seagull is walking across a grid of paving slabs. The number on each slab is how many chips have been dropped there.

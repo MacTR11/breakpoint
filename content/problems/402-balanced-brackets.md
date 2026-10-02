@@ -4,7 +4,7 @@
   "kind": "CODE",
   "difficulty": "MEDIUM",
   "topic": "Data structures",
-  "points": 20,
+  "points": 25,
   "track": "structures", "specRef": "1.4.2",
   "contest": "welcome",
   "functionName": "is_balanced",

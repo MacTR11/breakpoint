@@ -1,5 +1,5 @@
 --- meta
-{"title": "Priority Queue", "kind": "CODE", "difficulty": "HARD", "topic": "Queues", "points": 40, "track": "structures", "specRef": "1.4.2", "contest": "structures-derby", "functionName": "PriorityQueue",
+{"title": "Priority Queue", "kind": "CODE", "difficulty": "HARD", "topic": "Queues", "points": 50, "track": "structures", "specRef": "1.4.2", "contest": "structures-derby", "functionName": "PriorityQueue",
   "tests": [
     {"steps": [["PriorityQueue"], ["enqueue", "low", 5], ["enqueue", "high", 1], ["dequeue"], ["dequeue"], ["dequeue"]], "expected": [1, 2, "high", "low", null]},
     {"steps": [["PriorityQueue"], ["enqueue", "a", 2], ["enqueue", "b", 2], ["enqueue", "c", 1], ["dequeue"], ["dequeue"], ["dequeue"]], "expected": [1, 2, 3, "c", "a", "b"]},

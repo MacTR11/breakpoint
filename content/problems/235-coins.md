@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fewest Coins", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Loops and arithmetic", "points": 20, "track": "basics", "specRef": "2.2.1", "functionName": "coins",
+{"title": "Fewest Coins", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Loops and arithmetic", "points": 25, "track": "basics", "specRef": "2.2.1", "functionName": "coins",
   "tests": [
     {"args": [87], "expected": [50, 20, 10, 5, 2]},
     {"args": [0], "expected": []},

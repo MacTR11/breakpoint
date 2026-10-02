@@ -4,7 +4,7 @@
   "kind": "CODE",
   "difficulty": "MEDIUM",
   "topic": "Strings",
-  "points": 20,
+  "points": 25,
   "track": "strings", "specRef": "1.3.1",
   "functionName": "compress",
   "tests": [

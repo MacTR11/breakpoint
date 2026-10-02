@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Leaderboard Order", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting records", "points": 20, "track": "sorting", "specRef": "2.3.1",
+  "title": "Leaderboard Order", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting records", "points": 25, "track": "sorting", "specRef": "2.3.1",
   "functionName": "rank", "banned": ["sorted(", ".sort("],
   "tests": [
     { "args": [[["Ava", 70], ["Ben", 85], ["Cal", 62]]], "expected": [["Ben", 85], ["Ava", 70], ["Cal", 62]] },

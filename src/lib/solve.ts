@@ -1,12 +1,12 @@
 import { awardsFor } from "./awards";
 import { claimDailyBonus } from "./daily";
 import { db } from "./db";
-import { earnsHint } from "./hints";
+import { hintsEarned } from "./hints";
 
 /** What a student picked up, beyond the points, by solving a challenge. */
-export type Rewards = { hintEarned: boolean; dailyBonus: boolean; awards: string[] };
+export type Rewards = { hints: number; dailyBonus: boolean; awards: string[] };
 
-export const noRewards: Rewards = { hintEarned: false, dailyBonus: false, awards: [] };
+export const noRewards: Rewards = { hints: 0, dailyBonus: false, awards: [] };
 
 /**
  * Record that a student has solved a challenge for the first time, and work out
@@ -19,7 +19,11 @@ export async function recordSolve(userId: string, problemId: string, points: num
     create: { userId, problemId, points, attempts },
     update: {},
   });
-  const [solvedNow, dailyBonus] = await Promise.all([db.solve.count({ where: { userId } }), claimDailyBonus(userId, problemId)]);
+  const [solvedNow, problem, dailyBonus] = await Promise.all([
+    db.solve.count({ where: { userId } }),
+    db.problem.findUnique({ where: { id: problemId }, select: { difficulty: true } }),
+    claimDailyBonus(userId, problemId),
+  ]);
   const awards = (await awardsFor(userId)).filter((a) => a.earned && !before.has(a.id)).map((a) => a.title);
-  return { hintEarned: earnsHint(solvedNow), dailyBonus, awards };
+  return { hints: hintsEarned(solvedNow, problem?.difficulty ?? ""), dailyBonus, awards };
 }

@@ -9,6 +9,7 @@ import { db } from "@/lib/db";
 import { hintWallet, parseHints } from "@/lib/hints";
 import { findViewableProblem, isLive, MAX_PUZZLE_ATTEMPTS, parseBanned, parseOptions, parseTests, pointsFor, puzzlePenalty } from "@/lib/problems";
 import { requireUser } from "@/lib/session";
+import { pasteMode } from "@/lib/settings";
 import { trackTitle } from "@/lib/tracks";
 
 export async function generateMetadata({ params }: PageProps<"/problems/[slug]">) {
@@ -113,6 +114,7 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
         banned={parseBanned(problem)}
         points={problem.points}
         isFix={problem.style === "FIX"}
+        blockPastes={!isTeacher && (await pasteMode()) === "block"}
         solved={Boolean(solve)}
         header={header}
         description={<Markdown>{problem.description}</Markdown>}

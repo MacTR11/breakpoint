@@ -1,5 +1,5 @@
 --- meta
-{"title": "Adventure game (c): the Backpack class", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Classes with arrays", "points": 20, "track": "exam", "specRef": "1.2.4", "functionName": "Backpack",
+{"title": "Adventure game (c): the Backpack class", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Classes with arrays", "points": 40, "track": "exam", "specRef": "1.2.4", "functionName": "Backpack",
   "tests": [
     {"steps": [["Backpack", 2], ["add", "map"], ["add", "rope"], ["add", "torch"], ["count"], ["contains", "rope"], ["contains", "torch"]], "expected": [true, true, false, 2, true, false]},
     {"steps": [["Backpack", 3], ["add", "key"], ["add", "key"], ["count"], ["remove", "key"], ["remove", "key"], ["count"]], "expected": [true, false, 1, true, false, 0]},

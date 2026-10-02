@@ -1,5 +1,5 @@
 --- meta
-{ "title": "By Value, By Reference", "kind": "PUZZLE", "difficulty": "HARD", "topic": "Parameter passing", "points": 15, "track": "recursion", "specRef": "2.2.1",
+{ "title": "By Value, By Reference", "kind": "PUZZLE", "difficulty": "HARD", "topic": "Parameter passing", "points": 20, "track": "recursion", "specRef": "2.2.1",
   "options": ["3", "13", "23", "33"], "answer": 2 }
 --- description
 ```

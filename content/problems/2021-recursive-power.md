@@ -1,5 +1,5 @@
 --- meta
-{"title": "Recursion (a): raise to a power", "kind": "CODE", "difficulty": "EASY", "topic": "Recursion", "points": 10, "track": "exam", "specRef": "2.2.1", "functionName": "power", "banned": ["**", "pow(", "for ", "while "],
+{"title": "Recursion (a): raise to a power", "kind": "CODE", "difficulty": "EASY", "topic": "Recursion", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "power", "banned": ["**", "pow(", "for ", "while "],
   "tests": [
     {"args": [2, 5], "expected": 32},
     {"args": [7, 0], "expected": 1},

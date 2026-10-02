@@ -1,5 +1,5 @@
 --- meta
-{"title": "Treasure map (a): list the treasure", "kind": "CODE", "difficulty": "EASY", "topic": "2D arrays", "points": 10, "track": "exam", "specRef": "2.2.1", "functionName": "find_treasure",
+{"title": "Treasure map (a): list the treasure", "kind": "CODE", "difficulty": "EASY", "topic": "2D arrays", "points": 25, "track": "exam", "specRef": "2.2.1", "functionName": "find_treasure",
   "tests": [
     {"args": [[[".", "T", "#"], [".", ".", "T"], ["#", ".", "."]]], "expected": [[0, 1], [1, 2]]},
     {"args": [[["T"]]], "expected": [[0, 0]]},

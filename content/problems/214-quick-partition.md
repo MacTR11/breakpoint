@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Quick Sort Partition", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 20, "track": "sorting", "specRef": "2.3.1",
+  "title": "Quick Sort Partition", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 25, "track": "sorting", "specRef": "2.3.1",
   "functionName": "partition",
   "tests": [
     { "args": [[5, 2, 8, 1, 9]], "expected": [[2, 1], 5, [8, 9]] },

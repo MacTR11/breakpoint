@@ -48,3 +48,7 @@ next-env.d.ts
 
 # Python runtime copied from node_modules by scripts/copy-pyodide.mjs
 /public/pyodide
+
+# copies left behind by iCloud, OneDrive or Dropbox
+* 2.*
+* 2

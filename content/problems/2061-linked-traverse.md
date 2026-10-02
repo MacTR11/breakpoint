@@ -1,5 +1,5 @@
 --- meta
-{"title": "Linked list (a): traverse it", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Linked lists", "points": 20, "track": "exam", "specRef": "1.4.2", "functionName": "traverse",
+{"title": "Linked list (a): traverse it", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Linked lists", "points": 25, "track": "exam", "specRef": "1.4.2", "functionName": "traverse",
   "tests": [
     {"args": [[["cat", 2], ["ant", 0], ["dog", -1]], 1], "expected": ["ant", "cat", "dog"]},
     {"args": [[["m", -1]], 0], "expected": ["m"]},

@@ -4,7 +4,7 @@ import type { Rewards } from "@/lib/solve";
 export function RewardLines({ rewards, dark = false }: { rewards: Rewards; dark?: boolean }) {
   const tone = dark ? "text-[#e5a50a]" : "text-warn";
   const lines: [string, string][] = [
-    ...(rewards.hintEarned ? [["Hint earned", "for your solves so far"] as [string, string]] : []),
+    ...(rewards.hints > 0 ? [[rewards.hints === 1 ? "Hint earned" : `${rewards.hints} hints earned`, "to spend on any challenge"] as [string, string]] : []),
     ...(rewards.dailyBonus ? [["Daily challenge done", "+1 hint"] as [string, string]] : []),
     ...rewards.awards.map((title) => ["New award", title] as [string, string]),
   ];

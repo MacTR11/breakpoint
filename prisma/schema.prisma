@@ -18,13 +18,35 @@ model User {
   passwordHash String   @default("") // scrypt, see src/lib/passwords.ts; empty means no password works
   role         String   @default("STUDENT") // STUDENT | TEACHER
   sessionEpoch Int      @default(0) // raised when the password changes, which signs the old password's sessions out
+  classId      String? // the teaching group, for students
   createdAt    DateTime @default(now())
   lastSeenAt   DateTime?
 
+  class       Class?       @relation(fields: [classId], references: [id], onDelete: SetNull)
   submissions Submission[]
   solves      Solve[]
   hintUnlocks HintUnlock[]
   dailyBonus  DailyBonus[]
+  mockPapers  MockPaper[]
+
+  @@index([classId])
+}
+
+// A teaching group, such as 12A. Classes are compared on their averages.
+model Class {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  year      String   @default("LOWER") // LOWER sixth | UPPER sixth
+  createdAt DateTime @default(now())
+
+  students User[]
+  homework Homework[]
+}
+
+// Site-wide choices the teacher makes in the dashboard, by name.
+model Setting {
+  key   String @id
+  value String
 }
 
 // Wrong sign-in attempts per username, so passwords cannot be guessed at speed.
@@ -70,6 +92,7 @@ model Problem {
   solves      Solve[]
   contests    ContestProblem[]
   hintUnlocks HintUnlock[]
+  homework    HomeworkProblem[]
 }
 
 model Submission {
@@ -81,6 +104,12 @@ model Submission {
   passed    Int
   total     Int
   penalty   Int      @default(0) // points lost for a wrong puzzle answer
+  // How the code was written, as reported by the student's browser. A guide
+  // for a conversation, never proof: see src/lib/integrity.ts.
+  pastedChars  Int @default(0) // characters pasted or dropped in from outside the editor
+  largestPaste Int @default(0) // the biggest single paste
+  typedChars   Int @default(0) // characters typed
+  seconds      Int @default(0) // time the editor was open before submitting
   createdAt DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -154,4 +183,47 @@ model ContestProblem {
   problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
   @@id([contestId, problemId])
+}
+
+// Challenges the teacher sets for a class, or for everyone, by a date. A
+// challenge counts as done whenever it was solved, even before it was set.
+model Homework {
+  id        String   @id @default(cuid())
+  title     String
+  note      String   @default("")
+  classId   String? // null: every student
+  dueAt     DateTime
+  createdAt DateTime @default(now())
+
+  class    Class?            @relation(fields: [classId], references: [id], onDelete: Cascade)
+  problems HomeworkProblem[]
+
+  @@index([dueAt])
+}
+
+model HomeworkProblem {
+  homeworkId String
+  problemId  String
+  sortOrder  Int    @default(0)
+
+  homework Homework @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  problem  Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@id([homeworkId, problemId])
+}
+
+// A timed paper of exam-style questions a student sat. Marks are worked out
+// from the submissions made between startedAt and the end; see src/lib/mock.ts.
+model MockPaper {
+  id         String    @id @default(cuid())
+  userId     String
+  problemIds String // JSON: string[], in paper order
+  minutes    Int
+  startedAt  DateTime  @default(now())
+  endsAt     DateTime
+  finishedAt DateTime? // set when the student hands it in early
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startedAt])
 }

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Sorting (c): insertion sort on names", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Insertion sort", "points": 20, "track": "exam", "specRef": "2.3.1", "functionName": "insertion_names", "banned": ["sorted(", ".sort("],
+{"title": "Sorting (c): insertion sort on names", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Insertion sort", "points": 30, "track": "exam", "specRef": "2.3.1", "functionName": "insertion_names", "banned": ["sorted(", ".sort("],
   "tests": [
     {"args": [["Mo", "Ada", "Zed", "Ben"]], "expected": ["Ada", "Ben", "Mo", "Zed"]},
     {"args": [["Kit"]], "expected": ["Kit"]},

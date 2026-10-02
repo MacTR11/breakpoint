@@ -4,7 +4,7 @@ import { python } from "@codemirror/lang-python";
 import { indentUnit } from "@codemirror/language";
 import CodeMirror from "@uiw/react-codemirror";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useSyncExternalStore, useTransition } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, useTransition } from "react";
 import { submitCode } from "@/app/actions";
 import { RewardLines } from "@/components/rewards";
 import { TestResults } from "@/components/test-results";
@@ -13,6 +13,7 @@ import { readDraft, subscribeToDrafts, writeDraft } from "@/lib/drafts";
 import { runInBrowser, warmUp } from "@/lib/py-runner";
 import type { Rewards } from "@/lib/solve";
 import { bannedUse, type JudgeOutcome, type TestCase } from "@/lib/types";
+import { addSeconds, readCounts, resetCounts, trackingExtensions } from "@/lib/typing-counts";
 
 const extensions = [python(), indentUnit.of("    ")];
 
@@ -30,6 +31,7 @@ export function CodeWorkspace({
   banned,
   points,
   isFix,
+  blockPastes,
   solved: initiallySolved,
   header,
   description,
@@ -48,6 +50,8 @@ export function CodeWorkspace({
   points: number;
   /** The starter code is deliberately broken and the task is to repair it. */
   isFix: boolean;
+  /** The teacher has chosen to refuse large pastes from outside the editor. */
+  blockPastes: boolean;
   solved: boolean;
   header: React.ReactNode;
   description: React.ReactNode;
@@ -76,6 +80,20 @@ export function CodeWorkspace({
   // Start fetching Python straight away so the first Run is quick.
   useEffect(() => warmUp(), []);
 
+  // What was typed and what was pasted in from outside is counted beside the
+  // draft and sent with each submission (see src/lib/integrity.ts).
+  const countsKey = `counts:${userId}:${slug}`;
+  const [pasteNote, setPasteNote] = useState<string | null>(null);
+  const tracking = useMemo(() => trackingExtensions(countsKey, blockPastes, setPasteNote), [countsKey, blockPastes]);
+  const allExtensions = useMemo(() => [...extensions, ...tracking], [tracking]);
+  // Time only counts while the page is actually being looked at.
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (document.visibilityState === "visible") addSeconds(countsKey, 5);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [countsKey]);
+
   const edit = (value: string) => writeDraft(draftKey, value);
 
   const run = async () => {
@@ -95,7 +113,7 @@ export function CodeWorkspace({
     setJustSolved(null);
     startTransition(async () => {
       try {
-        const result = await submitCode(slug, code);
+        const result = await submitCode(slug, code, readCounts(countsKey));
         if (!result.ok) {
           setMessage(result.message);
         } else {
@@ -122,6 +140,7 @@ export function CodeWorkspace({
     if (code !== starterCode && !window.confirm(question)) return;
     edit(starterCode);
     setState(null);
+    resetCounts(countsKey);
   };
 
   return (
@@ -153,7 +172,7 @@ export function CodeWorkspace({
             theme="dark"
             height="100%"
             style={{ height: "100%" }}
-            extensions={extensions}
+            extensions={allExtensions}
             aria-label="Python code editor"
             basicSetup={{ tabSize: 4 }}
           />
@@ -173,6 +192,7 @@ export function CodeWorkspace({
 
         <div className="max-h-[45%] min-h-28 overflow-y-auto border-t border-white/10 px-4 py-3 font-mono text-[13px] leading-6" aria-live="polite">
           {message && <p className="text-[#ff7b72]">{message}</p>}
+          {pasteNote && <p className="rise text-[#e5a50a]">{pasteNote}</p>}
           {state ? (
             <TestResults key={runs} state={state} tests={visibleTests} functionName={functionName} />
           ) : (
@@ -181,6 +201,8 @@ export function CodeWorkspace({
                 Run examples: tries {isFix ? "the code" : "your code"} on the {visibleTests.length} example{visibleTests.length === 1 ? "" : "s"} from the question.
                 <br />
                 Submit: marks it against those plus {hiddenCount} hidden test{hiddenCount === 1 ? "" : "s"}.
+                <br />
+                {blockPastes ? "Pasting large blocks of code is switched off." : "Large pastes are noted for your teacher."}
               </p>
             )
           )}

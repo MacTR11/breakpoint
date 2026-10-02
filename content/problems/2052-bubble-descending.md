@@ -1,5 +1,5 @@
 --- meta
-{"title": "Sorting (b): bubble sort, largest first", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Bubble sort", "points": 20, "track": "exam", "specRef": "2.3.1", "functionName": "bubble_descending", "banned": ["sorted(", ".sort(", "reversed(", "[::-1]"],
+{"title": "Sorting (b): bubble sort, largest first", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Bubble sort", "points": 30, "track": "exam", "specRef": "2.3.1", "functionName": "bubble_descending", "banned": ["sorted(", ".sort(", "reversed(", "[::-1]"],
   "tests": [
     {"args": [[3, 9, 1, 7]], "expected": [9, 7, 3, 1]},
     {"args": [[5]], "expected": [5]},

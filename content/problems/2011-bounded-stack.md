@@ -1,5 +1,5 @@
 --- meta
-{"title": "Stack in an array (a): push, pop and peek", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Stacks", "points": 20, "track": "exam", "specRef": "1.4.2", "functionName": "Stack", "banned": [".append(", ".insert("],
+{"title": "Stack in an array (a): push, pop and peek", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Stacks", "points": 40, "track": "exam", "specRef": "1.4.2", "functionName": "Stack", "banned": [".append(", ".insert("],
   "tests": [
     {"steps": [["Stack", 3], ["is_empty"], ["push", 5], ["push", 9], ["peek"], ["pop"], ["pop"], ["pop"], ["is_empty"]], "expected": [true, true, true, 9, 9, 5, null, true]},
     {"steps": [["Stack", 2], ["push", "a"], ["push", "b"], ["push", "c"], ["is_full"], ["pop"], ["is_full"], ["peek"]], "expected": [true, true, false, true, "b", false, "a"]},

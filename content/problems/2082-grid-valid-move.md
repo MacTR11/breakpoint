@@ -1,5 +1,5 @@
 --- meta
-{"title": "Treasure map (b): can the player stand here?", "kind": "CODE", "difficulty": "EASY", "topic": "2D arrays", "points": 10, "track": "exam", "specRef": "2.2.1", "functionName": "can_stand",
+{"title": "Treasure map (b): can the player stand here?", "kind": "CODE", "difficulty": "EASY", "topic": "2D arrays", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "can_stand",
   "tests": [
     {"args": [[[".", "T", "#"], [".", ".", "T"], ["#", ".", "."]], 1, 1], "expected": true},
     {"args": [[[".", "T", "#"], [".", ".", "T"], ["#", ".", "."]], 0, 2], "expected": false},

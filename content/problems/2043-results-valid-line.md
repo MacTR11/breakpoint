@@ -1,5 +1,5 @@
 --- meta
-{"title": "Results file (c): validate a line", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Validation", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "valid_line",
+{"title": "Results file (c): validate a line", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Validation", "points": 30, "track": "exam", "specRef": "2.2.1", "functionName": "valid_line",
   "tests": [
     {"args": ["Ada,12A,71"], "expected": true},
     {"args": ["Ada,12A"], "expected": false},

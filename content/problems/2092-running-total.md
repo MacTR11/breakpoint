@@ -1,5 +1,5 @@
 --- meta
-{"title": "Arrays (b): running totals", "kind": "CODE", "difficulty": "EASY", "topic": "Arrays", "points": 10, "track": "exam", "specRef": "2.2.1", "functionName": "running_totals",
+{"title": "Arrays (b): running totals", "kind": "CODE", "difficulty": "EASY", "topic": "Arrays", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "running_totals",
   "tests": [
     {"args": [[3, 1, 4]], "expected": [3, 4, 8]},
     {"args": [[10]], "expected": [10]},

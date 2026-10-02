@@ -1,5 +1,5 @@
 --- meta
-{"title": "Linked list (b): search it", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Linked lists", "points": 20, "track": "exam", "specRef": "1.4.2", "functionName": "position_of",
+{"title": "Linked list (b): search it", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Linked lists", "points": 25, "track": "exam", "specRef": "1.4.2", "functionName": "position_of",
   "tests": [
     {"args": [[["cat", 2], ["ant", 0], ["dog", -1]], 1, "cat"], "expected": 2},
     {"args": [[["cat", 2], ["ant", 0], ["dog", -1]], 1, "eel"], "expected": -1},

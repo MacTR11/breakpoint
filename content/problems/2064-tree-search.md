@@ -1,5 +1,5 @@
 --- meta
-{"title": "Binary tree (d): search it", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Trees", "points": 20, "track": "exam", "specRef": "1.4.2", "functionName": "tree_contains",
+{"title": "Binary tree (d): search it", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Trees", "points": 25, "track": "exam", "specRef": "1.4.2", "functionName": "tree_contains",
   "tests": [
     {"args": [[[1, 50, 2], [-1, 30, 3], [-1, 70, -1], [-1, 40, -1]], 0, 40], "expected": true},
     {"args": [[[1, 50, 2], [-1, 30, 3], [-1, 70, -1], [-1, 40, -1]], 0, 45], "expected": false},

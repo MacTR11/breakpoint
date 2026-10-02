@@ -1,5 +1,5 @@
 --- meta
-{"title": "Cinema (a): count the free seats", "kind": "CODE", "difficulty": "EASY", "topic": "2D arrays", "points": 10, "track": "exam", "specRef": "2.2.1", "functionName": "count_free",
+{"title": "Cinema (a): count the free seats", "kind": "CODE", "difficulty": "EASY", "topic": "2D arrays", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "count_free",
   "tests": [
     {"args": [[["F", "B", "F"], ["B", "B", "B"], ["F", "F", "F"]]], "expected": 5},
     {"args": [[["B", "B"], ["B", "F"]]], "expected": 1},

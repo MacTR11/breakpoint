@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Binary Search Tree: Post-order", "kind": "CODE", "difficulty": "HARD", "topic": "Trees", "points": 40, "track": "structures", "specRef": "1.4.2",
+  "title": "Binary Search Tree: Post-order", "kind": "CODE", "difficulty": "HARD", "topic": "Trees", "points": 50, "track": "structures", "specRef": "1.4.2",
   "functionName": "post_order",
   "tests": [
     { "args": [[5, 3, 8, 1, 4]], "expected": [1, 4, 3, 8, 5] },
