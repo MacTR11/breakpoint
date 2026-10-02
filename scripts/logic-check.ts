@@ -25,28 +25,51 @@ check("homework: done, late, open and overdue", () => {
   assert.equal(stateOf(due, [day("2025-01-01T00:00:00Z")], before), "done");
 });
 
-check("homework: a challenge held for a competition counts only once open or solved", () => {
+check("homework: a challenge students cannot open counts only once open or solved", () => {
   const due = day("2026-10-09T08:30:00Z");
   const before = day("2026-10-08T12:00:00Z");
   const after = day("2026-10-10T12:00:00Z");
   // The open one is solved and the held one is not: done, and not overdue after the due date.
-  assert.equal(homeworkState(due, [{ solvedAt: before, open: true }, { solvedAt: undefined, open: false }], after), "done");
+  assert.equal(homeworkState(due, [{ solvedAt: before, counts: true }, { solvedAt: undefined, counts: false }], after), "done");
   // Everything held and nothing solved: still to do, never overdue.
-  assert.equal(homeworkState(due, [{ solvedAt: undefined, open: false }], after), "open");
-  // A held challenge already solved still counts.
-  assert.equal(homeworkState(due, [{ solvedAt: after, open: false }], after), "late");
-  assert.equal(homeworkState(due, [{ solvedAt: undefined, open: true }], after), "overdue");
+  assert.equal(homeworkState(due, [{ solvedAt: undefined, counts: false }], after), "open");
+  // Held until after the due date, then solved: it counts, but is not late.
+  assert.equal(homeworkState(due, [{ solvedAt: after, counts: false }], after), "done");
+  assert.equal(homeworkState(due, [{ solvedAt: after, counts: true }], after), "late");
+  assert.equal(homeworkState(due, [{ solvedAt: undefined, counts: true }], after), "overdue");
+  // Every challenge deleted: nothing to do.
+  assert.equal(homeworkState(due, [], after), "done");
 });
 
 check("homework: which challenges students can open", () => {
   const now = day("2026-10-02T12:00:00Z");
-  const contest = (startsAt: string | null, endsAt: string | null) => ({ contest: { startsAt: startsAt ? day(startsAt) : null, endsAt: endsAt ? day(endsAt) : null } });
+  const contest = (startsAt: string | null, endsAt: string | null, createdAt?: string) => ({
+    ...(createdAt ? { createdAt: day(createdAt) } : {}),
+    contest: { startsAt: startsAt ? day(startsAt) : null, endsAt: endsAt ? day(endsAt) : null },
+  });
   assert.equal(openToStudents({ published: true, contests: [] }, now), true);
   assert.equal(openToStudents({ published: false, contests: [] }, now), false);
   assert.equal(openToStudents({ published: true, contests: [contest(null, null)] }, now), false, "in an unscheduled pack");
   assert.equal(openToStudents({ published: true, contests: [contest("2026-10-05T09:00:00Z", "2026-10-05T10:00:00Z")] }, now), false, "competition not started");
   assert.equal(openToStudents({ published: true, contests: [contest("2026-10-02T11:00:00Z", "2026-10-02T13:00:00Z")] }, now), true, "competition running");
   assert.equal(openToStudents({ published: true, contests: [contest("2026-09-01T09:00:00Z", "2026-09-01T10:00:00Z")] }, now), true, "competition over");
+  assert.equal(openToStudents({ published: true, contests: [contest(null, null, "2026-10-03T09:00:00Z")] }, now), true, "put in a pack later");
+});
+
+check("homework: a past result does not change when a competition starts or a pack is made later", () => {
+  const due = day("2026-10-09T08:30:00Z");
+  const solved = day("2026-10-08T12:00:00Z");
+  const during = day("2026-10-20T09:30:00Z");
+  // X went into a competition on 1 Oct that runs on 20 Oct, after the due date. A was solved on time.
+  const x = { published: true, contests: [{ createdAt: day("2026-10-01T09:00:00Z"), contest: { startsAt: day("2026-10-20T09:00:00Z"), endsAt: day("2026-10-20T10:00:00Z") } }] };
+  const counts = (at: Date) => openToStudents(x, at < due ? at : due);
+  assert.equal(counts(during), false, "held at the due date, so it never counts unless solved");
+  assert.equal(homeworkState(due, [{ solvedAt: solved, counts: true }, { solvedAt: undefined, counts: counts(during) }], during), "done");
+  assert.equal(homeworkState(due, [{ solvedAt: solved, counts: true }, { solvedAt: during, counts: counts(during) }], during), "done");
+  // Y was open until the due date and never done; a pack made after the due date does not excuse it.
+  const y = { published: true, contests: [{ createdAt: day("2026-10-12T09:00:00Z"), contest: { startsAt: null, endsAt: null } }] };
+  assert.equal(openToStudents(y, due), true);
+  assert.equal(homeworkState(due, [{ solvedAt: solved, counts: true }, { solvedAt: undefined, counts: openToStudents(y, due) }], during), "overdue");
 });
 
 check("homework: Home shows what is not yet due and recent overdue work", () => {

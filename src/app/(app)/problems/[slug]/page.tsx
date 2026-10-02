@@ -123,6 +123,8 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
       ) : null;
     return (
       <CodeWorkspace
+        // A fresh editor for each draft, so undo cannot carry a mock paper's code into practice when the paper ends.
+        key={paper ? `mock-${paper.id}` : "practice"}
         userId={user.id}
         slug={problem.slug}
         fileName={fileName}

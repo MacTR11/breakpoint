@@ -7,6 +7,7 @@ A Python practice and competition platform for A Level Computer Science.
 - **First steps**: a gentle on-ramp of tiny challenges with most of the code already written.
 - **Fix the bug**: the editor opens on a broken program. Students find the fault and repair it.
 - **Puzzles**: read some code and say what it prints, spot the bug, or trace an algorithm. Wrong answers cost points, so guessing does not pay.
+- **Debugger and console**: click beside a line number to put a breakpoint (a red dot) on it, then step through a call forwards and backwards, watching the variables change, the call stack grow and shrink, and a trace table fill in the way one is written in an exam. A Python console beside the editor tries the code on any input. Neither marks anything.
 - **Hints**: every challenge has hints. Students earn hint tokens by solving challenges and spend one to reveal each hint.
 - **Daily challenge, streaks and awards**: one challenge is featured each day and earns a bonus hint if solved that day; a calendar and a streak count show which days a student solved something; and there are 20 awards to collect, plus 6 secret ones.
 - **Course map**: every challenge grouped by topic, from Python basics to algorithm challenges, with the student's progress.
@@ -82,11 +83,13 @@ Teacher → Classes. Add your classes there (for example 12A and 12B in the lowe
 
 **Homework.** Teacher → Homework → **Set homework**: pick practice challenges (filter by topic or title), a class or every class, and a due date in UK time. Students see it on their Home page as a checklist and on a Homework page; the bell in the top bar tells them when something is set. A challenge solved before the homework was set already counts. Each piece of homework shows a grid of who has done what, on time or late.
 
+A challenge students cannot open, because it has since gone into a competition that has not started or been unpublished, counts only for those who have solved it, and the homework page says which. Once the due date has passed, what counts is whether students could open it at the due date, so a competition that starts (or a pack that is made) afterwards never changes a past result.
+
 **Mock papers.** Practice → **Sit a mock paper**. Students tick exam-style scenarios (or let the site pick about 30 marks they have not done), choose a length (a minute a mark is the default), and work against a countdown. While the paper runs, those questions open with a clean editor and no hints, mark schemes or model answers. Marks are worked out from what they submitted during the paper: full marks for a question whose tests all pass, otherwise the share of tests passed, rounded down. It is an estimate of a mark scheme, not a replacement for one. Their papers appear on their page for you.
 
 ## Paste tracking
 
-The code editor counts what each student types and what they paste or drop in from outside it, and how long the editor was open, and stores the counts with each submission. Moving their own code around inside the editor is not counted. A challenge is **flagged** for a student when a single paste is 120 characters or more, or most of the code was pasted. Each flagged challenge counts once, however many times it was submitted afterwards. Flags show on the Students page, the class page and the student's page, beside the code.
+The code editor counts what each student types and what they paste or drop in from outside it, and how long the editor was open, and stores the counts with each submission. A dropped file counts as a paste, and so does a large block arriving at once from a phone keyboard's clipboard. Moving their own code around inside the editor (copy, cut and paste, or dragging) is not counted, and two tabs open on one challenge keep a single record. A challenge is **flagged** for a student when a single paste is 120 characters or more, or most of the code was pasted. Each flagged challenge counts once, however many times it was submitted afterwards. Flags show on the Students page, the class page and the student's page, beside the code.
 
 Teacher → Settings switches between **recording** large pastes (the default) and **recording and blocking** them, in which case a student who pastes a large block is asked to type it instead. Teachers are never blocked.
 
@@ -160,7 +163,7 @@ npm run verify    # runs every reference solution through the real judge, and ch
 npm run db:seed   # loads the files into the database
 ```
 
-`db:seed` overwrites the database copy of any problem that also exists as a file, so pick one way of editing each problem. Deleting or renaming a file removes its problem at the next seed, unless students have worked on it: then it is kept, unpublished, so nobody loses points, and the seed tells you which to delete or republish in Teacher → Problems. To put a file's problem in a pack, add `"contest": "<slug>"` to its meta, using a slug from `content/contests.json`. Problems made in the browser are never touched by the seed.
+`db:seed` overwrites the database copy of any problem that also exists as a file, so pick one way of editing each problem. Renaming a file keeps its problem and its solves, as long as the title stays the same. Deleting a file removes its problem at the next seed, unless students have worked on it or homework or a mock paper uses it: then it is kept, unpublished and out of any competition that has not started, so nobody loses points, and the seed tells you which to delete or republish in Teacher → Problems. A new file whose name would take over a different problem's address is not loaded, and the seed says so. To put a file's problem in a pack, add `"contest": "<slug>"` to its meta, using a slug from `content/contests.json`. Problems made in the browser are never touched by the seed.
 
 Each file's meta also sets `"track"` (the course-map topic, from `src/lib/tracks.ts`) and, for a broken-code task, `"style": "FIX"`. A `--- hints` section lists the hints, one per line starting with `- `. A puzzle with `"check": "run"` has the first Python block in its question executed by `scripts/check-puzzles.py`, which must print the marked answer.
 
@@ -238,6 +241,8 @@ Nothing else needs setting up: there is no Google project or redirect address to
 | `src/lib/homework.ts`, `mock.ts` | Homework progress, and mock papers and their marks |
 | `src/lib/integrity.ts`, `typing-counts.ts`, `settings.ts` | Paste tracking: the flag rule, the editor's counting, and the record-or-block setting |
 | `src/lib/notifications.ts` | What the bell in the top bar lists |
+| `src/lib/debugger.ts`, `trace.ts`, `public/judge/tracer.mjs` | The debugger: breakpoints in the editor, what each step shows, and the recording of a run |
+| `src/components/code-workspace.tsx`, `debug-panel.tsx`, `console-panel.tsx` | The editor with its Results, Console and Debugger tabs |
 | `src/app/(app)/` | Student pages: home, practice, course map, competitions, leaderboard, awards, homework, mock papers |
 | `src/app/(app)/teacher/` | Teacher dashboard: students, classes, homework, problems, competitions, settings, reports |
 | `src/app/present/` | The projector view |

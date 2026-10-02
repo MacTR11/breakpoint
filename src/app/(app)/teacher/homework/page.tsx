@@ -37,6 +37,7 @@ export default async function TeacherHomeworkPage() {
               <td className="num">
                 {h.challenges}
                 {h.held > 0 && <span className="block text-xs font-normal text-warn">{h.held} held</span>}
+                {h.unpublished > 0 && <span className="block text-xs font-normal text-warn">{h.unpublished} unpublished</span>}
               </td>
               <td>
                 <span className="flex items-center gap-3">

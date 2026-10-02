@@ -12,6 +12,15 @@ export function dueLabel(dueAt: Date, now = new Date()) {
   return `${dueFormat.format(dueAt)} · ${when}`;
 }
 
+/** Why a challenge cannot be opened, or does not count, in a few words; null when neither. */
+function challengeNote(p: StudentHomework["problems"][number], solved: boolean) {
+  if (!p.open) {
+    const why = p.held === "competition" ? "Held for a competition, so it cannot be opened yet." : "Not available at the moment.";
+    return solved || p.counts ? why : `${why} It does not count towards this homework.`;
+  }
+  return solved || p.counts ? null : "It could not be opened before the due date, so it does not count towards this homework.";
+}
+
 /** One piece of homework as a task list: a circle per challenge, ticked once solved. */
 export function HomeworkTasks({ set, compact = false }: { set: StudentHomework; compact?: boolean }) {
   const [word, color] = homeworkStateLabel[set.state];
@@ -28,32 +37,48 @@ export function HomeworkTasks({ set, compact = false }: { set: StudentHomework; 
       <ul className="mt-2">
         {set.problems.map((p) => {
           const solved = set.solvedIds.includes(p.id);
-          // Put into a competition since it was set: students cannot open it until the competition starts.
-          if (!p.open && !solved) {
+          const why = challengeNote(p, solved);
+          const check = (
+            <span
+              className="task-check"
+              data-done={solved ? "" : undefined}
+              data-held={!solved && !p.open ? "" : undefined}
+              aria-label={solved ? "Solved" : p.open ? "Not solved yet" : "Cannot be opened now"}
+              role="img"
+            />
+          );
+          const title = <span className={`block text-[15px] ${solved ? "text-muted line-through decoration-1" : p.open ? "font-medium" : "text-muted"}`}>{p.title}</span>;
+          const points = <span className="shrink-0 text-sm font-semibold tabular-nums text-muted">{p.points}</span>;
+          // Students cannot open it now (held for a competition, or unpublished), so it is not a link.
+          if (!p.open) {
             return (
               <li key={p.id} className="-mx-2 flex items-center gap-3 px-2 py-1.5">
-                <span className="task-check" data-held="" aria-label="Not open yet" role="img" />
+                {check}
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[15px] text-muted">{p.title}</span>
-                  <span className="block text-[13px] text-muted">Held for a competition, so not open yet. It does not count until it is.</span>
+                  {title}
+                  <span className="block text-[13px] text-muted">{why}</span>
                 </span>
-                <span className="shrink-0 text-sm font-semibold tabular-nums text-muted">{p.points}</span>
+                {points}
               </li>
             );
           }
           return (
             <li key={p.id}>
               <Link href={`/problems/${p.slug}`} className="-mx-2 flex items-center gap-3 rounded-[12px] px-2 py-1.5 transition-colors duration-150 hover:bg-paper">
-                <span className="task-check" data-done={solved ? "" : undefined} aria-label={solved ? "Solved" : "Not solved yet"} role="img" />
+                {check}
                 <span className="min-w-0 flex-1">
-                  <span className={`block text-[15px] ${solved ? "text-muted line-through decoration-1" : "font-medium"}`}>{p.title}</span>
-                  {!compact && (
+                  {title}
+                  {(why || !compact) && (
                     <span className="block text-[13px] text-muted">
-                      {kindLabel(p.kind, p.style)} · {levelLabel(p.difficulty)}
+                      {why ?? (
+                        <>
+                          {kindLabel(p.kind, p.style)} · {levelLabel(p.difficulty)}
+                        </>
+                      )}
                     </span>
                   )}
                 </span>
-                <span className="shrink-0 text-sm font-semibold tabular-nums text-muted">{p.points}</span>
+                {points}
               </Link>
             </li>
           );

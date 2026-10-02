@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { londonToDate } from "@/lib/london";
 import { practiceFilter } from "@/lib/problems";
-import { assertTeacher } from "@/lib/session";
+import { assertTeacher, SIGNED_OUT, stillTeacher } from "@/lib/session";
 
 export type HomeworkFormState = { errors: string[]; values: Record<string, string> } | null;
 
@@ -14,7 +14,6 @@ const MAX_HOMEWORK_CHALLENGES = 20;
 
 /** Set homework, or change it when the form carries an id. */
 export async function saveHomework(_previous: HomeworkFormState, formData: FormData): Promise<HomeworkFormState> {
-  await assertTeacher();
   const id = text(formData, "id");
   const problemIds = [...new Set(formData.getAll("problemIds").map(String))];
   const values = {
@@ -24,6 +23,7 @@ export async function saveHomework(_previous: HomeworkFormState, formData: FormD
     dueAt: text(formData, "dueAt"),
     problemIds: problemIds.join(","),
   };
+  if (!(await stillTeacher())) return { errors: [SIGNED_OUT], values };
   const errors: string[] = [];
   if (!values.title) errors.push("Give the homework a title.");
   const dueAt = londonToDate(values.dueAt);

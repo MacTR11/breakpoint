@@ -6,10 +6,11 @@ import { isLive, isPending, practiceFilter } from "./problems";
 // student, with a due date. A challenge counts as done whenever it was solved,
 // even before the homework was set; one solved after the due date is late.
 //
-// A challenge can be put into a competition after it was set as homework.
-// Until the competition starts (or, for an unscheduled pack, until it has
-// been and gone) students cannot open it, so it does not count towards the
-// homework unless they had already solved it.
+// A challenge can be put into a competition after it was set as homework, or
+// be unpublished. While students cannot open it, it does not count towards the
+// homework unless they have solved it. Once the due date has passed, what
+// counts is whether they could open it at the due date, so a competition that
+// starts (or a pack made) afterwards never changes a past result.
 
 const challengeFields = {
   id: true,
@@ -21,19 +22,34 @@ const challengeFields = {
   points: true,
   track: true,
   published: true,
-  contests: { select: { contest: { select: { startsAt: true, endsAt: true } } } },
+  contests: { select: { createdAt: true, contest: { select: { startsAt: true, endsAt: true } } } },
 } as const;
 
-type Fetched = { published: boolean; contests: { contest: { startsAt: Date | null; endsAt: Date | null } }[] };
+type Fetched = { published: boolean; contests: { createdAt?: Date; contest: { startsAt: Date | null; endsAt: Date | null } }[] };
 
-/** Whether students can open a challenge now: in Practice, or in a competition that is running (as in findViewableProblem). */
-export function openToStudents(problem: Fetched, now = new Date()) {
-  const contests = problem.contests.map((c) => c.contest);
-  return contests.some((c) => isLive(c, now)) || (problem.published && !contests.some((c) => isPending(c, now)));
+/**
+ * Whether students could open a challenge at `at`: in Practice, or in a
+ * competition running then (as in findViewableProblem). A competition it was
+ * put into after `at` is left out. Published is as it is now.
+ */
+export function openToStudents(problem: Fetched, at = new Date()) {
+  const contests = problem.contests.filter((c) => !c.createdAt || c.createdAt <= at).map((c) => c.contest);
+  return contests.some((c) => isLive(c, at)) || (problem.published && !contests.some((c) => isPending(c, at)));
 }
 
-/** A homework challenge as the pages need it, with `open` saying whether students can get at it. */
-const asChallenge = <T extends Fetched>({ published, contests, ...rest }: T, now: Date) => ({ ...rest, open: openToStudents({ published, contests }, now) });
+/** Why students cannot open a challenge now, if they cannot. */
+export type Held = "competition" | "unpublished" | null;
+
+/**
+ * A homework challenge as the pages need it: `open` (students can get at it now,
+ * so it is a link), `held` (why not), and `counts` (whether it counts towards
+ * homework due at `dueAt` even if unsolved).
+ */
+function asChallenge<T extends Fetched>({ published, contests, ...rest }: T, dueAt: Date, now: Date) {
+  const open = openToStudents({ published, contests }, now);
+  const held: Held = open ? null : contests.some((c) => isPending(c.contest, now)) ? "competition" : "unpublished";
+  return { ...rest, open, held, counts: openToStudents({ published, contests }, now < dueAt ? now : dueAt) };
+}
 
 export type HomeworkState = "done" | "late" | "open" | "overdue";
 
@@ -51,10 +67,16 @@ export function stateOf(dueAt: Date, solvedAt: (Date | undefined)[], now = new D
   return now > dueAt ? "overdue" : "open";
 }
 
-/** As `stateOf`, leaving out challenges students cannot open yet unless already solved. With nothing left to count it is still to do. */
-export function homeworkState(dueAt: Date, entries: { solvedAt: Date | undefined; open: boolean }[], now = new Date()): HomeworkState {
-  const counted = entries.filter((e) => e.solvedAt || e.open);
-  return counted.length > 0 ? stateOf(dueAt, counted.map((e) => e.solvedAt), now) : "open";
+/**
+ * As `stateOf`, leaving out challenges that do not count (see asChallenge)
+ * unless solved. One solved after the due date that could not be opened before
+ * it is not late. Homework with no challenges left is done; with challenges but
+ * nothing yet to count, it is still to do.
+ */
+export function homeworkState(dueAt: Date, entries: { solvedAt: Date | undefined; counts: boolean }[], now = new Date()): HomeworkState {
+  if (entries.length === 0) return "done";
+  const counted = entries.filter((e) => e.solvedAt || e.counts).map((e) => (e.counts || !e.solvedAt || e.solvedAt <= dueAt ? e.solvedAt : dueAt));
+  return counted.length > 0 ? stateOf(dueAt, counted, now) : "open";
 }
 
 /**
@@ -73,26 +95,29 @@ export const homeworkFor = cache(async (user: { id: string; classId: string | nu
   ]);
   const solvedAt = new Map(solves.map((s) => [s.problemId, s.solvedAt]));
   const now = new Date();
-  return sets.map((set) => {
-    const problems = set.problems.map((p) => asChallenge(p.problem, now));
-    const times = problems.map((p) => solvedAt.get(p.id));
-    return {
-      id: set.id,
-      title: set.title,
-      note: set.note,
-      dueAt: set.dueAt,
-      createdAt: set.createdAt,
-      className: set.class?.name ?? null,
-      problems,
-      solvedIds: problems.filter((p) => solvedAt.has(p.id)).map((p) => p.id),
-      done: times.filter(Boolean).length,
-      state: homeworkState(
-        set.dueAt,
-        problems.map((p, i) => ({ solvedAt: times[i], open: p.open })),
-        now,
-      ),
-    };
-  });
+  // Homework whose challenges have all been deleted has nothing to do, so students do not see it.
+  return sets
+    .filter((set) => set.problems.length > 0)
+    .map((set) => {
+      const problems = set.problems.map((p) => asChallenge(p.problem, set.dueAt, now));
+      const times = problems.map((p) => solvedAt.get(p.id));
+      return {
+        id: set.id,
+        title: set.title,
+        note: set.note,
+        dueAt: set.dueAt,
+        createdAt: set.createdAt,
+        className: set.class?.name ?? null,
+        problems,
+        solvedIds: problems.filter((p) => solvedAt.has(p.id)).map((p) => p.id),
+        done: times.filter(Boolean).length,
+        state: homeworkState(
+          set.dueAt,
+          problems.map((p, i) => ({ solvedAt: times[i], counts: p.counts })),
+          now,
+        ),
+      };
+    });
 });
 
 export type StudentHomework = Awaited<ReturnType<typeof homeworkFor>>[number];
@@ -108,7 +133,7 @@ export async function homeworkProgress(id: string) {
   });
   if (!set) return null;
   const now = new Date();
-  const problems = set.problems.map((p) => asChallenge(p.problem, now));
+  const problems = set.problems.map((p) => asChallenge(p.problem, set.dueAt, now));
   const problemIds = problems.map((p) => p.id);
   const students = await db.user.findMany({
     where: { role: "STUDENT", ...(set.classId ? { classId: set.classId } : {}) },
@@ -120,7 +145,7 @@ export async function homeworkProgress(id: string) {
     const times = problemIds.map((pid) => at.get(pid));
     const state = homeworkState(
       set.dueAt,
-      problems.map((p, i) => ({ solvedAt: times[i], open: p.open })),
+      problems.map((p, i) => ({ solvedAt: times[i], counts: p.counts })),
       now,
     );
     return { id: student.id, name: student.name, times, done: times.filter(Boolean).length, state };
@@ -137,13 +162,13 @@ export async function homeworkSummaries() {
   const students = await db.user.findMany({ where: { role: "STUDENT" }, select: { id: true, classId: true, solves: { select: { problemId: true } } } });
   const now = new Date();
   return sets.map((set) => {
-    const challenges = set.problems.map((p) => asChallenge(p.problem, now));
+    const challenges = set.problems.map((p) => asChallenge(p.problem, set.dueAt, now));
     const theirs = students.filter((s) => !set.classId || s.classId === set.classId);
-    // Finished: every challenge that counts is solved (one students cannot open yet only counts once solved).
+    // Finished: every challenge that counts is solved (as in homeworkState; lateness does not matter here).
     const finished = theirs.filter((s) => {
       const solved = new Set(s.solves.map((x) => x.problemId));
-      const counted = challenges.filter((c) => c.open || solved.has(c.id));
-      return counted.length > 0 && counted.every((c) => solved.has(c.id));
+      const counted = challenges.filter((c) => c.counts || solved.has(c.id));
+      return challenges.length === 0 || (counted.length > 0 && counted.every((c) => solved.has(c.id)));
     }).length;
     return {
       id: set.id,
@@ -151,7 +176,8 @@ export async function homeworkSummaries() {
       dueAt: set.dueAt,
       className: set.class?.name ?? null,
       challenges: challenges.length,
-      held: challenges.filter((c) => !c.open).length,
+      held: challenges.filter((c) => c.held === "competition").length,
+      unpublished: challenges.filter((c) => c.held === "unpublished").length,
       students: theirs.length,
       finished,
     };

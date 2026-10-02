@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { signOutAction } from "@/app/actions";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { Notice } from "@/lib/notifications";
@@ -101,14 +101,23 @@ function useMenu() {
   return { open, setOpen, box };
 }
 
-// When the viewer last opened the bell, kept in this browser.
+// Which notices the viewer had in front of them when they last opened the bell,
+// kept in this browser by key (see src/lib/notifications.ts).
 const SEEN_EVENT = "breakpoint:seen";
-const seenKey = (userId: string) => `seen:${userId}`;
+const seenKey = (userId: string) => `seen-notices:${userId}`;
 function readSeen(userId: string) {
   try {
-    return localStorage.getItem(seenKey(userId)) ?? "";
+    return localStorage.getItem(seenKey(userId)) ?? "[]";
   } catch {
-    return "";
+    return "[]";
+  }
+}
+function parseSeen(raw: string) {
+  try {
+    const keys: unknown = JSON.parse(raw);
+    return new Set(Array.isArray(keys) ? keys.filter((key): key is string => typeof key === "string") : []);
+  } catch {
+    return new Set<string>();
   }
 }
 function subscribeSeen(onChange: () => void) {
@@ -128,11 +137,13 @@ export function Bell({ userId, notices }: { userId: string; notices: Notice[] })
     () => readSeen(userId),
     () => null,
   );
-  const unread = seen === null ? 0 : notices.filter((n) => n.at > seen).length;
+  const seenKeys = useMemo(() => parseSeen(seen ?? "[]"), [seen]);
+  const unread = seen === null ? 0 : notices.filter((n) => !seenKeys.has(n.key)).length;
   const toggle = () => {
     if (!open) {
       try {
-        localStorage.setItem(seenKey(userId), new Date().toISOString());
+        localStorage.setItem(seenKey(userId), JSON.stringify(notices.map((n) => n.key)));
+        localStorage.removeItem(`seen:${userId}`);
       } catch {}
       window.dispatchEvent(new Event(SEEN_EVENT));
     }

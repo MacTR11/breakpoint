@@ -6,7 +6,7 @@ import { generatePassword } from "@/lib/accounts";
 import { YEARS } from "@/lib/classes";
 import { db } from "@/lib/db";
 import { hashPassword } from "@/lib/passwords";
-import { assertTeacher } from "@/lib/session";
+import { assertTeacher, SIGNED_OUT, stillTeacher } from "@/lib/session";
 import type { EnrolState } from "../students/actions";
 
 export type ClassFormState = { errors: string[]; saved: boolean; values: Record<string, string> } | null;
@@ -15,9 +15,9 @@ const text = (formData: FormData, key: string) => String(formData.get(key) ?? ""
 
 /** Create a class, or rename one and change its year when the form carries an id. */
 export async function saveClass(_previous: ClassFormState, formData: FormData): Promise<ClassFormState> {
-  await assertTeacher();
   const id = text(formData, "id");
   const values = { name: text(formData, "name").slice(0, 40), year: text(formData, "year") };
+  if (!(await stillTeacher())) return { errors: [SIGNED_OUT], saved: false, values };
   const errors: string[] = [];
   if (!values.name) errors.push("Give the class a name, such as 12A.");
   if (!YEARS.includes(values.year as (typeof YEARS)[number])) errors.push("Choose lower or upper sixth.");
@@ -41,7 +41,7 @@ export async function deleteClass(formData: FormData) {
 
 /** Give every student in a class a fresh password, and hand back the sign-in sheet. */
 export async function resetClassPasswords(_previous: EnrolState, formData: FormData): Promise<EnrolState> {
-  await assertTeacher();
+  if (!(await stillTeacher())) return { errors: [SIGNED_OUT], logins: [], values: {} };
   const group = await db.class.findUnique({ where: { id: text(formData, "id") }, include: { students: { where: { role: "STUDENT" }, orderBy: { name: "asc" } } } });
   if (!group) return { errors: ["That class no longer exists."], logins: [], values: {} };
   if (group.students.length === 0) return { errors: ["There are no students in this class yet."], logins: [], values: {} };

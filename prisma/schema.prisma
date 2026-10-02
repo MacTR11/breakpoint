@@ -170,7 +170,6 @@ model Contest {
   startsAt    DateTime?
   endsAt      DateTime?
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now()) @updatedAt // when it was last scheduled or changed, for the bell
 
   problems ContestProblem[]
 }
@@ -178,7 +177,10 @@ model Contest {
 model ContestProblem {
   contestId String
   problemId String
-  sortOrder Int    @default(0)
+  sortOrder Int      @default(0)
+  // When the problem was put into the competition: homework past its due date
+  // asks whether students could open a challenge at the due date (src/lib/homework.ts).
+  createdAt DateTime @default(now())
 
   contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
   problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
