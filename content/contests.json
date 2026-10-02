@@ -1,0 +1,48 @@
+[
+  {
+    "slug": "welcome",
+    "title": "Welcome Challenge",
+    "description": "A first competition to try the platform: a mix of writing code, fixing a bug and reading code.",
+    "live": true
+  },
+  {
+    "slug": "python-sprint",
+    "title": "Python Sprint",
+    "description": "Short, quick problems. Speed and accuracy decide it."
+  },
+  {
+    "slug": "bug-hunt",
+    "title": "Bug Hunt",
+    "description": "Every program here is broken. Find the bugs and fix them."
+  },
+  {
+    "slug": "sort-it-out",
+    "title": "Sort It Out",
+    "description": "Searching and sorting: write them, repair them and trace them."
+  },
+  {
+    "slug": "recursion-rumble",
+    "title": "Recursion Rumble",
+    "description": "Functions that call themselves. No loops allowed in places."
+  },
+  {
+    "slug": "structures-derby",
+    "title": "Data Structures Derby",
+    "description": "Stacks, queues, linked lists and trees, built and traced."
+  },
+  {
+    "slug": "algorithms-showdown",
+    "title": "Algorithms Showdown",
+    "description": "Searching, traversal, recursion and complexity."
+  },
+  {
+    "slug": "build-it-right",
+    "title": "Build It Right",
+    "description": "Validation, messy input, classes and testing: the skills of a robust program."
+  },
+  {
+    "slug": "grand-final",
+    "title": "Grand Final",
+    "description": "The hardest set. A bit of everything."
+  }
+]

@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// SQLite keeps local setup to zero. For production, change provider to
+// "postgresql" and point DATABASE_URL at a hosted database (see README).
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String
+  image      String?
+  role       String   @default("STUDENT") // STUDENT | TEACHER
+  school     String? // email domain, e.g. "example-college.ac.uk"
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+
+  submissions Submission[]
+  solves      Solve[]
+  hintUnlocks HintUnlock[]
+}
+
+model Problem {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  title       String
+  kind        String // CODE | PUZZLE
+  difficulty  String // EASY | MEDIUM | HARD
+  topic       String
+  points      Int
+  description String // Markdown
+  published   Boolean @default(true)
+  sortOrder   Int     @default(0)
+  fromFile    Boolean @default(false) // loaded from content/problems, so the seed may update or remove it
+  track       String  @default("") // topic strand, see src/lib/tracks.ts
+  specRef     String  @default("") // OCR H446 reference, e.g. "2.3.1"; see src/lib/spec.ts
+  hints       String? // JSON: string[] of Markdown hints, revealed one at a time
+
+  // CODE problems
+  style        String  @default("WRITE") // WRITE from scratch, or FIX the broken starter code
+  functionName String?
+  starterCode  String?
+  tests        String? // JSON: [{ args: [...] | steps: [...], expected: ..., hidden?: boolean }]
+  solution     String? // reference solution, only ever shown to teachers
+  banned       String? // JSON: string[] of text the code may not contain, e.g. ["sorted("]
+
+  // PUZZLE problems
+  options     String? // JSON: string[]; empty array means a typed answer
+  answer      String? // index into options, or the typed answer
+  explanation String? // Markdown, shown once answered correctly
+
+  createdAt DateTime @default(now())
+
+  submissions Submission[]
+  solves      Solve[]
+  contests    ContestProblem[]
+  hintUnlocks HintUnlock[]
+}
+
+model Submission {
+  id        String   @id @default(cuid())
+  userId    String
+  problemId String
+  code      String // the code, or the answer given to a puzzle
+  status    String // ACCEPTED | WRONG | ERROR | TIMEOUT
+  passed    Int
+  total     Int
+  penalty   Int      @default(0) // points lost for a wrong puzzle answer
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@index([userId, problemId, createdAt])
+}
+
+// One row per student per solved problem: what leaderboards are built from.
+model Solve {
+  id        String   @id @default(cuid())
+  userId    String
+  problemId String
+  points    Int
+  attempts  Int
+  solvedAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, problemId])
+  @@index([problemId, solvedAt])
+}
+
+// A hint a student has spent one of their hint tokens on.
+model HintUnlock {
+  id        String   @id @default(cuid())
+  userId    String
+  problemId String
+  index     Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, problemId, index])
+}
+
+// A contest with no dates is a ready-made pack waiting to be scheduled.
+model Contest {
+  id          String    @id @default(cuid())
+  slug        String?   @unique // set for packs loaded from content/contests.json
+  title       String
+  description String    @default("")
+  startsAt    DateTime?
+  endsAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  problems ContestProblem[]
+}
+
+model ContestProblem {
+  contestId String
+  problemId String
+  sortOrder Int    @default(0)
+
+  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@id([contestId, problemId])
+}

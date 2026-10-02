@@ -1,0 +1,339 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --color-ink: #1d1d1f;
+  --color-ink-soft: #424245;
+  --color-paper: #f5f5f7;
+  --color-line: rgba(20, 28, 70, 0.1);
+  --color-muted: #62666f;
+  --color-accent: #0a84ff;
+  --color-accent-dark: #0070e0;
+  --color-link: #0060d0;
+  /* The accent as it appears on dark panels. */
+  --color-glow: #5cb8ff;
+}
+
+/* A bright, fixed wash of colour for the glass to float over. */
+body {
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+  background-color: #f3f1fc;
+  background-image:
+    radial-gradient(48rem 36rem at 4% -6%, rgba(10, 132, 255, 0.4), transparent 60%),
+    radial-gradient(44rem 34rem at 100% 0%, rgba(191, 90, 242, 0.36), transparent 60%),
+    radial-gradient(40rem 30rem at 94% 66%, rgba(255, 55, 95, 0.24), transparent 60%),
+    radial-gradient(46rem 34rem at 0% 80%, rgba(48, 209, 88, 0.24), transparent 60%),
+    radial-gradient(42rem 30rem at 50% 108%, rgba(255, 159, 10, 0.3), transparent 60%);
+  background-attachment: fixed;
+}
+
+@layer components {
+  /* Liquid glass: a flat, translucent sheet that blurs and brightens what is behind it. */
+  .glass {
+    background: rgba(255, 255, 255, 0.58);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+    backdrop-filter: blur(26px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.66);
+    box-shadow: 0 12px 40px -14px rgba(70, 50, 150, 0.2);
+  }
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.5);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    backdrop-filter: blur(30px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 10px 34px -12px rgba(70, 50, 150, 0.24);
+  }
+  a.glass,
+  .glass-lift {
+    transition:
+      transform 0.2s ease,
+      background-color 0.2s ease;
+  }
+  a.glass:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.74);
+  }
+  .glass-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Tinted glass, for tiles that deserve a colour of their own. */
+  .tint-blue {
+    background: linear-gradient(135deg, rgba(10, 132, 255, 0.24), rgba(255, 255, 255, 0.56) 70%);
+  }
+  .tint-green {
+    background: linear-gradient(135deg, rgba(48, 209, 88, 0.26), rgba(255, 255, 255, 0.56) 70%);
+  }
+  .tint-purple {
+    background: linear-gradient(135deg, rgba(191, 90, 242, 0.26), rgba(255, 255, 255, 0.56) 70%);
+  }
+  .tint-yellow {
+    background: linear-gradient(135deg, rgba(255, 204, 0, 0.34), rgba(255, 255, 255, 0.56) 70%);
+  }
+
+  /* The loud panel: live competitions and competition headers. */
+  .panel-hero {
+    color: #fff;
+    background: linear-gradient(120deg, #5e5ce6 0%, #bf5af2 50%, #ff375f 100%);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    box-shadow: 0 22px 50px -20px rgba(160, 60, 220, 0.6);
+  }
+
+  /* Progress tracks and their fill. */
+  .well {
+    background: rgba(70, 60, 130, 0.1);
+  }
+  .bar {
+    background: linear-gradient(90deg, #0a84ff, #bf5af2);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.5rem 1.15rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition:
+      background-color 0.15s ease,
+      transform 0.1s ease,
+      opacity 0.15s ease;
+  }
+  .btn:enabled,
+  a.btn {
+    cursor: pointer;
+  }
+  .btn:disabled {
+    opacity: 0.4;
+  }
+  .btn:not(:disabled):active {
+    transform: scale(0.97);
+  }
+  .btn-primary {
+    color: #fff;
+    background: #0a84ff;
+    box-shadow: 0 10px 22px -10px rgba(10, 132, 255, 0.75);
+  }
+  .btn-primary:not(:disabled):hover {
+    background: #2b95ff;
+  }
+  .btn-secondary {
+    color: var(--color-ink);
+    background: rgba(255, 255, 255, 0.62);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+  }
+  .btn-secondary:not(:disabled):hover {
+    background: rgba(255, 255, 255, 0.85);
+  }
+  .btn-dark {
+    color: #fff;
+    background: #1d1d1f;
+  }
+  .btn-dark:not(:disabled):hover {
+    background: #3a3a3d;
+  }
+  .btn-hint {
+    color: #4a3500;
+    background: #ffd60a;
+    box-shadow: 0 10px 22px -10px rgba(255, 190, 0, 0.85);
+  }
+  .btn-hint:not(:disabled):hover {
+    background: #ffe04d;
+  }
+  /* For buttons that sit on the dark editor. */
+  .btn-on-dark {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.14);
+  }
+  .btn-on-dark:not(:disabled):hover {
+    background: rgba(255, 255, 255, 0.24);
+  }
+
+  /* Filter pills. */
+  .chip {
+    border-radius: 9999px;
+    padding: 0.4rem 0.95rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    color: var(--color-ink);
+    background: rgba(255, 255, 255, 0.5);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.66);
+    transition: background-color 0.15s ease;
+  }
+  .chip:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+  .chip-on,
+  .chip-on:hover {
+    color: #fff;
+    background: #1d1d1f;
+    border-color: transparent;
+  }
+
+  .badge {
+    display: inline-block;
+    border-radius: 9999px;
+    padding: 0.1rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* Status dots. */
+  .bead {
+    display: inline-flex;
+    height: 1.5rem;
+    width: 1.5rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    color: #fff;
+  }
+  .bead-done {
+    background: #30d158;
+  }
+  .bead-locked {
+    background: #ff453a;
+  }
+  .bead-open {
+    border: 2px solid rgba(70, 60, 130, 0.22);
+  }
+
+  .field {
+    display: block;
+    width: 100%;
+    margin-top: 0.4rem;
+    border-radius: 0.9rem;
+    padding: 0.6rem 0.9rem;
+    font-weight: 400;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(70, 60, 130, 0.16);
+    outline: none;
+  }
+  .field:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.2);
+  }
+
+  /* A revealed hint: yellow glass. */
+  .hint-card {
+    border-radius: 1.1rem;
+    padding: 0.9rem 1.1rem;
+    background: rgba(255, 214, 10, 0.22);
+    border: 1px solid rgba(255, 204, 0, 0.5);
+  }
+
+  /* The editor: a flat dark sheet, so code stays easy to read. */
+  .window {
+    background: #1c1c1e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 24px 60px -26px rgba(50, 30, 120, 0.55);
+  }
+  .window-bar {
+    background: rgba(255, 255, 255, 0.07);
+  }
+}
+
+/* Rendered Markdown (problem statements, hints and explanations). */
+.md {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+.md > * + * {
+  margin-top: 1rem;
+}
+.md h3 {
+  font-weight: 600;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+  margin-top: 2rem;
+}
+.md ul {
+  list-style: disc;
+  padding-left: 1.3rem;
+}
+.md ol {
+  list-style: decimal;
+  padding-left: 1.3rem;
+}
+.md li + li {
+  margin-top: 0.3rem;
+}
+.md code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: rgba(70, 60, 130, 0.1);
+  border-radius: 6px;
+  padding: 0.12em 0.4em;
+  letter-spacing: 0;
+}
+.md pre {
+  background: #1c1c1e;
+  color: #f5f5f7;
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+  line-height: 1.55;
+  font-size: 0.9rem;
+}
+.md pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+.md table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.92em;
+}
+.md th,
+.md td {
+  border-bottom: 1px solid var(--color-line);
+  padding: 0.55rem 1rem 0.55rem 0;
+  text-align: left;
+}
+.md th {
+  font-weight: 600;
+  color: var(--color-muted);
+  font-size: 0.85em;
+}
+.md a {
+  color: var(--color-link);
+}
+.md a:hover {
+  text-decoration: underline;
+}
+.md-compact {
+  font-size: 0.97rem;
+}
+
+.cm-editor {
+  height: 100%;
+  font-size: 14px;
+}
+.cm-editor .cm-scroller {
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+}
+
+/* Blur is expensive on older school machines; this keeps the look without it. */
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .glass-nav {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.94);
+  }
+}
