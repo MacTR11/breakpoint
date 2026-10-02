@@ -13,14 +13,7 @@ const at = (day: string) => new Date(`${day}T12:00:00Z`);
  * narrow screen.
  */
 export function YearActivity({ grid }: { grid: ActivityDay[][] }) {
-  // A month is named over the first week that starts in it, if there is room since the last name.
-  let last = -Infinity;
-  const months = grid.map((week, i) => {
-    const starts = i > 0 && at(week[0].day).getUTCMonth() !== at(grid[i - 1][0].day).getUTCMonth();
-    if (!starts || i - last < 3) return "";
-    last = i;
-    return monthLabel.format(at(week[0].day));
-  });
+  const months = monthNames(grid);
   return (
     <div>
       {/* Right to left outside, left to right inside: starts scrolled to the latest week. */}
@@ -46,6 +39,20 @@ export function YearActivity({ grid }: { grid: ActivityDay[][] }) {
       </p>
     </div>
   );
+}
+
+/** A month is named over the first week that starts in it, if there is room since the last name. */
+function monthNames(grid: ActivityDay[][]) {
+  const names: string[] = [];
+  let last = -Infinity;
+  for (let i = 0; i < grid.length; i++) {
+    const starts = i > 0 && at(grid[i][0].day).getUTCMonth() !== at(grid[i - 1][0].day).getUTCMonth();
+    if (starts && i - last >= 3) {
+      names.push(monthLabel.format(at(grid[i][0].day)));
+      last = i;
+    } else names.push("");
+  }
+  return names;
 }
 
 function Row({ weekday, grid }: { weekday: number; grid: ActivityDay[][] }) {
