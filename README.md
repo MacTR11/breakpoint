@@ -269,3 +269,5 @@ A few things are hidden for students to find. None of them changes a score.
 - Six secret awards (see `src/lib/awards.ts`).
 
 Useful commands: `npm run verify`, `npm run check` (homework states, paste flags, points and marks, the fix diff, palette search and debugger stepping), `python3 scripts/check-puzzles.py`, `npx tsx scripts/judge-smoke.ts` (checks the judge copes with broken and hostile code), `npm run lint`.
+
+**End-to-end tests.** `npm run e2e` drives the real site in a browser: signing in, solving, puzzles, hints, homework and the bell, paste recording and blocking, the debugger and console, search, teacher forms, mock papers, a phone-sized screen, and checks that no hidden test, model answer or unpaid hint ever reaches the page. It starts its own copy of the site on port 3100 with its own database (`prisma/e2e.db`, built from nothing each run by `e2e/prepare.ts`, which refuses any other database), so your data is never touched. The first time, run `npx playwright install chromium`. The tests are in `e2e/`.
