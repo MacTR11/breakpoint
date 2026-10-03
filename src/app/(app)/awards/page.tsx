@@ -1,8 +1,10 @@
+import { ArrivalMark } from "@/components/arrival-mark";
 import { AwardTile } from "@/components/award-tile";
 import { Page, PageHeader, tone } from "@/components/ui";
 import { YearActivity } from "@/components/year-activity";
 import { activity } from "@/lib/activity";
-import { AWARD_GROUPS, awardsFor } from "@/lib/awards";
+import Link from "next/link";
+import { AWARD_GROUPS, awardHref, awardsFor } from "@/lib/awards";
 import { requireUser } from "@/lib/session";
 
 export const metadata = { title: "Awards" };
@@ -27,6 +29,7 @@ export default async function AwardsPage() {
 
   return (
     <Page>
+      <ArrivalMark />
       <PageHeader
         path={[{ label: "awards" }]}
         title="Awards"
@@ -60,20 +63,22 @@ export default async function AwardsPage() {
           ) : (
             <ul className="mt-2 divide-y divide-line">
               {nearest.map((a) => (
-                <li key={a.id} className="flex items-center gap-3.5 py-2.5">
-                  <span className="icon !w-12" style={tone(a.color)} aria-hidden="true">
-                    {a.code}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-semibold">{a.title}</span>
-                    <span className="block text-[13px] text-muted">{a.description}</span>
-                    <span className="meter mt-1.5 block" style={tone(a.color)} aria-hidden="true">
-                      <span style={{ width: `${(a.progress[0] / a.progress[1]) * 100}%` }} />
+                <li key={a.id}>
+                  <Link href={awardHref(a) ?? "/problems"} className="box-link -mx-2 flex items-center gap-3.5 rounded-[14px] px-2 py-2.5" style={tone(a.color)}>
+                    <span className="icon !w-12" style={tone(a.color)} aria-hidden="true">
+                      {a.code}
                     </span>
-                  </span>
-                  <span className="text-sm font-semibold tabular-nums text-muted">
-                    {a.progress[0]}/{a.progress[1]}
-                  </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold">{a.title}</span>
+                      <span className="block text-[13px] text-muted">{a.description}</span>
+                      <span className="meter mt-1.5 block" style={tone(a.color)} aria-hidden="true">
+                        <span style={{ width: `${(a.progress[0] / a.progress[1]) * 100}%` }} />
+                      </span>
+                    </span>
+                    <span className="text-sm font-semibold tabular-nums text-muted">
+                      {a.progress[0]}/{a.progress[1]}
+                    </span>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -81,7 +86,7 @@ export default async function AwardsPage() {
         </section>
       </div>
 
-      <section className="card mt-4">
+      <section id="your-year" className="card mt-4 scroll-mt-20">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
           <h2 className="cap">Your year</h2>
           <p className="flex flex-wrap gap-x-5 text-[13px] text-muted">
@@ -119,8 +124,13 @@ export default async function AwardsPage() {
             </h2>
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {inGroup.map((award, index) => (
-                <li key={award.id} className={`grid ${award.earned ? "sticker" : "[&>div]:bg-card"}`} style={{ "--tilt": `${[-1.2, 0.8, -0.6, 1.1][index % 4]}deg` } as React.CSSProperties}>
-                  <AwardTile award={award} />
+                <li
+                  key={award.id}
+                  id={award.id}
+                  className={`target-ring grid scroll-mt-24 ${award.earned ? "sticker" : "[&>*]:!bg-card"}`}
+                  style={{ "--tilt": `${[-1.2, 0.8, -0.6, 1.1][index % 4]}deg` } as React.CSSProperties}
+                >
+                  <AwardTile award={award} href={awardHref(award)} />
                 </li>
               ))}
             </ul>

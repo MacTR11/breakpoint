@@ -36,6 +36,43 @@ const CLUES: Record<string, string> = {
   "friday-13": "Unlucky for some.",
 };
 
+/** Where to go to work on an award: the challenges, page or part of Home that earns it. */
+const AWARD_LINKS: Record<string, string> = {
+  "in-order": "/problems?type=order",
+  "first-fix": "/problems?type=fix",
+  "ten-fixes": "/problems?type=fix",
+  "bug-hunter": "/problems?type=fix",
+  "clean-run": "/problems?type=write",
+  "sharp-eye": "/problems?type=puzzle",
+  puzzler: "/problems?type=puzzle",
+  "puzzle-master": "/problems?type=puzzle",
+  tracer: "/problems?type=trace",
+  unassisted: "/problems?difficulty=HARD",
+  "heavy-lifting": "/problems?difficulty=HARD",
+  "exam-ready": "/problems?track=exam",
+  "exam-season": "/problems?track=exam",
+  "exam-marathon": "/problems?track=exam",
+  "full-paper": "/problems?track=exam",
+  "mock-sitter": "/mock",
+  "all-sorts": "/syllabus#sorting",
+  "seek-and-find": "/syllabus#searching",
+  "all-rounder": "/syllabus",
+  completionist: "/syllabus",
+  "hat-trick": "/syllabus",
+  "five-topics": "/syllabus",
+  "off-the-mark": "/syllabus#warmup",
+  "three-days": "/#streak",
+  "full-week": "/#streak",
+  fortnight: "/#streak",
+  month: "/#streak",
+  "daily-habit": "/#today",
+  "on-time": "/homework",
+  "on-the-clock": "/contests",
+};
+
+/** Where an award leads, or null for a secret one, which gives nothing away. */
+export const awardHref = (award: Pick<Award, "id" | "secret">) => (award.secret ? null : (AWARD_LINKS[award.id] ?? "/problems"));
+
 /** The headings awards are shown under, in order. */
 export const AWARD_GROUPS = ["Solving", "Fixing", "Accuracy", "Taking it on", "Exams", "Algorithms", "Breadth", "Habits", "Competing", "Secret"];
 
@@ -128,10 +165,10 @@ export async function awardsFor(userId: string): Promise<Award[]> {
   const kindsByDay = new Map<string, Set<string>>();
   for (const s of solveRows) {
     const day = londonDay(s.solvedAt);
-    const kind = s.problem.kind === "PUZZLE" ? "puzzle" : s.problem.style === "FIX" ? "fix" : "write";
+    const kind = s.problem.kind === "PUZZLE" ? "puzzle" : s.problem.style === "FIX" ? "fix" : s.problem.style === "ORDER" ? "order" : "write";
     kindsByDay.set(day, (kindsByDay.get(day) ?? new Set()).add(kind));
   }
-  const tripleThreat = [...kindsByDay.values()].some((kinds) => kinds.size === 3);
+  const tripleThreat = [...kindsByDay.values()].some((kinds) => kinds.has("write") && kinds.has("fix") && kinds.has("puzzle"));
 
   const make =
     (group: string, secret = false) =>
@@ -165,6 +202,7 @@ export async function awardsFor(userId: string): Promise<Award[]> {
     solving("fifty", "50", "Half century", "Solve 50 challenges.", GREEN, solves.length, 50),
     solving("hundred", "100", "Centurion", "Solve 100 challenges.", GREEN, solves.length, 100),
     solving("two-hundred", "200", "Double century", "Solve 200 challenges.", GREEN, solves.length, 200),
+    solving("in-order", "1↕2", "In good order", "Put 5 programs in order.", GREEN, count((s) => s.style === "ORDER"), 5),
     fixing("first-fix", "fix", "Bug squashed", "Fix your first broken program.", RED, count((s) => s.style === "FIX"), 1),
     fixing("ten-fixes", "x10", "Exterminator", "Fix 10 broken programs.", RED, count((s) => s.style === "FIX"), 10),
     fixing("bug-hunter", "x25", "Bug hunter", "Fix 25 broken programs.", RED, count((s) => s.style === "FIX"), 25),
@@ -172,6 +210,7 @@ export async function awardsFor(userId: string): Promise<Award[]> {
     accuracy("sharp-eye", "==", "Sharp eye", "Answer 10 puzzles correctly at the first attempt.", BLUE, count((s) => s.kind === "PUZZLE" && s.attempts === 1), 10),
     accuracy("puzzler", "?", "Puzzler", "Solve 25 puzzles.", BLUE, count((s) => s.kind === "PUZZLE"), 25),
     accuracy("puzzle-master", "??", "Puzzle master", "Solve 50 puzzles.", BLUE, count((s) => s.kind === "PUZZLE"), 50),
+    accuracy("tracer", "x=", "Tracer", "Complete 5 trace tables.", BLUE, count((s) => s.style === "TRACE"), 5),
     accuracy("own-steam", "self", "Under your own steam", "Solve 20 challenges without using a hint on them.", BLUE, count((s) => !hinted.has(s.problemId)), 20),
     taking("unassisted", "solo", "Unassisted", "Solve a hard challenge without using a hint.", PURPLE, count((s) => s.difficulty === "HARD" && !hinted.has(s.problemId)), 1),
     taking("heavy-lifting", "hard", "Heavy lifting", "Solve 5 hard challenges.", PURPLE, count((s) => s.difficulty === "HARD"), 5),

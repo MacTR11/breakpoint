@@ -44,8 +44,8 @@ const oneDecimal = (value: number) => Math.round(value * 10) / 10;
  * only points scored since then count. Averages are per student in the class,
  * including those who have not started, so signing everyone up matters.
  */
-export async function classStandings(scope: { from?: Date } = {}): Promise<ClassStanding[]> {
-  const since = scope.from ? { gte: scope.from } : undefined;
+export async function classStandings(scope: { from?: Date; to?: Date } = {}): Promise<ClassStanding[]> {
+  const since = scope.from || scope.to ? { ...(scope.from ? { gte: scope.from } : {}), ...(scope.to ? { lt: scope.to } : {}) } : undefined;
   const [classes, solves, penalties] = await Promise.all([
     db.class.findMany({ orderBy: { name: "asc" }, include: { students: { where: { role: "STUDENT" }, select: { id: true } } } }),
     db.solve.groupBy({ by: ["userId"], where: since ? { solvedAt: since } : {}, _sum: { points: true }, _count: { _all: true } }),

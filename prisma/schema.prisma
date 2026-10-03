@@ -12,14 +12,14 @@ datasource db {
 // Students are created by the teacher (one at a time or from a CSV). The
 // teacher's own sign-in is set in .env, so their row never holds a password.
 model User {
-  id           String   @id @default(cuid())
-  username     String   @unique // lower case; what is typed to sign in
+  id           String    @id @default(cuid())
+  username     String    @unique // lower case; what is typed to sign in
   name         String
-  passwordHash String   @default("") // scrypt, see src/lib/passwords.ts; empty means no password works
-  role         String   @default("STUDENT") // STUDENT | TEACHER
-  sessionEpoch Int      @default(0) // raised when the password changes, which signs the old password's sessions out
+  passwordHash String    @default("") // scrypt, see src/lib/passwords.ts; empty means no password works
+  role         String    @default("STUDENT") // STUDENT | TEACHER
+  sessionEpoch Int       @default(0) // raised when the password changes, which signs the old password's sessions out
   classId      String? // the teaching group, for students
-  createdAt    DateTime @default(now())
+  createdAt    DateTime  @default(now())
   lastSeenAt   DateTime?
 
   class       Class?       @relation(fields: [classId], references: [id], onDelete: SetNull)
@@ -28,6 +28,7 @@ model User {
   hintUnlocks HintUnlock[]
   dailyBonus  DailyBonus[]
   mockPapers  MockPaper[]
+  liveOpens   LiveOpen[]
 
   @@index([classId])
 }
@@ -39,8 +40,9 @@ model Class {
   year      String   @default("LOWER") // LOWER sixth | UPPER sixth
   createdAt DateTime @default(now())
 
-  students User[]
-  homework Homework[]
+  students    User[]
+  homework    Homework[]
+  liveLessons LiveLesson[]
 }
 
 // Site-wide choices the teacher makes in the dashboard, by name.
@@ -93,24 +95,25 @@ model Problem {
   contests    ContestProblem[]
   hintUnlocks HintUnlock[]
   homework    HomeworkProblem[]
+  liveLessons LiveLesson[]
 }
 
 model Submission {
-  id        String   @id @default(cuid())
-  userId    String
-  problemId String
-  code      String // the code, or the answer given to a puzzle
-  status    String // ACCEPTED | WRONG | ERROR | TIMEOUT
-  passed    Int
-  total     Int
-  penalty   Int      @default(0) // points lost for a wrong puzzle answer
+  id           String   @id @default(cuid())
+  userId       String
+  problemId    String
+  code         String // the code, or the answer given to a puzzle
+  status       String // ACCEPTED | WRONG | ERROR | TIMEOUT
+  passed       Int
+  total        Int
+  penalty      Int      @default(0) // points lost for a wrong puzzle answer
   // How the code was written, as reported by the student's browser. A guide
   // for a conversation, never proof: see src/lib/integrity.ts.
-  pastedChars  Int @default(0) // characters pasted or dropped in from outside the editor
-  largestPaste Int @default(0) // the biggest single paste
-  typedChars   Int @default(0) // characters typed
-  seconds      Int @default(0) // time the editor was open before submitting
-  createdAt DateTime @default(now())
+  pastedChars  Int      @default(0) // characters pasted or dropped in from outside the editor
+  largestPaste Int      @default(0) // the biggest single paste
+  typedChars   Int      @default(0) // characters typed
+  seconds      Int      @default(0) // time the editor was open before submitting
+  createdAt    DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
@@ -229,4 +232,32 @@ model MockPaper {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, startedAt])
+}
+
+// A challenge the teacher puts on every screen in a lesson, for one class or
+// for everyone. One runs at a time; see src/lib/live.ts.
+model LiveLesson {
+  id        String    @id @default(cuid())
+  problemId String
+  classId   String? // null: every student
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+
+  problem Problem    @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  class   Class?     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  opens   LiveOpen[]
+
+  @@index([endedAt])
+}
+
+// A student who has opened a live lesson's challenge.
+model LiveOpen {
+  lessonId String
+  userId   String
+  openedAt DateTime @default(now())
+
+  lesson LiveLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([lessonId, userId])
 }

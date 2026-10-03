@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Icon } from "@/components/icons";
 import { secretWord, setTheme, toast } from "@/lib/eggs";
 import { search, type PaletteItem } from "@/lib/palette";
 
@@ -87,10 +88,7 @@ export function CommandPalette({ pages }: { pages: { href: string; label: string
   return (
     <div ref={box}>
       <button type="button" onClick={() => show(!open)} aria-expanded={open} aria-label="Search" title={`Search (${isMac() ? "⌘K" : "Ctrl K"})`} className="round-button">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
-          <circle cx="11" cy="11" r="7" />
-          <path d="m20 20-3.6-3.6" />
-        </svg>
+        <Icon name="magnifying-glass" className="text-[18px]" />
       </button>
       {open && (
         <div className="palette rise" role="dialog" aria-label="Search">

@@ -2,6 +2,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import type { TestCase } from "../src/lib/types";
 
+/** A trace table as the student first sees it: column headings, and rows of cells that are given or left blank (null). */
+export type TraceSpec = { columns: string[]; rows: (string | null)[][] };
+
 export type ContentProblem = {
   slug: string;
   sortOrder: number;
@@ -11,7 +14,8 @@ export type ContentProblem = {
   topic: string;
   track: string;
   specRef: string;
-  style?: "WRITE" | "FIX";
+  /** CODE: WRITE from scratch, FIX the broken starter, or ORDER the given lines. PUZZLE: TRACE for a trace table. */
+  style?: "WRITE" | "FIX" | "ORDER" | "TRACE";
   hints: string[];
   points: number;
   contest?: string;
@@ -21,8 +25,10 @@ export type ContentProblem = {
   banned?: string[];
   starter?: string;
   solution?: string;
-  options?: string[];
-  answer?: number;
+  /** A puzzle's options; for a trace table, its columns and the cells given (null where the student writes). */
+  options?: string[] | TraceSpec;
+  /** A puzzle's answer index; for a trace table, every cell of the finished table. */
+  answer?: number | string[][];
   explanation?: string;
 };
 

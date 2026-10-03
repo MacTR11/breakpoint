@@ -10,6 +10,7 @@ import { duration, flagsByChallenge, pasteFlag } from "@/lib/integrity";
 import { papersOf } from "@/lib/mock";
 import { MAX_PUZZLE_ATTEMPTS, parseOptions } from "@/lib/problems";
 import { requireTeacher } from "@/lib/session";
+import { parseTraceAnswer, parseTraceSpec, sameCell } from "@/lib/trace-table";
 import { resetAttempts } from "../../actions";
 
 const statusWord: Record<string, [string, string]> = { ACCEPTED: ["Passed", "text-pass"], WRONG: ["Failed", "text-fail"], ERROR: ["Error", "text-fail"], TIMEOUT: ["Too slow", "text-warn"] };
@@ -169,6 +170,7 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
             <ul className="border-y border-line divide-y divide-line">
               {student.submissions.slice(0, 50).map((submission) => {
                 const isPuzzle = submission.problem.kind === "PUZZLE";
+                const trace = submission.problem.style === "TRACE" ? parseTraceSpec(submission.problem.options) : null;
                 const options = isPuzzle ? parseOptions(submission.problem) : [];
                 const [word, color] = statusWord[submission.status] ?? [submission.status, "text-muted"];
                 const flag = isPuzzle ? null : pasteFlag(submission);
@@ -180,6 +182,7 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
                         <span>{submission.problem.title}</span>
                         <span className="text-[13px] tabular-nums text-muted">
                           {!isPuzzle && `${submission.passed}/${submission.total}`}
+                          {trace && `${submission.passed}/${submission.total} boxes`}
                           {submission.penalty > 0 && ` −${submission.penalty} pts`}
                         </span>
                         {flag && <Tag color="var(--warn)">Large paste</Tag>}
@@ -191,7 +194,9 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
                           {submission.seconds > 0 && `, editor open ${duration(submission.seconds)}`}.
                         </p>
                       )}
-                      {isPuzzle ? (
+                      {trace ? (
+                        <TraceAnswer columns={trace.columns} given={trace.rows} written={parseTraceAnswer(submission.code)} answer={parseTraceAnswer(submission.problem.answer)} />
+                      ) : isPuzzle ? (
                         <p className="pb-3 text-sm">Answered: {options[Number(submission.code)] ?? submission.code}</p>
                       ) : (
                         <div className="mb-3">
@@ -207,5 +212,37 @@ export default async function StudentPage({ params }: PageProps<"/teacher/studen
         </section>
       </div>
     </>
+  );
+}
+
+/** A student's trace table as they handed it in, wrong boxes in red. */
+function TraceAnswer({ columns, given, written, answer }: { columns: string[]; given: (string | null)[][]; written: string[][]; answer: string[][] }) {
+  return (
+    <div className="mb-3 overflow-x-auto rounded-[14px] border border-line">
+      <table className="trace-sheet">
+        <thead>
+          <tr>
+            {columns.map((column) => (
+              <th key={column}>{column}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {given.map((row, r) => (
+            <tr key={r}>
+              {row.map((cell, c) => {
+                const mine = written[r]?.[c] ?? "";
+                const className = cell !== null ? "trace-given" : sameCell(mine, answer[r]?.[c] ?? "") ? "trace-right" : "trace-wrong";
+                return (
+                  <td key={c} className={className}>
+                    {cell ?? mine}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

@@ -73,7 +73,7 @@ export function SolvedDialog({ celebration, summary, onClose }: { celebration: C
         </dl>
         {rewards.awards.length > 0 && (
           <p className="mt-3 rounded-[14px] bg-paper px-3.5 py-2.5 text-left text-sm">
-            <span className="font-semibold text-hint">New award{rewards.awards.length === 1 ? "" : "s"}:</span> {rewards.awards.join(", ")}
+            <span className="font-semibold text-hint">New award{rewards.awards.length === 1 ? "" : "s"}:</span> {rewards.awards.map((award) => award.title).join(", ")}
           </p>
         )}
 

@@ -57,7 +57,7 @@ test("a puzzle: a wrong answer costs points, a right second answer earns half", 
   const verdict = page.getByRole("alert").filter({ hasText: "Not right." });
   await expect(verdict).toContainText("1 attempt left");
 
-  await page.getByRole("radio").nth(p.answer!).click();
+  await page.getByRole("radio").nth(p.answer as number).click();
   await page.getByRole("button", { name: "Check answer" }).click();
   await expect(page.getByText("Correct.")).toBeVisible();
   await expect(page.getByText("(second attempt)")).toBeVisible();

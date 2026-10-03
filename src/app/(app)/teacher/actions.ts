@@ -87,6 +87,10 @@ export async function saveProblem(_previous: FormState, formData: FormData): Pro
   const points = Number(text(formData, "points"));
   const description = code(formData, "description");
 
+  // The form has no fields for these, so saving would quietly break them.
+  if (id && (await db.problem.findUnique({ where: { id }, select: { style: true } }))?.style.match(/^(ORDER|TRACE)$/)) {
+    return { errors: ["Put-in-order and trace-table challenges are edited in their file in content/problems."], values: typed(formData) };
+  }
   if (!title) errors.push("Give the problem a title.");
   if (!slug) errors.push("The web address could not be worked out from the title.");
   if (!DIFFICULTIES.includes(difficulty as (typeof DIFFICULTIES)[number])) errors.push("Choose a difficulty.");

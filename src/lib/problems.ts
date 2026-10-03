@@ -68,7 +68,8 @@ export function pointsFor(problem: Pick<Problem, "kind" | "points">, wrongAttemp
  * Points lost for each wrong puzzle answer. With n options a random guess is
  * right 1 time in n, so losing points/(n-1) each time makes guessing worthless.
  */
-export function puzzlePenalty(problem: Pick<Problem, "points" | "options">) {
+export function puzzlePenalty(problem: Pick<Problem, "points" | "options"> & { style?: string }) {
+  if (problem.style === "TRACE") return 0;
   const options = parseOptions(problem).length;
   return Math.ceil(problem.points / Math.max(options > 1 ? options - 1 : 4, 1));
 }

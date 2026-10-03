@@ -58,7 +58,7 @@ async function main() {
       solution: p.solution ?? null,
       banned: p.banned ? JSON.stringify(p.banned) : null,
       options: p.options ? JSON.stringify(p.options) : null,
-      answer: p.answer === undefined ? null : String(p.answer),
+      answer: p.answer === undefined ? null : typeof p.answer === "number" ? String(p.answer) : JSON.stringify(p.answer),
       explanation: p.explanation ?? null,
     };
     const saved = await db.problem.upsert({ where: { slug: p.slug }, create: { slug: p.slug, ...data }, update: data });

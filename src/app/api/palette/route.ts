@@ -1,3 +1,4 @@
+import { kindGlyph } from "@/components/ui";
 import { allClasses } from "@/lib/classes";
 import { db } from "@/lib/db";
 import type { PaletteItem } from "@/lib/palette";
@@ -5,7 +6,6 @@ import { difficultyLabel, isLive, practiceFilter } from "@/lib/problems";
 import { getCurrentUser } from "@/lib/session";
 import { trackColor, trackTitle } from "@/lib/tracks";
 
-const glyph = (kind: string, style: string) => (kind === "PUZZLE" ? "?" : style === "FIX" ? "fix" : "def");
 const dateFormat = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/London" });
 
 /**
@@ -36,7 +36,7 @@ export async function GET() {
         .filter(Boolean)
         .join(" · "),
       href: `/problems/${p.slug}`,
-      icon: { text: glyph(p.kind, p.style), color: trackColor(p.track) },
+      icon: { text: kindGlyph(p.kind, p.style), color: trackColor(p.track) },
     })),
     ...contests.map((c) => ({
       group: "Competitions" as const,

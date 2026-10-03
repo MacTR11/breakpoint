@@ -153,7 +153,7 @@ for fn in sorted(os.listdir(d)):
     slug = re.match(r'\d+-(.+)\.md', fn).group(1)
     text = open(os.path.join(d, fn)).read()
     meta = json.loads(text.split('--- description')[0].replace('--- meta', ''))
-    if meta['kind'] != 'PUZZLE': continue
+    if meta['kind'] != 'PUZZLE' or meta.get('style') == 'TRACE': continue
     marked = meta['options'][meta['answer']]
     if meta.get('check') == 'run':
         got = run_block(text.split('--- description')[1].split('\n--- ')[0])

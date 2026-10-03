@@ -4,10 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { signOutAction } from "@/app/actions";
+import { Icon, type IconName } from "@/components/icons";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { Notice } from "@/lib/notifications";
 
-export type NavLink = { href: string; label: string; short: string; glyph: string };
+/** A main place on the site. `glyph` is its word of code in the command palette; `icon` is drawn in the bars. */
+export type NavLink = { href: string; label: string; short: string; glyph: string; icon: IconName };
 
 const isActive = (pathname: string, href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
 
@@ -51,6 +53,7 @@ export function TopLinks({ links }: { links: NavLink[] }) {
         <span ref={pill} className="nav-pill" aria-hidden="true" />
         {links.map((link) => (
           <Link key={link.href} href={link.href} data-href={link.href} aria-current={link.href === active ? "page" : undefined}>
+            <Icon name={link.icon} filled={link.href === active} />
             {link.label}
           </Link>
         ))}
@@ -59,17 +62,64 @@ export function TopLinks({ links }: { links: NavLink[] }) {
   );
 }
 
-/** The bar along the bottom of a phone or tablet: five places, each with a word of code for an icon. */
+/** A tiny tap on phones that allow it (Android); iPhones ignore it. */
+const tick = () => {
+  try {
+    navigator.vibrate?.(8);
+  } catch {}
+};
+
+/**
+ * The bar along the bottom of a phone or tablet: five places, each an icon
+ * that fills in when chosen. A soft pill slides to the chosen one, and its
+ * icon pops as it arrives.
+ */
 export function TabBar({ links }: { links: NavLink[] }) {
   const pathname = usePathname();
+  const bar = useRef<HTMLElement>(null);
+  const blob = useRef<HTMLSpanElement>(null);
+  const active = links.find((l) => isActive(pathname, l.href))?.href ?? null;
+  const first = useRef(true);
+
+  useLayoutEffect(() => {
+    const icon = active ? bar.current?.querySelector<HTMLElement>(`[data-href="${active}"] .tab-icon`) : null;
+    const place = () => {
+      if (!blob.current) return;
+      if (!icon) {
+        blob.current.style.opacity = "0";
+        return;
+      }
+      // Layout positions, so a tap still squashing the icon does not throw it off.
+      blob.current.style.width = `${icon.offsetWidth}px`;
+      blob.current.style.transform = `translate(${icon.offsetLeft}px, ${icon.offsetTop}px)`;
+      blob.current.style.opacity = "1";
+    };
+    place();
+    // The icon pops when the page changes to it, not when the site first loads.
+    if (!first.current && icon) {
+      icon.classList.remove("nav-pop");
+      void icon.offsetWidth;
+      icon.classList.add("nav-pop");
+    }
+    first.current = false;
+    const ready = requestAnimationFrame(() => bar.current?.setAttribute("data-ready", ""));
+    const observer = new ResizeObserver(place);
+    if (bar.current) observer.observe(bar.current);
+    return () => {
+      cancelAnimationFrame(ready);
+      observer.disconnect();
+    };
+  }, [active]);
+
   return (
-    <nav aria-label="Main" className="tab-bar lg:hidden">
+    <nav ref={bar} aria-label="Main" className="tab-bar lg:hidden">
+      <span ref={blob} className="tab-blob" aria-hidden="true" />
       {links.map((link) => {
-        const active = isActive(pathname, link.href);
+        const on = link.href === active;
         return (
-          <Link key={link.href} href={link.href} aria-current={active ? "page" : undefined}>
-            <span className="tab-glyph" aria-hidden="true">
-              {link.glyph}
+          <Link key={link.href} href={link.href} data-href={link.href} aria-current={on ? "page" : undefined} onClick={tick}>
+            <span className="tab-icon" onAnimationEnd={(event) => event.currentTarget.classList.remove("nav-pop")}>
+              <Icon name={link.icon} filled={on} />
             </span>
             {link.short}
           </Link>
@@ -160,10 +210,7 @@ export function Bell({ userId, notices }: { userId: string; notices: Notice[] })
         className="round-button"
         data-ring={unread > 0 ? "" : undefined}
       >
-        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-        </svg>
+        <Icon name="bell" filled={open} className="text-[19px]" />
         {unread > 0 && <span className="bell-count">{unread}</span>}
       </button>
       {open && (

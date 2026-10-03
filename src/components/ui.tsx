@@ -1,4 +1,6 @@
 import Link from "next/link";
+import type { IconName } from "@/components/icons";
+import { ChipRow, SlidingTabs } from "@/components/sliding-tabs";
 import { difficultyLabel } from "@/lib/problems";
 import { TRACKS, trackColor, trackTitle } from "@/lib/tracks";
 
@@ -6,10 +8,11 @@ type Tone = React.CSSProperties & { "--tone"?: string; "--topic"?: string };
 export const tone = (color: string): Tone => ({ "--tone": color });
 
 /** What the student is asked to do: write code, repair code, or answer a question. */
-export const kindLabel = (kind: string, style?: string) => (kind === "PUZZLE" ? "Puzzle" : style === "FIX" ? "Fix the bug" : "Write code");
+export const kindLabel = (kind: string, style?: string) =>
+  kind === "PUZZLE" ? (style === "TRACE" ? "Trace table" : "Puzzle") : style === "FIX" ? "Fix the bug" : style === "ORDER" ? "Put in order" : "Write code";
 
 /** The word of code that stands for each kind of challenge. */
-const kindGlyph = (kind: string, style?: string) => (kind === "PUZZLE" ? "?" : style === "FIX" ? "fix" : "def");
+export const kindGlyph = (kind: string, style?: string) => (kind === "PUZZLE" ? (style === "TRACE" ? "x=" : "?") : style === "FIX" ? "fix" : style === "ORDER" ? "1↕2" : "def");
 
 /** A challenge's icon: its topic's colour, holding the glyph for its kind. */
 export function KindIcon({ kind, style, track }: { kind: string; style?: string; track: string }) {
@@ -143,22 +146,21 @@ export function PageHeader({ path, title, intro, children }: { path: { label: st
 }
 
 /** A row of mutually exclusive filters: a segmented control, or coloured chips when the options are topics. */
-export function FilterRow({ label, options }: { label: string; options: { label: string; href: string; active: boolean; track?: string }[] }) {
+/**
+ * A row of filters: topics as coloured chips, anything else as tabs on a
+ * sliding pill (with an icon or level bars when given).
+ */
+export function FilterRow({ label, options }: { label: string; options: { label: string; href: string; active: boolean; track?: string; icon?: IconName; level?: number }[] }) {
   const chips = options.some((option) => option.track);
+  if (!chips) return <SlidingTabs label={label} items={options} keepScroll />;
   return (
-    <div className={chips ? "flex flex-wrap gap-1.5" : "segmented"} role="group" aria-label={label}>
+    <ChipRow label={label}>
       {options.map((option) => (
-        <Link
-          key={option.href}
-          href={option.href}
-          aria-current={option.active ? "true" : undefined}
-          className={chips ? "chip" : undefined}
-          style={chips ? tone(option.track ? trackColor(option.track) : "#8e8e93") : undefined}
-        >
+        <Link key={option.href} href={option.href} aria-current={option.active ? "true" : undefined} scroll={false} className="chip" style={tone(option.track ? trackColor(option.track) : "#8e8e93")}>
           {option.label}
         </Link>
       ))}
-    </div>
+    </ChipRow>
   );
 }
 

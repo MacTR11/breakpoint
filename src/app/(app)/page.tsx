@@ -5,10 +5,12 @@ import { Countdown } from "@/components/countdown";
 import { SolveCalendar } from "@/components/solve-calendar";
 import { Page, Tag, TopicTile, kindLabel, levelLabel, link, ordinal, signed, tone } from "@/components/ui";
 import { HomeworkTasks } from "@/components/homework-list";
+import { WeeklyRace } from "@/components/weekly-race";
 import { YourClass } from "@/components/your-class";
 import { activity } from "@/lib/activity";
 import { awardsFor } from "@/lib/awards";
 import { classStandings } from "@/lib/classes";
+import { weeklyRace } from "@/lib/race";
 import { dailyChallenge } from "@/lib/daily";
 import { db } from "@/lib/db";
 import { hintWallet } from "@/lib/hints";
@@ -21,11 +23,14 @@ import { specialDay } from "@/lib/special-days";
 import { TRACKS, trackColor, trackGlyph } from "@/lib/tracks";
 import { DIFFICULTIES } from "@/lib/types";
 
+// A figure in the summary card: a box that opens the page behind it.
+const stat = "box-link block rounded-[16px] p-2.5";
+
 export default async function HomePage() {
   const user = await requireUser();
   const now = new Date();
 
-  const [problems, statusOf, points, wallet, board, history, daily, awards, liveContests, upcoming, classes, homework] = await Promise.all([
+  const [problems, statusOf, points, wallet, board, history, daily, awards, liveContests, upcoming, classes, homework, race] = await Promise.all([
     db.problem.findMany({
       where: practiceFilter(),
       orderBy: [{ sortOrder: "asc" }],
@@ -42,6 +47,7 @@ export default async function HomePage() {
     db.contest.findFirst({ where: { startsAt: { gt: now } }, orderBy: { startsAt: "asc" } }),
     user.classId ? classStandings() : Promise.resolve([]),
     homeworkFor(user),
+    weeklyRace(now),
   ]);
   const dueHomework = current(homework, now);
 
@@ -95,9 +101,16 @@ export default async function HomePage() {
       <p className="mt-1 text-muted">{nudge}</p>
       {today && <p className="rise mt-2 text-sm font-medium text-hint">{today}</p>}
 
+      <WeeklyRace race={race} classId={user.classId} />
+
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,5fr)_minmax(0,4fr)]">
         {daily ? (
-          <Link href={`/problems/${daily.problem.slug}`} className="tile flex min-h-[12rem] flex-col justify-between rounded-[22px] p-[1.375rem]" style={tone(trackColor(daily.problem.track))}>
+          <Link
+            id="today"
+            href={`/problems/${daily.problem.slug}`}
+            className="tile flex min-h-[12rem] scroll-mt-20 flex-col justify-between rounded-[22px] p-[1.375rem]"
+            style={tone(trackColor(daily.problem.track))}
+          >
             <span className="glyph top-auto right-5 bottom-4 text-[4.5rem]" aria-hidden="true">
               {trackGlyph(daily.problem.track)}
             </span>
@@ -123,31 +136,32 @@ export default async function HomePage() {
           <div className="card flex min-h-[12rem] items-center text-muted">You have solved every challenge the daily pick draws from. Impressive.</div>
         )}
 
-        <div className="card grid grid-cols-2 gap-x-4 gap-y-5">
-          <div>
+        {/* Each figure opens the page that explains it. */}
+        <div className="card grid grid-cols-2 gap-x-2 gap-y-2 !p-3">
+          <Link href="/leaderboard" className={stat}>
             <p className="cap">Points</p>
             <p className="figure text-[2.1rem]">{signed(points)}</p>
             <p className="text-[13px] text-muted">{user.role === "TEACHER" ? "teachers are not ranked" : rank ? `${ordinal(rank)} of ${board.length}` : "solve one to be ranked"}</p>
-          </div>
-          <div>
+          </Link>
+          <Link href="/syllabus" className={stat}>
             <p className="cap">Solved</p>
             <p className="figure text-[2.1rem]">{solvedInPractice}</p>
             <p className="text-[13px] text-muted">of {problems.length} in practice</p>
-          </div>
-          <div>
+          </Link>
+          <Link href="#streak" className={stat}>
             <p className="cap">Streak</p>
             <p className="figure text-[2.1rem] text-streak">{history.streak}</p>
             <p className="text-[13px] text-muted">
               {days(history.streak).replace(/^\d+ /, "")} · best {history.best}
             </p>
-          </div>
-          <div>
+          </Link>
+          <Link href="/problems" className={stat}>
             <p className="cap">Hints</p>
             <p className="figure text-[2.1rem] text-hint">{wallet.balance}</p>
             <p className="text-[13px] text-muted">
               +1 in {wallet.untilNext} solve{wallet.untilNext === 1 ? "" : "s"}
             </p>
-          </div>
+          </Link>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -214,7 +228,7 @@ export default async function HomePage() {
             </section>
           )}
 
-          <section className="card">
+          <section id="streak" className="card scroll-mt-20">
             <h2 className="cap">Your last {history.grid.length} weeks</h2>
             <div className="mt-3 overflow-x-auto">
               <SolveCalendar grid={history.grid} />
@@ -234,7 +248,7 @@ export default async function HomePage() {
             <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-2">
               {[...shownAwards.filter((a) => a.earned), ...nearest].slice(0, 6).map((award) => (
                 <li key={award.id} className="grid">
-                  <AwardTile award={award} compact />
+                  <AwardTile award={award} compact href={`/awards#${award.id}`} />
                 </li>
               ))}
             </ul>

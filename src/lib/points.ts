@@ -2,9 +2,13 @@
 // program from nothing earns more than repairing one or answering a question.
 type Level = "EASY" | "MEDIUM" | "HARD";
 
-export const POINTS: Record<"write" | "fix" | "puzzle", Record<Level, number>> = {
+export const POINTS: Record<"write" | "fix" | "order" | "trace" | "puzzle", Record<Level, number>> = {
   write: { EASY: 10, MEDIUM: 25, HARD: 50 },
   fix: { EASY: 10, MEDIUM: 20, HARD: 40 },
+  // Putting given lines in order: easier than writing them.
+  order: { EASY: 5, MEDIUM: 10, HARD: 20 },
+  // A whole trace table is more work than one puzzle answer.
+  trace: { EASY: 10, MEDIUM: 15, HARD: 25 },
   puzzle: { EASY: 5, MEDIUM: 10, HARD: 20 },
 };
 
@@ -14,7 +18,7 @@ export const FIRST_STEPS_POINTS = 5;
 export const POINTS_PER_MARK = 5;
 
 export function suggestedPoints(kind: string, style: string | undefined, difficulty: string) {
-  const column = kind === "PUZZLE" ? "puzzle" : style === "FIX" ? "fix" : "write";
+  const column = kind === "PUZZLE" ? (style === "TRACE" ? "trace" : "puzzle") : style === "FIX" ? "fix" : style === "ORDER" ? "order" : "write";
   return POINTS[column][(difficulty as Level) in POINTS[column] ? (difficulty as Level) : "EASY"];
 }
 

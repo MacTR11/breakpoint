@@ -3,6 +3,7 @@ import { AccountMenu, Bell, TabBar, TopLinks, type NavLink } from "@/components/
 import { Wordmark } from "@/components/brand";
 import { CommandPalette } from "@/components/command-palette";
 import { EasterEggs } from "@/components/easter-eggs";
+import { LiveBanner } from "@/components/live-banner";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { activity } from "@/lib/activity";
 import { siteName } from "@/lib/config";
@@ -11,13 +12,13 @@ import { hintWallet } from "@/lib/hints";
 import { noticesFor } from "@/lib/notifications";
 import { requireUser } from "@/lib/session";
 
-const HOME: NavLink = { href: "/", label: "Home", short: "Home", glyph: "~" };
-const PRACTICE: NavLink = { href: "/problems", label: "Practice", short: "Practice", glyph: "def" };
-const MAP: NavLink = { href: "/syllabus", label: "Course map", short: "Map", glyph: "{ }" };
-const COMPETE: NavLink = { href: "/contests", label: "Competitions", short: "Compete", glyph: "vs" };
-const RANKS: NavLink = { href: "/leaderboard", label: "Leaderboard", short: "Ranks", glyph: "#1" };
-const AWARDS: NavLink = { href: "/awards", label: "Awards", short: "Awards", glyph: "++" };
-const TEACHER: NavLink = { href: "/teacher", label: "Teacher", short: "Teacher", glyph: "sudo" };
+const HOME: NavLink = { href: "/", label: "Home", short: "Home", glyph: "~", icon: "house" };
+const PRACTICE: NavLink = { href: "/problems", label: "Practice", short: "Practice", glyph: "def", icon: "code" };
+const MAP: NavLink = { href: "/syllabus", label: "Course map", short: "Map", glyph: "{ }", icon: "map-trifold" };
+const COMPETE: NavLink = { href: "/contests", label: "Competitions", short: "Compete", glyph: "vs", icon: "trophy" };
+const RANKS: NavLink = { href: "/leaderboard", label: "Leaderboard", short: "Ranks", glyph: "#1", icon: "ranking" };
+const AWARDS: NavLink = { href: "/awards", label: "Awards", short: "Awards", glyph: "++", icon: "medal" };
+const TEACHER: NavLink = { href: "/teacher", label: "Teacher", short: "Teacher", glyph: "sudo", icon: "chalkboard-teacher" };
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const user = await requireUser();
@@ -33,6 +34,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
   const tabs = [HOME, PRACTICE, COMPETE, RANKS, teacher ? TEACHER : AWARDS];
   const menu = teacher
     ? [
+        { href: "/teacher/live", label: "Live lesson" },
         { href: "/teacher/classes", label: "Classes" },
         { href: "/teacher/homework", label: "Homework" },
         { href: "/present", label: "Projector view" },
@@ -51,6 +53,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
     ...links,
     ...(teacher
       ? [
+          { href: "/teacher/live", label: "Live lesson", glyph: "(o)" },
           { href: "/teacher/classes", label: "Classes", glyph: "#" },
           { href: "/teacher/homework", label: "Homework", glyph: "hw" },
           { href: "/teacher/problems", label: "Problems", glyph: "def" },
@@ -99,7 +102,10 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       </header>
 
       {/* Room at the bottom for the tab bar on phones and tablets. */}
-      <div className="flex flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">{children}</div>
+      <div className="flex flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
+        {!teacher && <LiveBanner />}
+        {children}
+      </div>
       <TabBar links={tabs} />
       <EasterEggs />
     </>

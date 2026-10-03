@@ -8,6 +8,29 @@ import { TRACK_IDS } from "../src/lib/tracks";
 import { bannedUse } from "../src/lib/types";
 import { callText } from "../public/judge/harness.mjs";
 
+/** What is wrong with a trace table's layout and answer, if anything. */
+function traceProblems(spec: unknown, answer: unknown): string[] {
+  const table = spec as { columns?: unknown[]; rows?: unknown[] };
+  if (!table || !Array.isArray(table.columns) || !Array.isArray(table.rows)) return ["a trace table needs options with columns and rows"];
+  const columns = table.columns;
+  if (!Array.isArray(answer) || answer.length !== table.rows.length) return ["the answer needs one row for every row of the table"];
+  const errors: string[] = [];
+  let blanks = 0;
+  table.rows.forEach((row, r) => {
+    const full = (answer as unknown[])[r];
+    if (!Array.isArray(row) || !Array.isArray(full) || row.length !== columns.length || full.length !== row.length) {
+      errors.push(`row ${r + 1} has the wrong number of cells`);
+      return;
+    }
+    row.forEach((cell, c) => {
+      if (cell === null) blanks++;
+      else if (cell !== full[c]) errors.push(`row ${r + 1}, ${columns[c]}: the given cell does not match the answer`);
+    });
+  });
+  if (blanks === 0) errors.push("a trace table needs at least one cell for the student to fill in");
+  return errors;
+}
+
 async function main() {
   const contests = new Set(loadContests().map((c) => c.slug));
   const only = process.argv[2];
@@ -29,6 +52,15 @@ async function main() {
       if (!p.functionName || !p.tests?.length || !p.solution || !p.starter) {
         problems.push("needs functionName, tests, a starter section and a solution section");
       } else {
+        // A put-in-order challenge offers the lines of its answer, shuffled, perhaps with a few spare ones.
+        if (p.style === "ORDER") {
+          const offered = p.starter.split("\n").filter((line) => line.trim());
+          for (const line of p.solution.split("\n").filter((l) => l.trim())) {
+            const at = offered.indexOf(line);
+            if (at === -1) problems.push(`the answer's line ${JSON.stringify(line)} is not among the lines offered`);
+            else offered.splice(at, 1);
+          }
+        }
         const keyword = p.tests.every((t) => t.steps) ? "class" : "def";
         if (!new RegExp(`${keyword} ${p.functionName}\\b`).test(p.starter)) problems.push(`starter code does not contain "${keyword} ${p.functionName}"`);
         if (!p.tests.some((t) => !t.hidden)) problems.push("needs at least one visible test");
@@ -52,8 +84,14 @@ async function main() {
         }
       }
     } else {
-      if (!p.options?.length || p.answer === undefined || !(p.answer in p.options)) problems.push("answer must be an index into options");
-      if (new Set(p.options).size !== p.options?.length) problems.push("options must all be different");
+      if (p.style === "TRACE") {
+        problems.push(...traceProblems(p.options, p.answer));
+      } else if (!Array.isArray(p.options) || typeof p.answer !== "number") {
+        problems.push("options must be a list and answer an index into it");
+      } else {
+        if (!p.options.length || !(p.answer in p.options)) problems.push("answer must be an index into options");
+        if (new Set(p.options).size !== p.options.length) problems.push("options must all be different");
+      }
       if (!p.explanation) problems.push("needs an explanation section");
     }
     console.log(`${problems.length ? "FAIL" : " ok "}  ${p.slug}`);

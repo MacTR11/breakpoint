@@ -2,6 +2,8 @@ import { ClassBoard } from "@/components/class-board";
 import { LeaderboardTable } from "@/components/leaderboard-table";
 import { FilterRow, PageHeader, Sheet } from "@/components/ui";
 import { classStandings } from "@/lib/classes";
+import { londonDayStart } from "@/lib/london";
+import { weekStartDay } from "@/lib/race";
 import { daysAgo, leaderboard } from "@/lib/scoring";
 import { requireUser } from "@/lib/session";
 
@@ -12,7 +14,8 @@ export default async function LeaderboardPage({ searchParams }: PageProps<"/lead
   const { period, view } = await searchParams;
   const week = period === "week";
   const classes = view === "classes";
-  const scope = week ? { from: daysAgo(7) } : {};
+  // For classes, "this week" is the weekly race, which starts each Monday.
+  const scope = week ? { from: classes ? londonDayStart(weekStartDay()) : daysAgo(7) } : {};
   const query = (next: { period?: string; view?: string }) => {
     const params = new URLSearchParams();
     if (next.view === "classes") params.set("view", "classes");
@@ -43,7 +46,7 @@ export default async function LeaderboardPage({ searchParams }: PageProps<"/lead
           label="when"
           options={[
             { label: "All time", href: query({ view: view as string }), active: !week },
-            { label: "Last 7 days", href: query({ view: view as string, period: "week" }), active: week },
+            { label: classes ? "This week" : "Last 7 days", href: query({ view: view as string, period: "week" }), active: week },
           ]}
         />
       </div>

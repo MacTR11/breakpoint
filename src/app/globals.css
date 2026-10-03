@@ -39,6 +39,8 @@
   --topic-keep: 78%;
   /* How strongly a tinted tag is washed with its colour. */
   --tint: 13%;
+  /* How a tapped button comes back: a short spring with a little overshoot. */
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .dark {
   color-scheme: dark;
@@ -161,9 +163,57 @@ body {
   a.tile:active {
     transform: scale(0.975);
   }
+  /* A tile you can open deepens a little under the pointer, and its glyph
+     grows. No lift or shadow (see DESIGN.md). */
+  a.tile {
+    transition:
+      transform 0.14s cubic-bezier(0.2, 0.8, 0.2, 1),
+      background-color 0.15s ease;
+  }
+  a.tile .glyph {
+    transition:
+      transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+      color 0.15s ease;
+  }
+  @media (hover: hover) {
+    a.tile:hover {
+      background: color-mix(in oklab, var(--tone) 78%, #000);
+    }
+    a.tile:hover .glyph {
+      color: rgba(255, 255, 255, 0.5);
+      transform: scale(1.18) rotate(-6deg);
+    }
+    /* A grey box you can open is ringed in its colour. */
+    a.box-link:not(.tile):hover {
+      outline: 2px solid color-mix(in oklab, var(--tone, var(--accent)) 60%, transparent);
+      outline-offset: -2px;
+    }
+  }
+  a.tile:focus-visible,
+  a.box-link:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  a.box-link:not(.tile):active {
+    transform: scale(0.975);
+  }
+  a.box-link:not(.tile) {
+    transition: transform 0.14s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  /* Arriving at one item from a link elsewhere: it is ringed so it can be found. */
+  .target-ring[data-arrived] > * {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
   /* An earned award on the Awards page sits a touch askew, like a sticker. */
   .sticker > .tile {
     transform: rotate(var(--tilt, 0deg));
+  }
+  /* Drawn icons (src/components/icons.tsx): a square the size of the text. */
+  .icon-svg {
+    width: 1em;
+    height: 1em;
+    flex: none;
   }
   /* The code glyph printed faintly in a tile's corner. */
   .glyph {
@@ -336,6 +386,159 @@ body {
   .segmented label:has(input:focus-visible) {
     outline: 2px solid var(--accent);
   }
+  /* Links on a grey track, the chosen one raised on a pill that slides to the
+     next (src/components/sliding-tabs.tsx). On a narrow screen the row
+     scrolls sideways instead of wrapping. */
+  .slide-track {
+    position: relative;
+    display: inline-flex;
+    width: max-content;
+    max-width: 100%;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-radius: 12px;
+    background: var(--paper);
+    padding: 3px;
+  }
+  .slide-track::-webkit-scrollbar {
+    display: none;
+  }
+  .slide-track a {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 9px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--ink-soft);
+    transition:
+      transform 0.35s var(--spring),
+      color 0.15s ease;
+  }
+  .slide-track a:hover,
+  .slide-track a[aria-current] {
+    color: var(--ink);
+  }
+  .slide-track a[aria-current] {
+    font-weight: 600;
+  }
+  .slide-track a:active {
+    transform: scale(0.92);
+    transition-duration: 0.08s;
+  }
+  .slide-track a .icon-svg {
+    font-size: 1rem;
+    color: var(--muted);
+  }
+  .slide-track a[aria-current] .icon-svg {
+    color: var(--accent);
+  }
+  /* Until the pill has been placed, the chosen link raises itself. */
+  .slide-track:not(:has(.slide-pill[data-ready])) a[aria-current] {
+    background: var(--raised);
+  }
+  .slide-pill {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 0;
+    border-radius: 9px;
+    background: var(--raised);
+    opacity: 0;
+  }
+  .slide-pill[data-ready] {
+    transition:
+      transform 0.38s var(--spring),
+      width 0.38s var(--spring);
+  }
+  /* How hard a level is: one, two or three rising bars. */
+  .level-bars {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 0.75rem;
+  }
+  .level-bars i {
+    width: 3px;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.25;
+  }
+  .level-bars i:nth-child(1) {
+    height: 5px;
+  }
+  .level-bars i:nth-child(2) {
+    height: 8px;
+  }
+  .level-bars i:nth-child(3) {
+    height: 12px;
+  }
+  .level-bars[data-level="1"] i:nth-child(-n + 1),
+  .level-bars[data-level="2"] i:nth-child(-n + 2),
+  .level-bars[data-level="3"] i:nth-child(-n + 3) {
+    opacity: 1;
+  }
+  /* Practice's filters: one panel, a label beside each row (above it on a phone). */
+  .filter-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.4rem;
+    padding: 1rem;
+  }
+  .filter-key {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .filter-key:not(:first-child) {
+    margin-top: 0.5rem;
+  }
+  @media (min-width: 640px) {
+    .filter-panel {
+      grid-template-columns: 4rem minmax(0, 1fr);
+      align-items: center;
+      gap: 0.75rem 1rem;
+      padding: 1rem 1.25rem;
+    }
+    .filter-key:not(:first-child) {
+      margin-top: 0;
+    }
+  }
+  /* Topics on one row that scrolls sideways on a phone, wrapping on a wider screen. */
+  .chip-row {
+    position: relative;
+    display: flex;
+    gap: 0.375rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 1px 0;
+  }
+  .chip-row::-webkit-scrollbar {
+    display: none;
+  }
+  .chip-row .chip {
+    flex: none;
+    white-space: nowrap;
+    transition:
+      transform 0.35s var(--spring),
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .chip-row .chip:active {
+    transform: scale(0.92);
+    transition-duration: 0.08s;
+  }
+  @media (min-width: 640px) {
+    .chip-row {
+      flex-wrap: wrap;
+    }
+  }
   /* A topic to filter by: a wash of its colour, solid once chosen. */
   .chip {
     border-radius: 9999px;
@@ -402,12 +605,33 @@ body {
   .nav-track a {
     position: relative;
     z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
     border-radius: 9px;
-    padding: 0.32rem 0.8rem;
+    padding: 0.32rem 0.75rem;
     font-size: 0.875rem;
     font-weight: 500;
     white-space: nowrap;
     color: var(--ink-soft);
+    transition:
+      transform 0.35s var(--spring),
+      color 0.15s ease;
+  }
+  .nav-track a .icon-svg {
+    font-size: 1rem;
+    color: var(--muted);
+    transition: color 0.15s ease;
+  }
+  .nav-track a:hover .icon-svg {
+    color: var(--ink-soft);
+  }
+  .nav-track a[aria-current] .icon-svg {
+    color: var(--accent);
+  }
+  .nav-track a:active {
+    transform: scale(0.92);
+    transition-duration: 0.08s;
   }
   .nav-track a:hover,
   .nav-track a[aria-current] {
@@ -431,11 +655,12 @@ body {
   }
   .nav-pill[data-ready] {
     transition:
-      transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-      width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transform 0.38s var(--spring),
+      width 0.38s var(--spring);
   }
 
-  /* Phones and tablets: five places along the bottom, each with a word of code for an icon. */
+  /* Phones and tablets: five places along the bottom, each an icon that fills
+     in when chosen, on a soft blue pill that slides across. */
   .tab-bar {
     position: fixed;
     inset: auto 0 0 0;
@@ -455,32 +680,55 @@ body {
     font-size: 0.6875rem;
     font-weight: 600;
     color: var(--muted);
+    -webkit-tap-highlight-color: transparent;
   }
   .tab-bar a[aria-current] {
     color: var(--accent);
   }
-  .tab-glyph {
+  .tab-icon {
+    position: relative;
+    z-index: 1;
     display: grid;
     place-items: center;
-    min-width: 2.75rem;
-    height: 1.75rem;
-    border-radius: 9px;
-    padding: 0 0.45rem;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 700;
-    font-variant-ligatures: none;
+    min-width: 3rem;
+    height: 1.875rem;
+    border-radius: 10px;
+    font-size: 1.375rem;
+    transition: transform 0.35s var(--spring);
+  }
+  .tab-bar a:active .tab-icon {
+    transform: scale(0.84);
+    transition-duration: 0.08s;
+  }
+  .tab-blob {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1.875rem;
+    border-radius: 10px;
+    background: color-mix(in oklab, var(--accent) 15%, transparent);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .tab-bar[data-ready] .tab-blob {
     transition:
-      background-color 0.15s ease,
-      color 0.15s ease,
-      transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transform 0.38s var(--spring),
+      width 0.38s var(--spring);
   }
-  .tab-bar a[aria-current] .tab-glyph {
-    background: var(--accent);
-    color: #fff;
+  /* The icon arriving at its new place. */
+  .nav-pop {
+    animation: nav-pop 0.42s var(--spring);
   }
-  .tab-bar a:active .tab-glyph {
-    transform: scale(0.92);
+  @keyframes nav-pop {
+    0% {
+      transform: scale(0.84);
+    }
+    55% {
+      transform: scale(1.14) rotate(-6deg);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 
   /* Streak and hints in the top bar. */
@@ -511,6 +759,13 @@ body {
     background: var(--paper);
     color: var(--ink-soft);
     cursor: pointer;
+    transition:
+      transform 0.35s var(--spring),
+      background-color 0.15s ease;
+  }
+  .round-button:active {
+    transform: scale(0.86);
+    transition-duration: 0.08s;
   }
   .round-button:hover {
     background: var(--line);
@@ -663,8 +918,7 @@ html.terminal .cell[data-done] {
   color: var(--ink);
 }
 html.terminal .btn-primary,
-html.terminal .round-button.avatar,
-html.terminal .tab-bar a[aria-current] .tab-glyph {
+html.terminal .round-button.avatar {
   color: #020802;
 }
 
@@ -844,6 +1098,13 @@ html:not(.dark) .when-dark {
 }
 .cm-editor .cm-scroller {
   font-family: var(--font-mono);
+}
+/* Code shows <= and == as typed, never joined into ≤ and ═. */
+pre,
+code,
+.font-mono,
+.cm-editor .cm-scroller {
+  font-variant-ligatures: none;
 }
 
 /* What a fix changed (src/components/code-diff.tsx): lines out on a red wash,
@@ -1289,6 +1550,174 @@ html.typing-code body {
   }
 }
 
+/* Put-in-order challenges: each line of code is a row that can be dragged by
+   its handle or moved with the arrow buttons. */
+.order-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 6px 0 2px;
+  border-radius: 10px;
+  background: #21252b;
+  border: 1px solid rgb(255 255 255 / 0.06);
+  transition: background-color 0.15s ease;
+}
+.order-code {
+  --indent: 4ch;
+  min-width: 0;
+  flex: 1;
+  padding: 0.5rem 0 0.5rem calc(var(--level) * var(--indent));
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5rem;
+  /* A long line wraps under itself rather than hiding behind the buttons. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.order-arrows {
+  display: flex;
+  gap: 4px;
+}
+/* On a phone: half-width indents, smaller text, and the arrows stacked, so
+   lines have room. */
+@media (max-width: 639px) {
+  .order-code {
+    --indent: 2ch;
+    font-size: 13px;
+    line-height: 1.25rem;
+  }
+  .order-arrows {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .order-arrows .order-button {
+    height: 22px;
+  }
+}
+.order-line.order-dragging {
+  background: #2f3542;
+  border-color: #4aa3ff;
+}
+.order-line.order-spare {
+  opacity: 0.6;
+  padding-left: 12px;
+}
+.order-handle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 40px;
+  color: #6e7681;
+  cursor: grab;
+  touch-action: none;
+}
+.order-handle:active {
+  cursor: grabbing;
+  color: #f6f8fa;
+}
+.order-button {
+  display: grid;
+  place-items: center;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.08);
+  color: #c9d1d9;
+  font-size: 14px;
+  cursor: pointer;
+}
+.order-button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Trace tables: given cells shaded, boxes to fill in, red and green once checked. */
+.trace-sheet {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-variant-ligatures: none;
+}
+.trace-sheet th {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+}
+.trace-sheet td {
+  /* As tall as a box to type in, even where a given value is empty. */
+  height: 44px;
+  min-width: 64px;
+  padding: 4px;
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+.trace-sheet td:first-child {
+  border-left: 0;
+}
+.trace-sheet tr:last-child td {
+  border-bottom: 0;
+}
+.trace-given {
+  padding: 8px 10px !important;
+  color: var(--muted);
+  background: var(--paper);
+}
+.trace-input {
+  width: 100%;
+  min-width: 56px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--field);
+  color: var(--ink);
+  font: inherit;
+}
+.trace-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+.trace-wrong {
+  background: color-mix(in srgb, var(--fail) 14%, transparent);
+}
+.trace-wrong .trace-input {
+  border-color: var(--fail);
+}
+.trace-right {
+  background: color-mix(in srgb, var(--pass) 10%, transparent);
+}
+td.trace-right,
+td.trace-wrong {
+  padding: 8px 10px;
+}
+td.trace-right:has(input),
+td.trace-wrong:has(input) {
+  padding: 4px;
+}
+
+/* The strip that tells a student a live lesson is running. */
+.live-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  border-radius: 18px;
+  background: var(--card);
+  padding: 0.75rem 1rem;
+}
+
+/* A student on the live lesson board. Where they are is a tag. */
+.live-tile {
+  border-radius: 16px;
+  padding: 0.75rem 0.9rem;
+  background: var(--paper);
+}
+
 /* The solved pop-up: the one place the page is blurred, so the way on is unmissable. */
 .solved-dialog {
   margin: auto;
@@ -1333,6 +1762,26 @@ html.typing-code body {
   }
   .letter[data-moving] {
     animation: none;
+  }
+  .nav-pop {
+    animation: none;
+  }
+  .tab-bar[data-ready] .tab-blob,
+  .slide-pill[data-ready],
+  .tab-icon,
+  .nav-track a,
+  .slide-track a,
+  .chip-row .chip,
+  .round-button {
+    transition: none;
+  }
+  a.tile .glyph,
+  a.tile,
+  a.box-link {
+    transition: none;
+  }
+  a.tile:hover .glyph {
+    transform: none;
   }
   ::view-transition-old(*),
   ::view-transition-new(*),

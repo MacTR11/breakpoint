@@ -1,4 +1,5 @@
 import { ChallengeList } from "@/components/challenge-list";
+import type { IconName } from "@/components/icons";
 import { ButtonLink, FilterRow, Page, PageHeader } from "@/components/ui";
 import { db } from "@/lib/db";
 import { difficultyLabel, MAX_PUZZLE_ATTEMPTS, practiceFilter, standings } from "@/lib/problems";
@@ -8,14 +9,16 @@ import { DIFFICULTIES } from "@/lib/types";
 
 export const metadata = { title: "Practice" };
 
-const TYPES = [
+const TYPES: { value: string; label: string; icon?: IconName }[] = [
   { value: "", label: "All" },
-  { value: "write", label: "Write code" },
-  { value: "fix", label: "Fix the bug" },
-  { value: "puzzle", label: "Puzzles" },
+  { value: "write", label: "Write code", icon: "code" },
+  { value: "fix", label: "Fix the bug", icon: "bug" },
+  { value: "order", label: "Put in order", icon: "list-numbers" },
+  { value: "trace", label: "Trace tables", icon: "table" },
+  { value: "puzzle", label: "Puzzles", icon: "puzzle-piece" },
 ];
 
-const typeOf = (p: { kind: string; style: string }) => (p.kind === "PUZZLE" ? "puzzle" : p.style === "FIX" ? "fix" : "write");
+const typeOf = (p: { kind: string; style: string }) => (p.kind === "PUZZLE" ? (p.style === "TRACE" ? "trace" : "puzzle") : p.style === "FIX" ? "fix" : p.style === "ORDER" ? "order" : "write");
 
 export default async function ProblemsPage({ searchParams }: PageProps<"/problems">) {
   const user = await requireUser();
@@ -31,9 +34,7 @@ export default async function ProblemsPage({ searchParams }: PageProps<"/problem
     }),
     standings(user.id),
   ]);
-  const problems = all.filter(
-    (p) => (!filters.type || typeOf(p) === filters.type) && (!filters.difficulty || p.difficulty === filters.difficulty) && (!filters.track || p.track === filters.track),
-  );
+  const problems = all.filter((p) => (!filters.type || typeOf(p) === filters.type) && (!filters.difficulty || p.difficulty === filters.difficulty) && (!filters.track || p.track === filters.track));
   const tracksInUse = TRACKS.filter((track) => all.some((p) => p.track === track.id));
   const solved = problems.filter((p) => statusOf(p.id) === "solved").length;
 
@@ -54,17 +55,19 @@ export default async function ProblemsPage({ searchParams }: PageProps<"/problem
         </ButtonLink>
       </PageHeader>
 
-      <div className="mb-5 space-y-3">
-        <div className="flex flex-wrap gap-3">
-        <FilterRow label="type" options={TYPES.map((t) => ({ label: t.label, href: href({ type: t.value }), active: filters.type === t.value }))} />
+      {/* The filters together on one panel, a label beside each row. */}
+      <div className="card filter-panel mb-4">
+        <span className="filter-key">Type</span>
+        <FilterRow label="type" options={TYPES.map((t) => ({ label: t.label, href: href({ type: t.value }), active: filters.type === t.value, icon: t.icon }))} />
+        <span className="filter-key">Level</span>
         <FilterRow
           label="level"
           options={[
             { label: "Any level", href: href({ difficulty: "" }), active: !filters.difficulty },
-            ...DIFFICULTIES.map((d) => ({ label: difficultyLabel[d], href: href({ difficulty: d }), active: filters.difficulty === d })),
+            ...DIFFICULTIES.map((d, index) => ({ label: difficultyLabel[d], href: href({ difficulty: d }), active: filters.difficulty === d, level: index + 1 })),
           ]}
         />
-        </div>
+        <span className="filter-key">Topic</span>
         <FilterRow
           label="topic"
           options={[

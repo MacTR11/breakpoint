@@ -44,5 +44,30 @@
     "slug": "grand-final",
     "title": "Grand final",
     "description": "The hardest set. A bit of everything."
+  },
+  {
+    "slug": "code-breakers",
+    "title": "Code breakers",
+    "description": "Ciphers and secret messages: write them, repair one, trace one, and crack a Caesar shift without the key."
+  },
+  {
+    "slug": "trace-race",
+    "title": "Trace race",
+    "description": "Reading code rather than writing it: trace tables to fill in and programs to put back in order."
+  },
+  {
+    "slug": "lower-sixth-league",
+    "title": "Lower sixth league",
+    "description": "A friendly set for Year 12: short problems on times, lists, slices and loops."
+  },
+  {
+    "slug": "upper-sixth-challenge",
+    "title": "Upper sixth challenge",
+    "description": "For Year 13: a stack that knows its smallest item, rooms on a floor plan, recursion and a breadth-first search."
+  },
+  {
+    "slug": "winter-cracker",
+    "title": "Winter cracker",
+    "description": "A festive set for the end of the autumn term: sleighs, elves and a snowball."
   }
 ]

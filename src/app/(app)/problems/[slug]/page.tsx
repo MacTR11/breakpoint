@@ -6,7 +6,9 @@ import { CodeWorkspace } from "@/components/code-workspace";
 import { Countdown } from "@/components/countdown";
 import { HintPanel } from "@/components/hint-panel";
 import { Markdown } from "@/components/markdown";
+import { OrderWorkspace } from "@/components/order-workspace";
 import { PuzzleCard } from "@/components/puzzle-card";
+import { TraceCard } from "@/components/trace-card";
 import { KindIcon, Path, Sheet, TopicName, kindLabel, levelLabel, link } from "@/components/ui";
 import { afterSolve } from "@/lib/after-solve";
 import { db } from "@/lib/db";
@@ -15,6 +17,7 @@ import { paperUsing } from "@/lib/mock";
 import { findViewableProblem, isLive, MAX_PUZZLE_ATTEMPTS, parseBanned, parseOptions, parseTests, pointsFor, puzzlePenalty } from "@/lib/problems";
 import { requireUser } from "@/lib/session";
 import { pasteMode } from "@/lib/settings";
+import { parseTraceAnswer, parseTraceSpec } from "@/lib/trace-table";
 import { trackTitle } from "@/lib/tracks";
 
 export async function generateMetadata({ params }: PageProps<"/problems/[slug]">) {
@@ -90,6 +93,14 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
       <p className="mt-2 text-sm text-muted">
         {kindLabel(problem.kind, problem.style)} · {levelLabel(problem.difficulty)} · {problem.points} points · <TopicName track={problem.track} />
         {!problem.published && " · unpublished"}
+        {isTeacher && (
+          <>
+            {" · "}
+            <Link href={`/teacher/live?problem=${problem.id}`} className={link}>
+              Run as a live lesson
+            </Link>
+          </>
+        )}
         {liveContest && (
           <>
             {" · "}competition ends in <Countdown to={liveContest.endsAt!.toISOString()} className="font-semibold tabular-nums text-ink" />
@@ -145,6 +156,26 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
           )}
         </section>
       ) : null;
+    if (problem.style === "ORDER" && !paper) {
+      return (
+        <OrderWorkspace
+          userId={user.id}
+          slug={problem.slug}
+          fileName={fileName}
+          functionName={problem.functionName ?? ""}
+          lines={(problem.starterCode ?? "").split("\n").filter((line) => line.trim())}
+          visibleTests={tests.filter((t) => !t.hidden)}
+          hiddenCount={tests.filter((t) => t.hidden).length}
+          points={problem.points}
+          solved={Boolean(solve)}
+          header={header}
+          description={<Markdown>{problem.description}</Markdown>}
+          hints={hintPanel}
+          teacherNotes={modelAnswer}
+          celebration={celebration}
+        />
+      );
+    }
     return (
       <CodeWorkspace
         // A fresh editor for each draft, so undo cannot carry a mock paper's code into practice when the paper ends.
@@ -169,6 +200,34 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
         teacherNotes={modelAnswer}
         celebration={celebration}
       />
+    );
+  }
+
+  const traceSpec = problem.style === "TRACE" ? parseTraceSpec(problem.options) : null;
+  if (traceSpec) {
+    // The finished table is only sent once it is solved, or locked outside a live competition.
+    const answer = solve || (locked && !liveContest) ? parseTraceAnswer(problem.answer) : null;
+    return (
+      <Sheet width="max-w-3xl">
+        {header}
+        <div className="mt-7">
+          <Markdown>{problem.description}</Markdown>
+        </div>
+        <TraceCard
+          userId={user.id}
+          slug={problem.slug}
+          spec={traceSpec}
+          fullPoints={problem.points}
+          secondTryPoints={pointsFor(problem, 1)}
+          maxAttempts={MAX_PUZZLE_ATTEMPTS}
+          wrongBefore={wrong.length}
+          solved={solve && answer ? { points: solve.points, answer, explanation: problem.explanation } : null}
+          locked={locked}
+          reveal={locked && !solve && answer ? { answer, explanation: problem.explanation } : null}
+          celebration={celebration}
+        />
+        {hintPanel}
+      </Sheet>
     );
   }
 

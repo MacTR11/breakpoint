@@ -11,6 +11,7 @@ import { paperUsing } from "@/lib/mock";
 import { findViewableProblem, isLive, MAX_PUZZLE_ATTEMPTS, parseBanned, parseOptions, parseTests, pointsFor, puzzlePenalty } from "@/lib/problems";
 import { getCurrentUser } from "@/lib/session";
 import { noRewards, recordSolve, type Rewards } from "@/lib/solve";
+import { parseTraceAnswer, parseTraceSpec, wrongCells } from "@/lib/trace-table";
 import { bannedUse, type JudgeOutcome } from "@/lib/types";
 
 const MAX_CODE_LENGTH = 20_000;
@@ -25,6 +26,17 @@ export type CodeSubmitResult =
   | { ok: false; message: string }
   | { ok: true; outcome: JudgeOutcome; newlySolved: boolean; points: number; attempts: number; rewards: Rewards };
 
+/** For a put-in-order challenge: why the code is not made of the lines offered, each used once at most, or null if it is. */
+function notOffered(code: string, offered: string) {
+  const left = offered.split("\n").filter((line) => line.trim());
+  for (const line of code.split("\n").filter((line) => line.trim())) {
+    const at = left.indexOf(line);
+    if (at === -1) return "Use only the lines given, each at most once.";
+    left.splice(at, 1);
+  }
+  return null;
+}
+
 export async function submitCode(slug: string, code: string, telemetry?: Telemetry): Promise<CodeSubmitResult> {
   const user = await getCurrentUser();
   if (!user) return { ok: false, message: "Your session has ended. Please sign in again." };
@@ -37,7 +49,7 @@ export async function submitCode(slug: string, code: string, telemetry?: Telemet
   if (last && Date.now() - last.createdAt.getTime() < MIN_GAP_MS) return { ok: false, message: "Slow down: wait a couple of seconds between submissions." };
 
   const tests = parseTests(problem);
-  const banned = bannedUse(code, parseBanned(problem));
+  const banned = problem.style === "ORDER" ? notOffered(code, problem.starterCode ?? "") : bannedUse(code, parseBanned(problem));
   const outcome: JudgeOutcome = banned ? { status: "ERROR", loadError: banned, results: [] } : await judge(code, problem.functionName, tests);
 
   await db.submission.create({
@@ -83,7 +95,7 @@ export async function submitPuzzle(slug: string, answer: string): Promise<Puzzle
   if (!user) return { ok: false, message: "Your session has ended. Please sign in again." };
 
   const problem = await findViewableProblem(slug, user.role === "TEACHER");
-  if (!problem || problem.kind !== "PUZZLE" || problem.answer === null) return { ok: false, message: "This puzzle is not available." };
+  if (!problem || problem.kind !== "PUZZLE" || problem.style === "TRACE" || problem.answer === null) return { ok: false, message: "This puzzle is not available." };
 
   const key = { userId_problemId: { userId: user.id, problemId: problem.id } };
   const solved = await db.solve.findUnique({ where: key });
@@ -112,6 +124,65 @@ export async function submitPuzzle(slug: string, answer: string): Promise<Puzzle
       attemptsLeft,
       nextPoints: pointsFor(problem, wrongBefore + 1),
       reveal: attemptsLeft === 0 && !inLiveContest ? { answer: problem.answer, explanation: problem.explanation } : null,
+    };
+  }
+
+  const points = pointsFor(problem, wrongBefore);
+  const rewards = await recordSolve(user.id, problem.id, points, wrongBefore + 1);
+  return { ok: true, correct: true, points, attempts: wrongBefore + 1, explanation: problem.explanation, rewards };
+}
+
+export type TraceReveal = { answer: string[][]; explanation: string | null };
+
+export type TraceSubmitResult =
+  | { ok: false; message: string }
+  | { ok: true; correct: true; points: number; attempts: number; explanation: string | null; rewards: Rewards }
+  // Only the positions of wrong cells are sent back, never what should be in them,
+  // unless the table is now locked and no live competition is using it.
+  | { ok: true; correct: false; wrong: [number, number][]; attemptsLeft: number; nextPoints: number; reveal: TraceReveal | null };
+
+/**
+ * Mark a trace table. Like a puzzle it allows two attempts, the second for
+ * half points; unlike one, a wrong attempt costs nothing, since a whole table
+ * cannot be guessed.
+ */
+export async function submitTrace(slug: string, cells: string[][]): Promise<TraceSubmitResult> {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, message: "Your session has ended. Please sign in again." };
+
+  const problem = await findViewableProblem(slug, user.role === "TEACHER");
+  const spec = problem?.style === "TRACE" ? parseTraceSpec(problem.options) : null;
+  if (!problem || problem.kind !== "PUZZLE" || !spec) return { ok: false, message: "This trace table is not available." };
+
+  const key = { userId_problemId: { userId: user.id, problemId: problem.id } };
+  const solved = await db.solve.findUnique({ where: key });
+  if (solved) return { ok: true, correct: true, points: solved.points, attempts: solved.attempts, explanation: problem.explanation, rewards: noRewards };
+
+  const wrongBefore = await db.submission.count({ where: { userId: user.id, problemId: problem.id, status: "WRONG" } });
+  if (wrongBefore >= MAX_PUZZLE_ATTEMPTS) return { ok: false, message: "You have used both attempts on this trace table." };
+
+  // Only what fits the table is kept, and each cell is kept short.
+  const written = spec.rows.map((row, r) => row.map((_, c) => String(Array.isArray(cells?.[r]) ? (cells[r][c] ?? "") : "").slice(0, 60)));
+  const answer = parseTraceAnswer(problem.answer);
+  const wrong = wrongCells(spec, answer, written);
+  const blanks = spec.rows.flat().filter((cell) => cell === null).length;
+  const correct = wrong.length === 0;
+
+  await db.submission.create({
+    data: { userId: user.id, problemId: problem.id, code: JSON.stringify(written), status: correct ? "ACCEPTED" : "WRONG", passed: blanks - wrong.length, total: blanks },
+  });
+  revalidatePath("/", "layout");
+
+  if (!correct) {
+    const attemptsLeft = MAX_PUZZLE_ATTEMPTS - wrongBefore - 1;
+    const inLiveContest = problem.contests.some((c) => isLive(c.contest));
+    return {
+      ok: true,
+      correct: false,
+      wrong,
+      attemptsLeft,
+      nextPoints: pointsFor(problem, wrongBefore + 1),
+      reveal: attemptsLeft === 0 && !inLiveContest ? { answer, explanation: problem.explanation } : null,
     };
   }
 

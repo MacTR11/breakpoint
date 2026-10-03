@@ -7,12 +7,15 @@ A Python practice and competition platform for A Level Computer Science.
 - **First steps**: a gentle on-ramp of tiny challenges with most of the code already written.
 - **Fix the bug**: the editor opens on a broken program. Students find the fault and repair it.
 - **Puzzles**: read some code and say what it prints, spot the bug, or trace an algorithm. Wrong answers cost points, so guessing does not pay.
+- **Put in order**: the lines of a working program, shuffled, sometimes with a line that does not belong. Students drag them into order (or move them with arrow buttons, which suits a phone) and submit; any order that passes the tests counts.
+- **Trace tables**: a short program and a table of its variables, the way the exam asks for one. Students fill in the boxes; a check marks wrong boxes red without saying what they should be.
 - **Debugger and console**: click beside a line number to put a breakpoint (a red dot) on it, then step through a call forwards and backwards, watching the variables change, the call stack grow and shrink, and a trace table fill in the way one is written in an exam. Recursion is drawn as a tree of calls that grows as you step, a list of numbers is drawn as bars with `i`, `j`, `low`, `mid` and `high` pointing into it (outside a search range dimmed), and each line shows how many times it ran. A Python console beside the editor tries the code on any input. Neither marks anything.
 - **Hints**: every challenge has hints. Students earn hint tokens by solving challenges and spend one to reveal each hint.
-- **Daily challenge, streaks and awards**: one challenge is featured each day and earns a bonus hint if solved that day; a calendar and a streak count show which days a student solved something; and there are 20 awards to collect, plus 6 secret ones.
+- **Daily challenge, streaks and awards**: one challenge is featured each day and earns a bonus hint if solved that day; a calendar and a streak count show which days a student solved something; and there are 39 awards to collect, plus 16 secret ones.
 - **Course map**: every challenge grouped by topic, from Python basics to algorithm challenges, with the student's progress.
-- **Competitions**: timed events whose challenges unlock at the start time, with a live leaderboard. Nine ready-made packs are included.
-- **Classes**: put students in classes (lower or upper sixth) and the classes are compared on their average points, on the leaderboard, on each student's Home page and on a projector view for the classroom.
+- **Competitions**: timed events whose challenges unlock at the start time, with a live leaderboard. Fourteen ready-made packs are included.
+- **Classes**: put students in classes (lower or upper sixth) and the classes are compared on their average points, on the leaderboard, on each student's Home page and on a projector view for the classroom. A weekly class race on Home starts again every Monday.
+- **Live lessons**: put one challenge on every student's screen at once and watch a grid of who has opened it, who is trying and who has solved it.
 - **Homework**: set practice challenges for a class with a due date. Students tick them off on their Home page; you see who finished on time.
 - **Mock papers**: students sit exam-style questions against the clock, with hints off, and get marks from the tests their code passes.
 - **Paste tracking**: the editor notes when code is pasted in from outside, so you can spot answers copied from elsewhere, and can refuse large pastes altogether.
@@ -77,9 +80,18 @@ Teacher → Classes. Add your classes there (for example 12A and 12B in the lowe
 
 - **Compared on averages.** A class's score is its points per student, counting everyone in it, including students who have not started. So a class of 12 can beat a class of 20, and the way up is for every student to solve something. Students see the class table on the leaderboard (**Classes**) and a card on their Home page saying how far behind the class above they are.
 - **The class page** shows the class's figures, a **topic grid** (a square per student per topic, filling with the topic's colour as they solve its challenges), recent paste flags, and buttons to rename the class, **give the whole class new passwords** (with the sign-in sheet to hand out) and **print a report** for every student.
+- **Weekly class race.** Home shows this week's race: every class's average points since Monday (UK time), a countdown to the reset and last week's winner. Leaderboard → Classes → **This week** has the full table. It is hidden until at least two classes have students.
 - **Projector view.** Teacher → Classes → **Projector view** (or `/present`) fills a classroom screen with the classes, this week's top ten (as first name and initial) and any live competition, and refreshes itself every 20 seconds.
 - **Reports.** A student's page and each class page have a printable report: points and position in the class, progress in each topic, the last 15 weeks, homework, mock papers, awards and lines for a comment. Paste flags are left off reports.
 - Deleting a class (press and hold the button) keeps its students and everything they have solved; they are simply left without a class. Homework set for that class is deleted with it (the button says how many).
+
+## Live lessons
+
+Teacher → **Live lesson**: choose a class (or every class) and a practice challenge, then **Start the lesson**. A challenge page also has a **Run as a live lesson** link for the teacher.
+
+- Students who are signed in are taken to the challenge within a few seconds (unless they are sitting a mock paper). Anyone who signs in later, or wanders off to another page, sees a strip with a link back to it. On the challenge itself the strip tells them their teacher can see their progress. Work in progress is kept, so nothing is lost by being moved.
+- Your page shows a tile for each student, refreshed every five seconds: **Not opened yet**, **Opened**, **Trying** (with the number of tries and the best share of tests passed) or **Solved** (with how long it took). A student who had solved it before the lesson shows as solved too.
+- One lesson runs at a time; starting another ends the first. **End the lesson** stops students being sent to it. A lesson you forget to end stops on its own after two hours.
 
 ## Homework and mock papers
 
@@ -99,26 +111,26 @@ Neither setting can stop a student retyping an answer from another screen, and a
 
 ## What is covered
 
-The 357 starter challenges are original, written for this project: 221 write-the-code, 48 fix-the-bug and 88 puzzles. 301 are in Practice and 56 are held in competition packs.
+The 404 starter challenges are original, written for this project: 231 write-the-code, 52 fix-the-bug, 14 put-in-order, 16 trace tables and 91 puzzles. 318 are in Practice and 86 are held in competition packs (the table counts both).
 
-| Topic | Write | Fix | Puzzles | Includes |
-| --- | --- | --- | --- | --- |
-| First steps | 15 | 5 | | One idea at a time: a return, an `if`, a loop, a list. Worth 5 points each |
-| Exam-style questions | 72 | | | Twenty-one scenarios with parts (a), (b), (c): a cinema, a treasure map, Connect Four, sports day results, scooter hire, a bus network, pixel images, a car park, a quiz app, a weather station, a ranked-ballot election, a music app and a train timetable among them. They cover 2D arrays, stacks and queues in arrays, recursion, classes and inheritance, records from a file, sorts and searches by hand, linked lists and trees in arrays, string handling |
-| Debugging | | 43 | 17 | Syntax, runtime and logic errors; off-by-one; infinite loops; broken searches and sorts; choosing test data that exposes a bug |
-| Sorting | 12 | | 11 | Bubble, insertion, merge and quick sort, each written by hand, plus traces and best and worst cases |
-| Python basics | 12 | | 13 | Selection, loops, arithmetic, tracing |
-| Lists and dictionaries | 20 | | 5 | 1D and 2D lists, records, lookups |
-| Data structures | 13 | | 8 | Stacks, queues, linked lists, binary search trees, hash tables |
-| Strings | 14 | | 8 | Slicing, building, ciphers, run-length encoding |
-| Functions and recursion | 11 | | 9 | Scope, parameter passing, recursive functions |
-| Algorithm challenges | 9 | | 6 | Dijkstra, A*, breadth- and depth-first search, backtracking, Big O |
-| Searching | 10 | | 5 | Linear and binary search, iterative and recursive |
-| Robust programs | 11 | | 2 | Validation, messy file input, test data |
-| Object-oriented programming | 11 | | 2 | Classes, encapsulation, inheritance, polymorphism |
-| Bits and bytes | 11 | | 2 | Binary, hexadecimal, two's complement, bitwise masks, in code |
+| Topic | Write | Fix | Order | Trace | Puzzles | Includes |
+| --- | --- | --- | --- | --- | --- | --- |
+| First steps | 15 | 5 | | | | One idea at a time: a return, an `if`, a loop, a list. Worth 5 points each |
+| Exam-style questions | 72 | | | | | Twenty-one scenarios with parts (a), (b), (c): a cinema, a treasure map, Connect Four, sports day results, scooter hire, a bus network, pixel images, a car park, a quiz app, a weather station, a ranked-ballot election, a music app and a train timetable among them. They cover 2D arrays, stacks and queues in arrays, recursion, classes and inheritance, records from a file, sorts and searches by hand, linked lists and trees in arrays, string handling |
+| Debugging | | 43 | | | 17 | Syntax, runtime and logic errors; off-by-one; infinite loops; broken searches and sorts; choosing test data that exposes a bug |
+| Sorting | 12 | | 3 | 2 | 11 | Bubble, insertion, merge and quick sort, each written by hand, plus traces and best and worst cases |
+| Python basics | 15 | 1 | 3 | 6 | 13 | Selection, loops, arithmetic, tracing |
+| Lists and dictionaries | 22 | 1 | 3 | 1 | 6 | 1D and 2D lists, records, lookups |
+| Data structures | 14 | | | 2 | 8 | Stacks, queues, linked lists, binary search trees, hash tables |
+| Strings | 17 | 1 | 2 | 2 | 9 | Slicing, building, ciphers, run-length encoding |
+| Functions and recursion | 11 | 1 | 1 | | 10 | Scope, parameter passing, recursive functions |
+| Algorithm challenges | 10 | | | 1 | 6 | Dijkstra, A*, breadth- and depth-first search, backtracking, Big O |
+| Searching | 10 | | 2 | 2 | 5 | Linear and binary search, iterative and recursive |
+| Robust programs | 11 | | | | 2 | Validation, messy file input, test data |
+| Object-oriented programming | 11 | | | | 2 | Classes, encapsulation, inheritance, polymorphism |
+| Bits and bytes | 11 | | | | 2 | Binary, hexadecimal, two's complement, bitwise masks, in code |
 
-Every search and sort named in OCR H446 (linear search, binary search, bubble sort, insertion sort, merge sort, quick sort) has a write-it challenge, a fix-it challenge and at least one tracing puzzle. Each challenge also carries its H446 reference (`specRef`) for your records.
+Every search and sort named in OCR H446 (linear search, binary search, bubble sort, insertion sort, merge sort, quick sort) has a write-it challenge, a fix-it challenge and at least one tracing puzzle. Linear search, binary search, bubble sort and insertion sort also come as put-in-order challenges, and both searches and a bubble sort pass as trace tables. Each challenge also carries its H446 reference (`specRef`) for your records.
 
 ### Exam-style questions
 
@@ -138,15 +150,18 @@ Points grow with difficulty, and writing a program from nothing is worth more th
 | --- | --- | --- | --- |
 | Write code | 10 | 25 | 50 |
 | Fix the bug | 10 | 20 | 40 |
+| Put in order | 5 | 10 | 20 |
+| Trace table | 10 | 15 | 25 |
 | Puzzle | 5 | 10 | 20 |
 
 First steps challenges are worth 5 each, and exam-style questions 5 for each mark. The table is in `src/lib/points.ts`; challenge files carry their own points, so keep them in step when adding challenges.
 
-- **Code** (write or fix) is worth its full points however many attempts are needed.
+- **Code** (write, fix or put in order) is worth its full points however many attempts are needed.
 - **Puzzles** allow two attempts. Each wrong answer **deducts** points, sized so that guessing loses on average: with four options a wrong answer costs a third of the puzzle's value. A correct second attempt earns half points. After two wrong answers the puzzle locks and the worked explanation is shown (after the competition ends, if it is part of a live one).
+- **Trace tables** allow two checks and never cost points. A check marks each wrong box red without saying what it should be; a correct table at the second check earns half points. After two wrong checks the finished table is shown with the student's wrong entries crossed out (after the competition ends, if it is part of a live one).
 - **Hints.** Every student starts with 3 hint tokens, earns another for every 3 challenges solved, one for every hard challenge solved, and one for each daily challenge done on its day. Revealing a hint costs one token; hints are revealed in order, gentlest first. Once a challenge is solved, its remaining hints are free to read. The numbers are set in `src/lib/hints.ts`.
 - **Daily challenge.** Everyone is shown the same easy or medium practice challenge each day (anyone who had already solved it gets the next in that day's order). Solving it before midnight UK time earns one extra hint token.
-- **Awards and streaks** carry no points. Awards are worked out from a student's history each time they are shown, so adding or changing one in `src/lib/awards.ts` applies to everyone at once. Six are secret: they show only a clue until earned.
+- **Awards and streaks** carry no points. Awards are worked out from a student's history each time they are shown, so adding or changing one in `src/lib/awards.ts` applies to everyone at once. Sixteen are secret: they show only a clue until earned.
 - **Homework and mock papers** carry no extra points: a challenge scores the same however it is reached.
 - Teachers can reopen a locked puzzle for a student from that student's page, which also refunds the penalty. Teachers reveal hints without spending tokens.
 - **Competition standings** count only points and penalties between the start and end times. Ties go to whoever reached that score first.
@@ -154,7 +169,7 @@ First steps challenges are worth 5 each, and exam-style questions 5 for each mar
 
 ## Competitions
 
-Teacher → Competitions lists the nine packs: Welcome challenge (live when first set up), Python sprint, Bug hunt, Searching and sorting, Recursion, Data structures, Algorithms, Robust programs and Grand final. A pack with no dates is invisible to students; choose **Schedule**, give it start and end times (UK time) and save. Its problems stay hidden until the start, and join Practice automatically once it has finished.
+Teacher → Competitions lists the fourteen packs: Welcome challenge (live when first set up), Python sprint, Bug hunt, Searching and sorting, Recursion, Data structures, Algorithms, Robust programs, Grand final, Code breakers (ciphers), Trace race (reading code: trace tables and put-in-order), Lower sixth league (for Year 12), Upper sixth challenge (for Year 13) and Winter cracker (for the end of the autumn term). A pack with no dates is invisible to students; choose **Schedule**, give it start and end times (UK time) and save. Its problems stay hidden until the start, and join Practice automatically once it has finished.
 
 You can also build a competition from any problems in the bank. The form warns you about problems students have already solved, since those will not score again.
 
@@ -171,7 +186,7 @@ npm run db:seed   # loads the files into the database
 
 `db:seed` overwrites the database copy of any problem that also exists as a file, so pick one way of editing each problem. Renaming a file keeps its problem and its solves, as long as the title stays the same. Deleting a file removes its problem at the next seed, unless students have worked on it or homework or a mock paper uses it: then it is kept, unpublished and out of any competition that has not started, so nobody loses points, and the seed tells you which to delete or republish in Teacher → Problems. A new file whose name would take over a different problem's address is not loaded, and the seed says so. To put a file's problem in a pack, add `"contest": "<slug>"` to its meta, using a slug from `content/contests.json`. Problems made in the browser are never touched by the seed.
 
-Each file's meta also sets `"track"` (the course-map topic, from `src/lib/tracks.ts`) and, for a broken-code task, `"style": "FIX"`. A `--- hints` section lists the hints, one per line starting with `- `. A puzzle with `"check": "run"` has the first Python block in its question executed by `scripts/check-puzzles.py`, which must print the marked answer.
+Each file's meta also sets `"track"` (the course-map topic, from `src/lib/tracks.ts`) and, for a broken-code task, `"style": "FIX"`. A put-in-order challenge has `"style": "ORDER"`: its `--- starter` section is the shuffled lines (with any spare lines), and `npm run verify` checks that every line of the solution is among them and that the shuffled order fails. A trace table is a puzzle with `"style": "TRACE"`: `options` is `{ "columns": [...], "rows": [...] }` with `null` for each box to fill in, and `answer` is the whole table, every value as text; verify checks the given cells match the answer. These two kinds are edited as files only, not in Teacher → Problems. A `--- hints` section lists the hints, one per line starting with `- `. A puzzle with `"check": "run"` has the first Python block in its question executed by `scripts/check-puzzles.py`, which must print the marked answer.
 
 ### How Python problems are marked
 
@@ -225,7 +240,7 @@ Nothing else needs setting up: there is no Google project or redirect address to
 
 - **Data protection.** The site stores each student's name, username, class, a one-way hash of their password, the code they submit and, with each submission, how many characters were typed and pasted and how long the editor was open. It holds no email addresses. Speak to your data protection officer before launch, and host it somewhere they are happy with. Treat the sign-in sheet like any other list of passwords: hand each student only their own line.
 - **Passwords you set are known to you.** That is the point of a teacher-managed class, but it means a student's account is only as private as the sheet it was printed on. Students cannot change their own password; you set it.
-- **Read through the challenges.** Every coding challenge is proven by `npm run verify`: its reference solution passes every test, its starter code does not, and for a fix-the-bug task the examples reveal the bug. The exam-style mark schemes were written for this project, not taken from OCR, so have a subject specialist read those too. `python3 scripts/check-puzzles.py` recomputes 54 of the 76 puzzle answers, by running the code in the question or re-tracing the algorithm. The other 22 are judgement questions (which kind of error, which fix, which test data), so have a subject specialist read those.
+- **Read through the challenges.** Every coding challenge is proven by `npm run verify`: its reference solution passes every test, its starter code does not, and for a fix-the-bug task the examples reveal the bug. The exam-style mark schemes were written for this project, not taken from OCR, so have a subject specialist read those too. `python3 scripts/check-puzzles.py` recomputes 69 of the 91 puzzle answers, by running the code in the question or re-tracing the algorithm. The other 22 are judgement questions (which kind of error, which fix, which test data), so have a subject specialist read those. The trace tables were filled in by running their programs.
 
 ## Before running a national competition
 
@@ -243,7 +258,9 @@ Nothing else needs setting up: there is no Google project or redirect address to
 | `src/lib/hints.ts` | How hint tokens are earned |
 | `src/lib/points.ts` | What each kind and difficulty of challenge is worth |
 | `src/lib/awards.ts`, `daily.ts`, `activity.ts` | Awards (including the secret ones), the daily challenge, streaks and the solve calendar |
-| `src/lib/classes.ts` | Classes, their colours, standings and the topic grid |
+| `src/lib/classes.ts`, `race.ts` | Classes, their colours, standings and the topic grid; the weekly class race |
+| `src/lib/live.ts`, `src/app/api/live/route.ts`, `src/components/live-banner.tsx` | Live lessons: the teacher's board, and how students' screens find the lesson |
+| `src/components/order-workspace.tsx`, `trace-card.tsx`, `src/lib/trace-table.ts` | Put-in-order challenges, and trace tables and how a box is marked |
 | `src/lib/homework.ts`, `mock.ts` | Homework progress, and mock papers and their marks |
 | `src/lib/integrity.ts`, `typing-counts.ts`, `settings.ts` | Paste tracking: the flag rule, the editor's counting, and the record-or-block setting |
 | `src/lib/notifications.ts` | What the bell in the top bar lists |
@@ -252,11 +269,11 @@ Nothing else needs setting up: there is no Google project or redirect address to
 | `src/lib/debugger.ts`, `trace.ts`, `public/judge/tracer.mjs` | The debugger: breakpoints in the editor, what each step shows, and the recording of a run |
 | `src/components/code-workspace.tsx`, `debug-panel.tsx`, `console-panel.tsx` | The editor with its Results, Console and Debugger tabs |
 | `src/app/(app)/` | Student pages: home, practice, course map, competitions, leaderboard, awards, homework, mock papers |
-| `src/app/(app)/teacher/` | Teacher dashboard: students, classes, homework, problems, competitions, settings, reports |
+| `src/app/(app)/teacher/` | Teacher dashboard: students, live lessons, classes, homework, problems, competitions, settings, reports |
 | `src/app/present/` | The projector view |
 | `src/components/app-nav.tsx` | The top bar, the phone tab bar, the bell and the account menu |
 | `src/auth.ts`, `src/lib/accounts.ts`, `passwords.ts`, `throttle.ts` | Sign-in, usernames and the CSV import, password hashing, the wrong-password lock |
-| `src/app/actions.ts` | Submitting code and puzzle answers; penalties |
+| `src/app/actions.ts` | Submitting code, puzzle answers and trace tables; penalties |
 | `src/lib/judge.ts`, `judge/runner.mjs` | Server-side marking |
 | `public/judge/` | Marking code shared by the browser ("Run") and the server ("Submit") |
 | `prisma/schema.prisma` | Database tables |
@@ -282,4 +299,4 @@ A few things are hidden for students to find. None of them changes a score.
 
 Useful commands: `npm run verify`, `npm run check` (homework states, paste flags, points and marks, the fix diff, palette search and debugger stepping), `python3 scripts/check-puzzles.py`, `npx tsx scripts/judge-smoke.ts` (checks the judge copes with broken and hostile code), `npm run lint`.
 
-**End-to-end tests.** `npm run e2e` drives the real site in a browser: signing in, solving, puzzles, hints, homework and the bell, paste recording and blocking, the debugger and console, search, teacher forms, mock papers, a phone-sized screen, and checks that no hidden test, model answer or unpaid hint ever reaches the page. It starts its own copy of the site on port 3100 with its own database (`prisma/e2e.db`, built from nothing each run by `e2e/prepare.ts`, which refuses any other database), so your data is never touched. The first time, run `npx playwright install chromium`. The tests are in `e2e/`.
+**End-to-end tests.** `npm run e2e` drives the real site in a browser: signing in, solving, puzzles, putting lines in order, trace tables, live lessons, the weekly race, hints, homework and the bell, paste recording and blocking, the debugger and console, search, teacher forms, mock papers, a phone-sized screen, and checks that no hidden test, model answer or unpaid hint ever reaches the page. It starts its own copy of the site on port 3100 with its own database (`prisma/e2e.db`, built from nothing each run by `e2e/prepare.ts`, which refuses any other database), so your data is never touched. The first time, run `npx playwright install chromium`. The tests are in `e2e/`.
