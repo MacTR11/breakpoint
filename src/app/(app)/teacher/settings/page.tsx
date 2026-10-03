@@ -50,6 +50,26 @@ export default async function SettingsPage() {
       </section>
 
       <section className="mt-10 max-w-2xl border-t border-line pt-8">
+        <h2 className="text-lg font-semibold">Backups</h2>
+        <div className="mt-1 space-y-2 text-sm text-muted">
+          <p>
+            A copy of the whole site&apos;s data: every student, their work and their passwords (stored as one-way hashes, which cannot be read back). Download one every week, and before
+            any big change, and keep it somewhere your college allows for student data.
+          </p>
+          <p>
+            If the server&apos;s copy is ever lost, the database file can be replaced with the latest backup; see DEPLOYING.md. For a spreadsheet of results instead, use{" "}
+            <a href="/teacher/export" className={link}>
+              Download results
+            </a>
+            .
+          </p>
+        </div>
+        <a href="/teacher/backup" className="btn btn-secondary mt-4" download>
+          Download a backup
+        </a>
+      </section>
+
+      <section className="mt-10 max-w-2xl border-t border-line pt-8">
         <h2 className="text-lg font-semibold">Your sign-in</h2>
         <div className="mt-1 space-y-2 text-sm text-muted">
           <p>

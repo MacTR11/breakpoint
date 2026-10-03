@@ -48,6 +48,8 @@ next-env.d.ts
 # local database
 /prisma/*.db
 /prisma/*.db-journal
+/prisma/*.db-wal
+/prisma/*.db-shm
 
 # Python runtime copied from node_modules by scripts/copy-pyodide.mjs
 /public/pyodide

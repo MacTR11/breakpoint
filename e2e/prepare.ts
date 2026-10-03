@@ -13,7 +13,7 @@ const url = process.env.DATABASE_URL ?? "";
 if (url !== "file:./e2e.db") throw new Error(`Refusing to reset ${url || "a database with no DATABASE_URL"}: the end-to-end tests only use file:./e2e.db.`);
 
 // A new, empty file each run: this suite's own database, never the dev one.
-for (const file of ["prisma/e2e.db", "prisma/e2e.db-journal"]) rmSync(file, { force: true });
+for (const file of ["prisma/e2e.db", "prisma/e2e.db-journal", "prisma/e2e.db-wal", "prisma/e2e.db-shm"]) rmSync(file, { force: true });
 execSync("npx prisma db push --skip-generate", { stdio: "inherit" });
 execSync("npx tsx prisma/seed.ts", { stdio: "inherit" });
 

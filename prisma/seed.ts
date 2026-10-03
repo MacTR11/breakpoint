@@ -11,6 +11,9 @@ const db = new PrismaClient();
 const FORTNIGHT = 14 * 24 * 60 * 60 * 1000;
 
 async function main() {
+  // Write-ahead logging: pages can be read while a submission is being saved,
+  // which matters with a whole class online at once. It stays set in the file.
+  if ((process.env.DATABASE_URL ?? "").startsWith("file:")) await db.$queryRawUnsafe("PRAGMA journal_mode = WAL");
   const loaded = loadContent();
   const packs = new Map<string, string[]>();
   const fileSlugs = new Set(loaded.map((p) => p.slug));

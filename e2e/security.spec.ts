@@ -45,3 +45,12 @@ test("the search list holds only what a student can open", async ({ page }) => {
   // And a held challenge cannot be opened directly.
   expect((await page.request.get("/problems/fix-vowels")).status()).toBe(404);
 });
+
+test("only the teacher can download a backup; the health check says nothing else", async ({ page }) => {
+  expect((await page.request.get("/teacher/backup")).status()).toBe(403);
+  await signIn(page, STUDENTS.ann);
+  expect((await page.request.get("/teacher/backup")).status()).toBe(403);
+  const health = await page.request.get("/api/health");
+  expect(health.status()).toBe(200);
+  expect(await health.json()).toEqual({ ok: true });
+});

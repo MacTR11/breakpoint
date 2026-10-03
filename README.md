@@ -59,7 +59,7 @@ TEACHER_PASSWORD="a long password of your own"
 TEACHER_NAME="Mr Example"
 ```
 
-On the live site the password needs at least 8 characters, or teacher sign-in is switched off; make it long, and do not reuse one from elsewhere. Your sign-in lasts 12 hours, then asks again (`TEACHER_SESSION_HOURS` changes that). Changing your username or password signs you out everywhere, and if you leave yourself signed in on a classroom computer, Teacher → Settings → **Sign out everywhere** ends it. While running the site on your own computer with `npm run dev`, any password is accepted so you can try things quickly. To change your username or password, change these values and restart the site. `AUTH_SECRET` must also be set: it signs the sign-in cookies (`npx auth secret` makes one).
+On the live site the password needs at least 12 characters, or teacher sign-in is switched off; make it long, and do not reuse one from elsewhere. Your sign-in lasts 12 hours, then asks again (`TEACHER_SESSION_HOURS` changes that). Changing your username or password signs you out everywhere, and if you leave yourself signed in on a classroom computer, Teacher → Settings → **Sign out everywhere** ends it. While running the site on your own computer with `npm run dev`, any password is accepted so you can try things quickly. To change your username or password, change these values and restart the site. `AUTH_SECRET` must also be set: it signs the sign-in cookies (`npx auth secret` makes one).
 
 ### Student accounts
 
@@ -212,18 +212,11 @@ In both kinds, `"hidden": true` keeps a test for Submit only, where students see
 
 ## Putting it online
 
-The site needs an ordinary long-running Node.js server with a disk, for example Railway, Render, Fly.io, a small VPS, or a college server.
+**[DEPLOYING.md](DEPLOYING.md) is the step-by-step guide** for running it with a real class: Railway in an EU region, the settings to paste in, a check before students arrive, keeping it safe, a weekly routine, updates, and what to do if something goes wrong.
 
-```bash
-npm install
-npm run setup
-npm run build
-npm start
-```
+In short, the site needs an ordinary long-running Node.js server (22.13 or newer) with a disk, about 2 GB of memory for 60 students, and HTTPS. Set the same variables as `.env` on the host, with a fresh `AUTH_SECRET` and a teacher password of at least 12 characters, then build with `npm run build` and start with `npm run release && npm start` (the release step creates or updates the database tables and loads the challenges, keeping everyone's progress).
 
-Set the same variables as `.env` on the host, with a fresh `AUTH_SECRET` (`npx auth secret`) and your own `TEACHER_PASSWORD`. Serve it over HTTPS: passwords are typed into this site, so it must never be reached over plain HTTP.
-
-The database is a single SQLite file (`prisma/dev.db`), which is plenty for one college. **Back that file up**: it holds every student's progress.
+The database is a single SQLite file. **Back it up every week**: Teacher → Settings → **Download a backup** gives a consistent copy while the site runs. `/api/health` answers `{"ok":true}` for an uptime monitor.
 
 ### Vercel
 

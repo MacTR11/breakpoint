@@ -2,7 +2,7 @@ export const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Breakpoint";
 
 // A short password is fine while trying the site on your own computer, but the
 // live site will not accept one: the teacher account can see every student.
-export const MIN_TEACHER_PASSWORD = process.env.NODE_ENV === "production" ? 8 : 1;
+export const MIN_TEACHER_PASSWORD = process.env.NODE_ENV === "production" ? 12 : 1;
 
 /** How long a teacher sign-in lasts before signing in again: TEACHER_SESSION_HOURS, 12 unless set. */
 export const teacherSessionHours = () => {
