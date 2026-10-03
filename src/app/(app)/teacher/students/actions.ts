@@ -3,13 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cleanUsername, generatePassword, passwordProblem, readStudentCsv, usernameFor, usernameProblem, type ImportRow } from "@/lib/accounts";
+import { guessYear } from "@/lib/classes";
 import { teacherLogin } from "@/lib/config";
 import { db } from "@/lib/db";
 import { hashPassword } from "@/lib/passwords";
-import { getCurrentUser } from "@/lib/session";
+import { getCurrentUser, SIGNED_OUT, stillTeacher } from "@/lib/session";
 
 /** One line of the sign-in sheet. `password` is null when an existing student's password was left alone. */
-export type Login = { name: string; username: string; password: string | null; change: "added" | "updated" };
+export type Login = { name: string; username: string; password: string | null; group: string; change: "added" | "updated" };
 
 // Passwords are only readable at the moment they are set, so the sheet comes
 // back with the result and is never stored.
@@ -58,26 +59,35 @@ async function enrol(rows: ImportRow[]): Promise<{ errors: string[]; logins: Log
   }
   if (errors.length > 0) return { errors, logins: [] };
 
+  // Classes named in the rows are made if they do not exist yet.
+  const classIds = new Map((await db.class.findMany()).map((c) => [c.name.toLowerCase(), c.id]));
+  for (const name of new Set(plan.map((p) => p.row.group).filter(Boolean))) {
+    if (classIds.has(name.toLowerCase())) continue;
+    classIds.set(name.toLowerCase(), (await db.class.create({ data: { name, year: guessYear(name) } })).id);
+  }
+
   const hashes = await Promise.all(plan.map((p) => (p.password ? hashPassword(p.password) : null)));
   await db.$transaction(
     plan.map((p, i) => {
       const passwordHash = hashes[i];
+      // A row with no class leaves an existing student where they are.
+      const classId = p.row.group ? { classId: classIds.get(p.row.group.toLowerCase()) } : {};
       return p.id
-        ? db.user.update({ where: { id: p.id }, data: { name: p.row.name, ...(passwordHash ? { passwordHash, sessionEpoch: { increment: 1 } } : {}) } })
-        : db.user.create({ data: { name: p.row.name, username: p.username, passwordHash: passwordHash ?? "", role: "STUDENT" } });
+        ? db.user.update({ where: { id: p.id }, data: { name: p.row.name, ...classId, ...(passwordHash ? { passwordHash, sessionEpoch: { increment: 1 } } : {}) } })
+        : db.user.create({ data: { name: p.row.name, username: p.username, passwordHash: passwordHash ?? "", role: "STUDENT", ...classId } });
     }),
   );
   revalidatePath("/", "layout");
-  return { errors: [], logins: plan.map((p) => ({ name: p.row.name, username: p.username, password: p.password, change: p.id ? "updated" : "added" })) };
+  return { errors: [], logins: plan.map((p) => ({ name: p.row.name, username: p.username, password: p.password, group: p.row.group, change: p.id ? "updated" : "added" })) };
 }
 
 /** Import a class from a CSV file, or from rows pasted out of a spreadsheet. */
 export async function importStudents(_previous: EnrolState, formData: FormData): Promise<EnrolState> {
-  await assertTeacher();
   const pasted = String(formData.get("rows") ?? "");
   const file = formData.get("file");
   const upload = file instanceof File && file.size > 0 ? file : null;
   const values = { rows: pasted };
+  if (!(await stillTeacher())) return { errors: [SIGNED_OUT], logins: [], values };
   if (upload && upload.size > MAX_CSV_BYTES) return { errors: ["That file is too large to be a class list."], logins: [], values };
   const csv = upload ? await upload.text() : pasted;
   if (!csv.trim()) return { errors: ["Choose a CSV file, or paste the rows into the box."], logins: [], values };
@@ -89,20 +99,21 @@ export async function importStudents(_previous: EnrolState, formData: FormData):
 }
 
 export async function addStudent(_previous: EnrolState, formData: FormData): Promise<EnrolState> {
-  await assertTeacher();
-  const values = { name: text(formData, "name"), username: text(formData, "username"), password: text(formData, "password") };
+  const values = { name: text(formData, "name"), username: text(formData, "username"), password: text(formData, "password"), group: text(formData, "group") };
+  // A password typed for the student is not sent back to a browser that is no longer signed in.
+  if (!(await stillTeacher())) return { errors: [SIGNED_OUT], logins: [], values: { ...values, password: "" } };
   if (!values.name) return { errors: ["Enter the student's name."], logins: [], values };
   const username = cleanUsername(values.username);
   if (username && (await db.user.findUnique({ where: { username } }))) return { errors: [`The username "${username}" is already taken.`], logins: [], values };
-  const result = await enrol([{ line: 1, name: values.name.slice(0, 80), username, password: values.password }]);
-  return { ...result, values: result.errors.length ? values : { name: "", username: "", password: "" } };
+  const result = await enrol([{ line: 1, name: values.name.slice(0, 80), username, password: values.password, group: values.group.slice(0, 40) }]);
+  return { ...result, values: result.errors.length ? values : { name: "", username: "", password: "", group: values.group } };
 }
 
 /** Change a student's name, username or password. A blank password leaves it as it is. */
 export async function updateStudent(_previous: EditState, formData: FormData): Promise<EditState> {
-  await assertTeacher();
   const id = text(formData, "id");
-  const values = { name: text(formData, "name"), username: cleanUsername(text(formData, "username")), password: text(formData, "password") };
+  const values = { name: text(formData, "name"), username: cleanUsername(text(formData, "username")), password: text(formData, "password"), classId: text(formData, "classId") };
+  if (!(await stillTeacher())) return { errors: [SIGNED_OUT], saved: false, values: { ...values, password: "" } };
   const student = await db.user.findUnique({ where: { id } });
   if (!student || student.role !== "STUDENT") return { errors: ["That student no longer exists."], saved: false, values };
 
@@ -120,6 +131,7 @@ export async function updateStudent(_previous: EditState, formData: FormData): P
     data: {
       name: values.name.slice(0, 80),
       username: values.username,
+      classId: values.classId && (await db.class.findUnique({ where: { id: values.classId } })) ? values.classId : null,
       // A new password signs the student out wherever the old one was used.
       ...(values.password ? { passwordHash: await hashPassword(values.password), sessionEpoch: { increment: 1 } } : {}),
     },
@@ -135,4 +147,16 @@ export async function deleteStudent(formData: FormData) {
   await db.user.deleteMany({ where: { id: text(formData, "id"), role: "STUDENT" } });
   revalidatePath("/", "layout");
   redirect("/teacher");
+}
+
+/** Move the ticked students into a class, or out of any class. */
+export async function moveStudents(formData: FormData) {
+  await assertTeacher();
+  const ids = formData.getAll("student").map(String);
+  const classId = text(formData, "classId");
+  const target = classId && classId !== "none" ? await db.class.findUnique({ where: { id: classId } }) : null;
+  if (ids.length > 0 && (target || classId === "none")) {
+    await db.user.updateMany({ where: { id: { in: ids }, role: "STUDENT" }, data: { classId: target?.id ?? null } });
+    revalidatePath("/", "layout");
+  }
 }

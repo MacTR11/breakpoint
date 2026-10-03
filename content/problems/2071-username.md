@@ -1,5 +1,5 @@
 --- meta
-{"title": "String handling (a): make a username", "kind": "CODE", "difficulty": "EASY", "topic": "String handling", "points": 10, "track": "exam", "specRef": "2.2.1", "functionName": "make_username",
+{"title": "String handling (a): make a username", "kind": "CODE", "difficulty": "EASY", "topic": "String handling", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "make_username",
   "tests": [
     {"args": ["Ada", "Lovelace", 2009], "expected": "alovelace09"},
     {"args": ["alan", "TURING", 2010], "expected": "aturing10"},

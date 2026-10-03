@@ -1,5 +1,5 @@
 --- meta
-{"title": "Playlist", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Class design", "points": 20, "track": "oop", "specRef": "1.2.4", "functionName": "Playlist",
+{"title": "Playlist", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Class design", "points": 25, "track": "oop", "specRef": "1.2.4", "functionName": "Playlist",
   "tests": [
     {"steps": [["Playlist"], ["add", "Intro", 60], ["add", "Anthem", 240], ["total_time"], ["longest"]], "expected": [1, 2, 300, "Anthem"]},
     {"steps": [["Playlist"], ["total_time"], ["longest"], ["remove", "x"]], "expected": [0, null, false]},

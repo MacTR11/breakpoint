@@ -26,6 +26,28 @@ function headline(state: NonNullable<RunState>) {
   return { text: `${passed} of ${total} passed.`, good: false };
 }
 
+/**
+ * A value shown beside another it should have equalled, with the part where
+ * they differ washed: green in what was expected, red in what came back.
+ */
+function Compared({ text, other, color }: { text: string; other: string; color: string }) {
+  let prefix = 0;
+  while (prefix < text.length && prefix < other.length && text[prefix] === other[prefix]) prefix++;
+  let suffix = 0;
+  while (suffix < text.length - prefix && suffix < other.length - prefix && text[text.length - 1 - suffix] === other[other.length - 1 - suffix]) suffix++;
+  if (text === other || prefix + suffix === 0) return <>{text}</>;
+  const middle = text.slice(prefix, text.length - suffix);
+  return (
+    <>
+      {text.slice(0, prefix)}
+      <mark className="rounded-[3px] text-inherit" style={{ background: `color-mix(in srgb, ${color} 28%, transparent)` }} title={middle ? undefined : "Something is missing here"}>
+        {middle || "‸"}
+      </mark>
+      {text.slice(text.length - suffix)}
+    </>
+  );
+}
+
 function Row({ result, test, functionName, number, delay }: { result: TestResult; test?: TestCase; functionName: string; number: number; delay: number }) {
   const detail = test && !result.hidden ? test : null;
   const [label, color] = word[result.status];
@@ -49,13 +71,17 @@ function Row({ result, test, functionName, number, delay }: { result: TestResult
           {failed && (
             <>
               <dt>expected</dt>
-              <dd className="break-all text-[#f6f8fa]">{toPy(detail.expected)}</dd>
+              <dd className="break-all text-[#f6f8fa]">
+                {result.actual === undefined ? toPy(detail.expected) : <Compared text={toPy(detail.expected)} other={result.actual} color="#3fb950" />}
+              </dd>
             </>
           )}
           {failed && result.actual !== undefined && (
             <>
               <dt>returned</dt>
-              <dd className="break-all text-[#ff7b72]">{result.actual}</dd>
+              <dd className="break-all text-[#ff7b72]">
+                <Compared text={result.actual} other={toPy(detail.expected)} color="#ff7b72" />
+              </dd>
             </>
           )}
           {result.stdout && (

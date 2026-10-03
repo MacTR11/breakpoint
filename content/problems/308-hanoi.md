@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Towers of Hanoi", "kind": "CODE", "difficulty": "HARD", "topic": "Recursion", "points": 40, "track": "recursion", "specRef": "2.2.1",
+  "title": "Towers of Hanoi", "kind": "CODE", "difficulty": "HARD", "topic": "Recursion", "points": 50, "track": "recursion", "specRef": "2.2.1",
   "functionName": "hanoi",
   "tests": [
     { "args": [1], "expected": [["A", "C"]] },

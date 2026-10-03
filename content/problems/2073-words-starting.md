@@ -1,5 +1,5 @@
 --- meta
-{"title": "String handling (c): count words by first letter", "kind": "CODE", "difficulty": "EASY", "topic": "String handling", "points": 10, "track": "exam", "specRef": "2.2.1", "functionName": "count_starting",
+{"title": "String handling (c): count words by first letter", "kind": "CODE", "difficulty": "EASY", "topic": "String handling", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "count_starting",
   "tests": [
     {"args": ["the tower and the tram", "t"], "expected": 4},
     {"args": ["Blackpool beach is busy", "b"], "expected": 3},

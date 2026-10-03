@@ -1,5 +1,5 @@
 --- meta
-{"title": "Cinema (b): first free seat in a row", "kind": "CODE", "difficulty": "EASY", "topic": "2D arrays", "points": 10, "track": "exam", "specRef": "2.2.1", "functionName": "first_free",
+{"title": "Cinema (b): first free seat in a row", "kind": "CODE", "difficulty": "EASY", "topic": "2D arrays", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "first_free",
   "tests": [
     {"args": [[["F", "B", "F"], ["B", "B", "B"], ["F", "F", "F"]], 0], "expected": 0},
     {"args": [[["F", "B", "F"], ["B", "B", "B"], ["F", "F", "F"]], 1], "expected": -1},

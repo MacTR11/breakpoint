@@ -40,7 +40,8 @@ export const loadContests = (): ContentContest[] => JSON.parse(readFileSync(path
  */
 export function loadContent(): ContentProblem[] {
   return readdirSync(DIR)
-    .filter((file) => file.endsWith(".md"))
+    // Sync clients sometimes leave copies such as "101-sum 2.md"; a real file has no spaces.
+    .filter((file) => file.endsWith(".md") && !file.includes(" "))
     .sort()
     .map((file) => {
       const sections: Record<string, string> = {};

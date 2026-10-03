@@ -5,8 +5,11 @@ import { usePathname } from "next/navigation";
 
 const tabs = [
   { href: "/teacher", label: "Students" },
+  { href: "/teacher/classes", label: "Classes" },
+  { href: "/teacher/homework", label: "Homework" },
   { href: "/teacher/problems", label: "Problems" },
   { href: "/teacher/contests", label: "Competitions" },
+  { href: "/teacher/settings", label: "Settings" },
 ];
 
 export function TeacherTabs() {

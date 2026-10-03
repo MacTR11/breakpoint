@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Library Loans", "kind": "CODE", "difficulty": "HARD", "topic": "Class design", "points": 40, "track": "oop", "specRef": "3.3",
+  "title": "Library Loans", "kind": "CODE", "difficulty": "HARD", "topic": "Class design", "points": 50, "track": "oop", "specRef": "3.3",
   "functionName": "Library",
   "tests": [
     { "steps": [["Library"], ["add_book", "Dune"], ["add_book", "Dune"], ["borrow", "Dune", "amy"], ["borrow", "Dune", "ben"], ["on_loan"]], "expected": [true, false, true, false, ["Dune"]] },

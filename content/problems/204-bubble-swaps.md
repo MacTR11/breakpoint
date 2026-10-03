@@ -4,7 +4,7 @@
   "kind": "CODE",
   "difficulty": "MEDIUM",
   "topic": "Algorithms",
-  "points": 20,
+  "points": 25,
   "track": "sorting", "specRef": "2.3.1",
   "functionName": "bubble_swaps",
   "tests": [

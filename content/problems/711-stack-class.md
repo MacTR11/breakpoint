@@ -1,5 +1,5 @@
 --- meta
-{"title": "Build a Stack", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Stacks", "points": 20, "track": "structures", "specRef": "1.4.2", "contest": "structures-derby", "functionName": "Stack",
+{"title": "Build a Stack", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Stacks", "points": 25, "track": "structures", "specRef": "1.4.2", "contest": "structures-derby", "functionName": "Stack",
   "tests": [
     {"steps": [["Stack"], ["push", "a"], ["push", "b"], ["peek"], ["pop"], ["pop"], ["pop"]], "expected": [1, 2, "b", "b", "a", null]},
     {"steps": [["Stack"], ["is_empty"], ["size"], ["peek"]], "expected": [true, 0, null]},

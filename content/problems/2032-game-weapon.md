@@ -1,5 +1,5 @@
 --- meta
-{"title": "Adventure game (b): inheritance", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Inheritance", "points": 20, "track": "exam", "specRef": "1.2.4", "functionName": "Weapon",
+{"title": "Adventure game (b): inheritance", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Inheritance", "points": 30, "track": "exam", "specRef": "1.2.4", "functionName": "Weapon",
   "tests": [
     {"steps": [["Weapon", "Sword", 50, 12], ["get_name"], ["get_value"], ["get_damage"], ["describe"]], "expected": ["Sword", 50, 12, "Sword (value 50, damage 12)"]},
     {"steps": [["Weapon", "Stick", 0, 1], ["describe"], ["get_damage"]], "expected": ["Stick (value 0, damage 1)", 1]},

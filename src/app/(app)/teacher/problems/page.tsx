@@ -2,9 +2,11 @@ import Link from "next/link";
 import { ButtonLink, PageHeader, kindLabel, levelLabel, link } from "@/components/ui";
 import { db } from "@/lib/db";
 import { isPending } from "@/lib/problems";
+import { requireTeacher } from "@/lib/session";
 import { trackTitle } from "@/lib/tracks";
 
 export default async function TeacherProblemsPage() {
+  await requireTeacher();
   const problems = await db.problem.findMany({
     orderBy: { sortOrder: "asc" },
     include: { _count: { select: { solves: true, submissions: true } }, contests: { include: { contest: true } } },

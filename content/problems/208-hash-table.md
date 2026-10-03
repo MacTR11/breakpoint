@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Hash Table with Linear Probing", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Hash tables", "points": 20, "track": "structures", "specRef": "1.4.2",
+  "title": "Hash Table with Linear Probing", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Hash tables", "points": 25, "track": "structures", "specRef": "1.4.2",
   "functionName": "hash_insert",
   "tests": [
     { "args": [[10, 22, 31], 5], "expected": [10, 31, 22, null, null] },

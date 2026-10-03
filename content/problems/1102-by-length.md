@@ -1,5 +1,5 @@
 --- meta
-{"title": "Shortest First", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 20, "track": "sorting", "specRef": "2.3.1", "contest": "sort-it-out", "functionName": "by_length", "banned": ["sorted(", ".sort("],
+{"title": "Shortest First", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 25, "track": "sorting", "specRef": "2.3.1", "contest": "sort-it-out", "functionName": "by_length", "banned": ["sorted(", ".sort("],
   "tests": [
     {"args": [["pear", "fig", "apple"]], "expected": ["fig", "pear", "apple"]},
     {"args": [["bb", "aa", "c"]], "expected": ["c", "bb", "aa"]},

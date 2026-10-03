@@ -1,5 +1,5 @@
 --- meta
-{"title": "Queue in an array (b): a circular queue", "kind": "CODE", "difficulty": "HARD", "topic": "Queues", "points": 40, "track": "exam", "specRef": "1.4.2", "functionName": "CircularQueue", "banned": [".append(", ".insert(", ".pop("],
+{"title": "Queue in an array (b): a circular queue", "kind": "CODE", "difficulty": "HARD", "topic": "Queues", "points": 45, "track": "exam", "specRef": "1.4.2", "functionName": "CircularQueue", "banned": [".append(", ".insert(", ".pop("],
   "tests": [
     {"steps": [["CircularQueue", 3], ["is_empty"], ["enqueue", "a"], ["enqueue", "b"], ["dequeue"], ["enqueue", "c"], ["enqueue", "d"], ["enqueue", "e"], ["dequeue"], ["dequeue"], ["dequeue"], ["dequeue"]], "expected": [true, true, true, "a", true, true, false, "b", "c", "d", null]},
     {"steps": [["CircularQueue", 2], ["enqueue", 1], ["enqueue", 2], ["is_full"], ["enqueue", 3], ["dequeue"], ["is_full"], ["enqueue", 3], ["dequeue"], ["dequeue"], ["is_empty"]], "expected": [true, true, true, false, 1, false, true, 2, 3, true]},

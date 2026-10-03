@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "SELECT … WHERE in Python", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Databases", "points": 20, "track": "lists", "specRef": "1.3.2",
+  "title": "SELECT … WHERE in Python", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Databases", "points": 25, "track": "lists", "specRef": "1.3.2",
   "functionName": "select",
   "tests": [
     { "args": [[{ "name": "Amira", "year": 12, "house": "Stanley" }, { "name": "Ben", "year": 13, "house": "Stanley" }, { "name": "Chloe", "year": 12, "house": "Fylde" }], ["name"], "year", 12], "expected": [{ "name": "Amira" }, { "name": "Chloe" }] },

@@ -5,7 +5,9 @@ import { redirect } from "next/navigation";
 import { signOut } from "@/auth";
 import { db } from "@/lib/db";
 import { hintWallet, parseHints } from "@/lib/hints";
+import { cleanTelemetry, type Telemetry } from "@/lib/integrity";
 import { judge } from "@/lib/judge";
+import { paperUsing } from "@/lib/mock";
 import { findViewableProblem, isLive, MAX_PUZZLE_ATTEMPTS, parseBanned, parseOptions, parseTests, pointsFor, puzzlePenalty } from "@/lib/problems";
 import { getCurrentUser } from "@/lib/session";
 import { noRewards, recordSolve, type Rewards } from "@/lib/solve";
@@ -23,7 +25,7 @@ export type CodeSubmitResult =
   | { ok: false; message: string }
   | { ok: true; outcome: JudgeOutcome; newlySolved: boolean; points: number; rewards: Rewards };
 
-export async function submitCode(slug: string, code: string): Promise<CodeSubmitResult> {
+export async function submitCode(slug: string, code: string, telemetry?: Telemetry): Promise<CodeSubmitResult> {
   const user = await getCurrentUser();
   if (!user) return { ok: false, message: "Your session has ended. Please sign in again." };
   if (typeof code !== "string" || code.length > MAX_CODE_LENGTH) return { ok: false, message: "That code is too long to submit." };
@@ -46,6 +48,7 @@ export async function submitCode(slug: string, code: string): Promise<CodeSubmit
       status: outcome.status,
       passed: outcome.results.filter((r) => r.status === "PASS").length,
       total: tests.length,
+      ...cleanTelemetry(telemetry),
     },
   });
 
@@ -125,6 +128,8 @@ export async function unlockHint(slug: string): Promise<HintResult> {
   const isTeacher = user.role === "TEACHER";
   const problem = await findViewableProblem(slug, isTeacher);
   if (!problem) return { ok: false, message: "This problem is not available." };
+
+  if (!isTeacher && (await paperUsing(user.id, problem.id))) return { ok: false, message: "Hints are off while you sit a mock paper." };
 
   const hints = parseHints(problem);
   const index = await db.hintUnlock.count({ where: { userId: user.id, problemId: problem.id } });

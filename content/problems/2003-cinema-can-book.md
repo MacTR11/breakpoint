@@ -1,5 +1,5 @@
 --- meta
-{"title": "Cinema (c): can a group sit together?", "kind": "CODE", "difficulty": "MEDIUM", "topic": "2D arrays", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "can_book",
+{"title": "Cinema (c): can a group sit together?", "kind": "CODE", "difficulty": "MEDIUM", "topic": "2D arrays", "points": 30, "track": "exam", "specRef": "2.2.1", "functionName": "can_book",
   "tests": [
     {"args": [[["F", "F", "B", "F", "F", "F"], ["B", "F", "F", "B"], ["F"]], 0, 3, 3], "expected": true},
     {"args": [[["F", "F", "B", "F", "F", "F"], ["B", "F", "F", "B"], ["F"]], 0, 1, 3], "expected": false},

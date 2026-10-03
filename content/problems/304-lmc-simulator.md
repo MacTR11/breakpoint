@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Little Man Computer", "kind": "CODE", "difficulty": "HARD", "topic": "Assembly language", "points": 40, "track": "algorithms", "specRef": "1.2.4",
+  "title": "Little Man Computer", "kind": "CODE", "difficulty": "HARD", "topic": "Assembly language", "points": 50, "track": "algorithms", "specRef": "1.2.4",
   "functionName": "run_lmc",
   "tests": [
     { "args": [["INP", "STA 6", "INP", "ADD 6", "OUT", "HLT", "DAT 0"], [3, 4]], "expected": [7] },

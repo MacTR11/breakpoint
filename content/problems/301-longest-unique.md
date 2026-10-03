@@ -4,7 +4,7 @@
   "kind": "CODE",
   "difficulty": "HARD",
   "topic": "Algorithms",
-  "points": 40,
+  "points": 50,
   "track": "strings", "specRef": "2.3.1",
   "functionName": "longest_unique",
   "tests": [

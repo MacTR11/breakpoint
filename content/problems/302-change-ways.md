@@ -4,7 +4,7 @@
   "kind": "CODE",
   "difficulty": "HARD",
   "topic": "Dynamic programming",
-  "points": 40,
+  "points": 50,
   "track": "algorithms", "specRef": "2.2.2",
   "functionName": "change_ways",
   "tests": [

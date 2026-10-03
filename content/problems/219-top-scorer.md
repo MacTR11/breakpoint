@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Reading a Scores File", "kind": "CODE", "difficulty": "MEDIUM", "topic": "File handling", "points": 20, "track": "robust", "specRef": "3.3",
+  "title": "Reading a Scores File", "kind": "CODE", "difficulty": "MEDIUM", "topic": "File handling", "points": 25, "track": "robust", "specRef": "3.3",
   "functionName": "top_scorer",
   "tests": [
     { "args": [["Ava,70", "Ben,85", "Cal,62"]], "expected": "Ben" },

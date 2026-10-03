@@ -1,5 +1,5 @@
 --- meta
-{"title": "Recursion (b): count the matches", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "count_matches", "banned": ["for ", "while ", ".count("],
+{"title": "Recursion (b): count the matches", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 25, "track": "exam", "specRef": "2.2.1", "functionName": "count_matches", "banned": ["for ", "while ", ".count("],
   "tests": [
     {"args": [[3, 1, 3, 3], 3], "expected": 3},
     {"args": [["a", "b"], "z"], "expected": 0},

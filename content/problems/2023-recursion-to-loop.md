@@ -1,5 +1,5 @@
 --- meta
-{"title": "Recursion (c): rewrite it with a loop", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Recursion and iteration", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "step_total_loop", "banned": ["step_total("],
+{"title": "Recursion (c): rewrite it with a loop", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Recursion and iteration", "points": 25, "track": "exam", "specRef": "2.2.1", "functionName": "step_total_loop", "banned": ["step_total("],
   "tests": [
     {"args": [7], "expected": 16},
     {"args": [4], "expected": 6},

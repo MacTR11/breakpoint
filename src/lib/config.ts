@@ -4,6 +4,12 @@ export const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Breakpoint";
 // live site will not accept one: the teacher account can see every student.
 export const MIN_TEACHER_PASSWORD = process.env.NODE_ENV === "production" ? 8 : 1;
 
+/** How long a teacher sign-in lasts before signing in again: TEACHER_SESSION_HOURS, 12 unless set. */
+export const teacherSessionHours = () => {
+  const hours = Number(process.env.TEACHER_SESSION_HOURS);
+  return Number.isFinite(hours) && hours > 0 ? hours : 12;
+};
+
 /**
  * The teacher's sign-in, which is set in .env (or the host's settings) rather
  * than stored in the database. Null until both values are set and the

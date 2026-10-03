@@ -182,3 +182,10 @@ export function formatDateTime(date: Date) {
 
 /** Points with a real minus sign, so penalties read as "−4" rather than "-4". */
 export const signed = (points: number) => (points < 0 ? `−${Math.abs(points)}` : String(points));
+
+/** 1st, 2nd, 3rd, 4th, 11th, 22nd. */
+export function ordinal(n: number) {
+  const tens = n % 100;
+  const suffix = tens >= 11 && tens <= 13 ? "th" : (["th", "st", "nd", "rd"][n % 10] ?? "th");
+  return `${n}${suffix}`;
+}

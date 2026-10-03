@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "N Queens", "kind": "CODE", "difficulty": "HARD", "topic": "Backtracking", "points": 40, "track": "algorithms", "specRef": "2.2.2",
+  "title": "N Queens", "kind": "CODE", "difficulty": "HARD", "topic": "Backtracking", "points": 50, "track": "algorithms", "specRef": "2.2.2",
   "functionName": "count_queens",
   "tests": [
     { "args": [1], "expected": 1 },

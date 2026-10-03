@@ -1,5 +1,5 @@
 --- meta
-{"title": "String handling (b): calculate a check digit", "kind": "CODE", "difficulty": "MEDIUM", "topic": "String handling", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "check_digit",
+{"title": "String handling (b): calculate a check digit", "kind": "CODE", "difficulty": "MEDIUM", "topic": "String handling", "points": 25, "track": "exam", "specRef": "2.2.1", "functionName": "check_digit",
   "tests": [
     {"args": ["4006381"], "expected": 2},
     {"args": ["0000000"], "expected": 0},

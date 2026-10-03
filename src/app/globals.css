@@ -28,6 +28,8 @@
   --num: #b35900;
   --com: #6e7781;
   --field: #ffffff;
+  /* The raised choice in the top bar's track of links. */
+  --raised: #ffffff;
   --cal-0: #e5e5ea;
   --cal-1: #9be9a8;
   --cal-2: #40c463;
@@ -61,6 +63,7 @@
   --num: #ffa657;
   --com: #8b949e;
   --field: #2c2c2e;
+  --raised: #48484a;
   --cal-0: #2c2c2e;
   --cal-1: #0e4429;
   --cal-2: #26a641;
@@ -158,6 +161,10 @@ body {
   a.tile:active {
     transform: scale(0.975);
   }
+  /* An earned award on the Awards page sits a touch askew, like a sticker. */
+  .sticker > .tile {
+    transform: rotate(var(--tilt, 0deg));
+  }
   /* The code glyph printed faintly in a tile's corner. */
   .glyph {
     position: absolute;
@@ -242,6 +249,27 @@ body {
   .btn-secondary:not(:disabled):hover {
     background: var(--line);
   }
+  /* Press and hold to delete: fills with red while held (src/components/hold-button.tsx). */
+  .hold {
+    position: relative;
+    overflow: hidden;
+    color: var(--fail);
+    background: color-mix(in srgb, var(--fail) var(--tint), transparent);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .hold-fill {
+    position: absolute;
+    inset: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: color-mix(in srgb, var(--fail) 24%, transparent);
+  }
+  .hold[data-holding] .hold-fill {
+    transform: scaleX(1);
+    transition: transform 0.9s linear;
+  }
   /* On a coloured tile: white, with the tile's colour for its words. */
   .btn-on-tile {
     background: #fff;
@@ -281,17 +309,32 @@ body {
     background: var(--line);
     padding: 2px;
   }
-  .segmented a {
+  .segmented a,
+  .segmented label,
+  .segmented button {
+    position: relative;
     border-radius: 9px;
     padding: 0.3rem 0.8rem;
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--ink-soft);
+    cursor: pointer;
   }
-  .segmented a[aria-current] {
+  .segmented a[aria-current],
+  .segmented button[aria-pressed="true"],
+  .segmented label:has(input:checked) {
     background: var(--card);
     color: var(--ink);
     font-weight: 600;
+  }
+  /* As radio buttons in a form: the circle is hidden, the label is the button. */
+  .segmented input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .segmented label:has(input:focus-visible) {
+    outline: 2px solid var(--accent);
   }
   /* A topic to filter by: a wash of its colour, solid once chosen. */
   .chip {
@@ -320,6 +363,211 @@ body {
     background: var(--tone, var(--accent));
   }
 
+  /* A homework challenge: a ring, filled with a tick once solved (Rare UI's task list, in solid colour). */
+  .task-check {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid var(--line);
+    border-radius: 9999px;
+  }
+  .task-check[data-done] {
+    border-color: var(--pass);
+    background: var(--pass);
+  }
+  .task-check[data-held] {
+    border-style: dashed;
+  }
+  .task-check[data-done]::after {
+    content: "";
+    width: 0.55rem;
+    height: 0.3rem;
+    border-bottom: 2px solid #fff;
+    border-left: 2px solid #fff;
+    transform: translateY(-1px) rotate(-45deg);
+  }
+
+  /* The top bar's links on a wide screen: a grey track with the current page
+     raised on a pill that slides between them (src/components/app-nav.tsx). */
+  .nav-track {
+    position: relative;
+    display: flex;
+    gap: 2px;
+    border-radius: 12px;
+    background: var(--paper);
+    padding: 3px;
+  }
+  .nav-track a {
+    position: relative;
+    z-index: 1;
+    border-radius: 9px;
+    padding: 0.32rem 0.8rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--ink-soft);
+  }
+  .nav-track a:hover,
+  .nav-track a[aria-current] {
+    color: var(--ink);
+  }
+  .nav-track a[aria-current] {
+    font-weight: 600;
+  }
+  /* Until the pill has been placed, the current link raises itself. */
+  .nav-track:not(:has(.nav-pill[data-ready])) a[aria-current] {
+    background: var(--raised);
+  }
+  .nav-pill {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 0;
+    border-radius: 9px;
+    background: var(--raised);
+    opacity: 0;
+  }
+  .nav-pill[data-ready] {
+    transition:
+      transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+      width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  /* Phones and tablets: five places along the bottom, each with a word of code for an icon. */
+  .tab-bar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 30;
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    border-top: 1px solid var(--line);
+    background: var(--card);
+    padding: 0.4rem 0.25rem calc(0.4rem + env(safe-area-inset-bottom));
+  }
+  .tab-bar a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .tab-bar a[aria-current] {
+    color: var(--accent);
+  }
+  .tab-glyph {
+    display: grid;
+    place-items: center;
+    min-width: 2.75rem;
+    height: 1.75rem;
+    border-radius: 9px;
+    padding: 0 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-variant-ligatures: none;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .tab-bar a[aria-current] .tab-glyph {
+    background: var(--accent);
+    color: #fff;
+  }
+  .tab-bar a:active .tab-glyph {
+    transform: scale(0.92);
+  }
+
+  /* Streak and hints in the top bar. */
+  .stat-chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    border-radius: 9999px;
+    background: var(--paper);
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    color: var(--muted);
+  }
+  .stat-chip b {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+  /* The bell and the initials in the top bar. */
+  .round-button {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    background: var(--paper);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .round-button:hover {
+    background: var(--line);
+    color: var(--ink);
+  }
+  .round-button.avatar {
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 800;
+  }
+  .round-button.avatar:hover {
+    background: var(--accent-dark);
+  }
+  .bell-count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    display: grid;
+    place-items: center;
+    min-width: 1.15rem;
+    height: 1.15rem;
+    border: 2px solid var(--card);
+    border-radius: 9999px;
+    background: var(--brand);
+    padding: 0 0.25rem;
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+  }
+  /* A menu opened from the top bar: a card, kept apart from the page by a hairline. */
+  .menu-card {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    z-index: 40;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--card);
+    padding: 0.6rem;
+  }
+
+  /* The command palette (src/components/command-palette.tsx): a menu card centred under the top bar. */
+  .palette {
+    position: fixed;
+    top: 4.25rem;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    width: min(36rem, calc(100vw - 2rem));
+    margin-inline: auto;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--card);
+    padding: 0.7rem 0 0.4rem;
+  }
+
   /* Tables: column heads in small grey type, rows separated by hairlines. */
   .tbl {
     width: 100%;
@@ -346,9 +594,173 @@ body {
     font-variant-numeric: tabular-nums;
     font-weight: 600;
   }
+  /* The class topic grid: a square per student per topic. */
+  .topic-grid th,
+  .topic-grid td {
+    padding-right: 0.4rem;
+  }
+  .cell {
+    display: inline-grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 1.7rem;
+    border-radius: 7px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+    background: color-mix(in srgb, var(--tone) var(--fill), var(--paper));
+  }
+  .cell[data-strong] {
+    color: #fff;
+  }
+  .cell[data-done] {
+    background: var(--tone);
+  }
   .tbl th:last-child,
   .tbl td:last-child {
     padding-right: 0;
+  }
+}
+
+/* Easter egg: terminal mode, after the Konami code (src/components/easter-eggs.tsx).
+   Only the colour variables change, so every page follows. */
+html.terminal {
+  color-scheme: dark;
+  --page: #020802;
+  --card: #071207;
+  --paper: #0c1d0c;
+  --ink: #3dff6e;
+  --ink-soft: #33db5d;
+  --muted: #1f9d43;
+  --line: #15451f;
+  --link: #8dffaa;
+  --accent: #2fd657;
+  --accent-dark: #3dff6e;
+  --pass: #3dff6e;
+  --fail: #ff5f56;
+  --warn: #ffbd2e;
+  --brand: #3dff6e;
+  --streak: #ffbd2e;
+  --hint: #8dffaa;
+  --field: #020802;
+  --raised: #15451f;
+  --cal-0: #0c1d0c;
+  --cal-1: #14532d;
+  --cal-2: #1f9d43;
+  --cal-3: #3dff6e;
+  --topic-mix: #3dff6e;
+  --topic-keep: 15%;
+  --tint: 20%;
+}
+html.terminal body {
+  font-family: var(--font-mono);
+}
+html.terminal .tile,
+html.terminal .icon,
+html.terminal .cell[data-done] {
+  background: color-mix(in srgb, var(--tone) 30%, #071207);
+  color: var(--ink);
+}
+html.terminal .btn-primary,
+html.terminal .round-button.avatar,
+html.terminal .tab-bar a[aria-current] .tab-glyph {
+  color: #020802;
+}
+
+/* Easter eggs: the letters of the name falling, or floating away. */
+[data-wordmark] .letter {
+  display: inline-block;
+}
+.letter[data-moving="fall"] {
+  animation: letter-fall 3.6s both;
+}
+.letter[data-moving="float"] {
+  animation: letter-float 4.2s ease-in-out both;
+}
+@keyframes letter-fall {
+  0% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.5);
+  }
+  28% {
+    transform: translate(var(--drift), var(--drop)) rotate(var(--spin));
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  36% {
+    transform: translate(var(--drift), calc(var(--drop) - 34px)) rotate(var(--spin));
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
+  }
+  44% {
+    transform: translate(var(--drift), var(--drop)) rotate(var(--spin));
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  48% {
+    transform: translate(var(--drift), calc(var(--drop) - 9px)) rotate(var(--spin));
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
+  }
+  52%,
+  76% {
+    transform: translate(var(--drift), var(--drop)) rotate(var(--spin));
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes letter-float {
+  0% {
+    transform: none;
+  }
+  50%,
+  62% {
+    transform: translate(var(--drift), var(--drop)) rotate(var(--spin));
+    opacity: 0;
+  }
+  63% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+/* How far down a long page you are, along the bottom of the top bar. */
+.scroll-progress {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: var(--accent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* A short message near the bottom of the screen, above the tab bar on a phone. */
+.toast {
+  position: fixed;
+  right: 0;
+  bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  left: 0;
+  z-index: 50;
+  width: fit-content;
+  max-width: min(92vw, 30rem);
+  margin-inline: auto;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  padding: 0.7rem 1rem;
+  font-size: 0.9375rem;
+  text-align: center;
+}
+@media (min-width: 1024px) {
+  .toast {
+    bottom: 1.5rem;
   }
 }
 
@@ -434,6 +846,270 @@ html:not(.dark) .when-dark {
   font-family: var(--font-mono);
 }
 
+/* What a fix changed (src/components/code-diff.tsx): lines out on a red wash,
+   lines in on a green one, the changed part of a line washed more strongly. */
+.diff-line {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  padding-right: 1rem;
+}
+.diff-mark {
+  display: inline-block;
+  width: 2rem;
+  text-align: center;
+  color: var(--muted);
+  user-select: none;
+}
+.diff-line[data-kind="removed"] {
+  background: color-mix(in srgb, var(--fail) var(--tint), transparent);
+}
+.diff-line[data-kind="added"] {
+  background: color-mix(in srgb, var(--pass) var(--tint), transparent);
+}
+.diff-line[data-kind="removed"] .diff-mark {
+  color: var(--fail);
+}
+.diff-line[data-kind="added"] .diff-mark {
+  color: var(--pass);
+}
+.diff-line mark {
+  border-radius: 3px;
+  color: inherit;
+}
+.diff-line[data-kind="removed"] mark {
+  background: color-mix(in srgb, var(--fail) 30%, transparent);
+}
+.diff-line[data-kind="added"] mark {
+  background: color-mix(in srgb, var(--pass) 32%, transparent);
+}
+
+/* The debugger (src/lib/debugger.ts, src/components/debug-panel.tsx), in the
+   editor's own dark colours. A breakpoint is the site's mark: a red dot beside
+   the line. The line a step-through has reached is washed amber. */
+.cm-editor .cm-breakpoint-gutter .cm-gutterElement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  padding-left: 4px;
+  cursor: pointer;
+}
+.cm-breakpoint-dot,
+.cm-editor .cm-breakpoint-gutter .cm-gutterElement:not(:has(.cm-breakpoint-dot)):hover::before {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  background: #ff3b30;
+}
+.cm-editor .cm-breakpoint-gutter .cm-gutterElement:not(:has(.cm-breakpoint-dot)):hover::before {
+  content: "";
+  opacity: 0.35;
+}
+.cm-editor .cm-lineNumbers .cm-gutterElement {
+  cursor: pointer;
+}
+.cm-editor .cm-line.cm-debug-line,
+.cm-editor .cm-gutterElement.cm-debug-gutter {
+  background: rgba(229, 165, 10, 0.18);
+}
+.cm-editor .cm-gutterElement.cm-debug-gutter {
+  color: #e5a50a;
+}
+
+/* Call depth over a whole run, with a range input laid over it as the scrubber. */
+.timeline {
+  position: relative;
+  height: 2.25rem;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #1c1f24;
+}
+.timeline svg,
+.timeline input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.timeline input {
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.timeline input::-webkit-slider-runnable-track {
+  height: 100%;
+  background: transparent;
+}
+.timeline input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 3px;
+  height: 2.25rem;
+  border-radius: 2px;
+  background: #e5a50a;
+}
+.timeline input::-moz-range-track {
+  background: transparent;
+}
+.timeline input::-moz-range-thumb {
+  width: 3px;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 2px;
+  background: #e5a50a;
+}
+.timeline input:focus-visible {
+  outline: 2px solid #58a6ff;
+  outline-offset: -2px;
+}
+
+/* How many times each line ran, beside its number; the busiest in amber. */
+.cm-editor .cm-runs-gutter .cm-gutterElement {
+  padding: 0 6px 0 2px;
+}
+.cm-run-count {
+  font-size: 10.5px;
+  color: #6e7681;
+}
+.cm-run-count.cm-run-busiest {
+  color: #e5a50a;
+}
+
+/* A list drawn as it is: bars for numbers, boxes for anything else, positions and index variables underneath. */
+.list-view {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  overflow-x: auto;
+  padding: 0.25rem 0 0.15rem;
+}
+.list-cell {
+  display: flex;
+  flex: 1 0 1.9rem;
+  max-width: 3.25rem;
+  flex-direction: column;
+  align-items: center;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.list-bar-area {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 4.5rem;
+}
+.list-bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  background: #5c6370;
+}
+.list-box {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #3a3f4a;
+  padding: 0.2rem 0.25rem;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list-value {
+  color: #c9d1d9;
+}
+.list-index {
+  color: #6e7681;
+}
+.list-marker {
+  min-height: 1.35em;
+  color: #79c0ff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.list-cell[data-marked] .list-bar,
+.list-cell[data-marked] .list-box {
+  background: #388bfd;
+}
+.list-cell[data-changed] .list-bar,
+.list-cell[data-changed] .list-box {
+  background: #e5a50a;
+  color: #1c1f24;
+}
+.list-cell[data-outside] {
+  opacity: 0.3;
+}
+
+/* A recursion tree: each call under the call that made it. */
+.call-node {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #2c313a;
+  padding: 0.2rem 0.5rem;
+  color: #c9d1d9;
+  font-size: 12px;
+  line-height: 1.3;
+  text-align: center;
+  cursor: pointer;
+}
+.call-node:hover {
+  background: #3a3f4a;
+}
+.call-node:focus-visible {
+  outline: 2px solid #58a6ff;
+  outline-offset: 1px;
+}
+.call-node[data-state="waiting"] {
+  background: #3a3f4a;
+  color: #f6f8fa;
+}
+.call-node[data-state="running"] {
+  background: #e5a50a;
+  color: #1c1f24;
+}
+.call-outcome {
+  font-size: 11px;
+  color: #9198a1;
+}
+.call-node[data-state="done"] .call-outcome {
+  color: #3fb950;
+}
+.call-node[data-raised] .call-outcome {
+  color: #ff7b72;
+}
+.call-node[data-state="running"] .call-outcome {
+  color: #1c1f24;
+}
+
+/* A trace table, the way one is written by hand in an exam. */
+.trace-table {
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.trace-table th,
+.trace-table td {
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.15rem 0.7rem 0.15rem 0;
+  text-align: left;
+}
+.trace-table th {
+  color: #d2a8ff;
+  font-weight: 500;
+}
+.trace-table th:first-child {
+  color: #9198a1;
+}
+.trace-table tr[data-latest] td {
+  color: #ffd479;
+}
+
 /* Motion. Short, and only where something has actually changed: a page, a
    result, a reveal. See DESIGN.md. */
 a,
@@ -491,6 +1167,46 @@ button {
 .dot-pass {
   animation: dot-pass 2.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+
+/* A new award arrives as a sticker pressed onto the page, once. */
+.award-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 12px;
+  background: var(--tone);
+  color: #fff;
+  padding: 0.45rem 0.8rem 0.45rem 0.65rem;
+  transform: rotate(var(--tilt, 0deg));
+  animation: stick 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes stick {
+  from {
+    opacity: 0;
+    transform: scale(1.3) rotate(0deg);
+  }
+}
+
+/* The bell swings once when the page opens with something new under it. */
+@keyframes bell-swing {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(14deg);
+  }
+  45% {
+    transform: rotate(-10deg);
+  }
+  70% {
+    transform: rotate(5deg);
+  }
+}
+.round-button[data-ring] svg {
+  transform-origin: 50% 10%;
+  animation: bell-swing 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s 1;
+}
 .dot-pass::after {
   content: "";
   position: absolute;
@@ -514,7 +1230,15 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .rise,
   .dot-pass,
-  .dot-pass::after {
+  .dot-pass::after,
+  .award-sticker,
+  .round-button[data-ring] svg {
+    animation: none;
+  }
+  .nav-pill[data-ready] {
+    transition: none;
+  }
+  .letter[data-moving] {
     animation: none;
   }
   ::view-transition-old(*),
@@ -540,5 +1264,14 @@ button {
   body {
     background: #fff;
     color: #000;
+  }
+  /* Reports: one student to a page, keeping their colours. */
+  .report {
+    break-inside: avoid;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .report + .report {
+    break-before: page;
   }
 }

@@ -1,5 +1,5 @@
 --- meta
-{ "title": "First Partition", "kind": "PUZZLE", "difficulty": "HARD", "topic": "Sorting", "points": 15, "track": "sorting", "specRef": "2.3.1", "contest": "algorithms-showdown",
+{ "title": "First Partition", "kind": "PUZZLE", "difficulty": "HARD", "topic": "Sorting", "points": 20, "track": "sorting", "specRef": "2.3.1", "contest": "algorithms-showdown",
   "options": ["1 2 3 6 8 9", "3 6 1 8 2 9", "3 1 2 6 9 8", "2 1 3 6 9 8"], "answer": 2 }
 --- description
 A quick sort is applied to this list, using the **first item as the pivot**:

@@ -3,16 +3,21 @@ import { AwardTile } from "@/components/award-tile";
 import { ChallengeList } from "@/components/challenge-list";
 import { Countdown } from "@/components/countdown";
 import { SolveCalendar } from "@/components/solve-calendar";
-import { Page, Tag, TopicTile, kindLabel, levelLabel, link, signed, tone } from "@/components/ui";
+import { Page, Tag, TopicTile, kindLabel, levelLabel, link, ordinal, signed, tone } from "@/components/ui";
+import { HomeworkTasks } from "@/components/homework-list";
+import { YourClass } from "@/components/your-class";
 import { activity } from "@/lib/activity";
 import { awardsFor } from "@/lib/awards";
+import { classStandings } from "@/lib/classes";
 import { dailyChallenge } from "@/lib/daily";
 import { db } from "@/lib/db";
 import { hintWallet } from "@/lib/hints";
+import { current, homeworkFor } from "@/lib/homework";
 import { dateToLondonInput, londonDay, londonDayStart, shiftDay } from "@/lib/london";
 import { practiceFilter, standings } from "@/lib/problems";
 import { leaderboard, pointsOf } from "@/lib/scoring";
 import { requireUser } from "@/lib/session";
+import { specialDay } from "@/lib/special-days";
 import { TRACKS, trackColor, trackGlyph } from "@/lib/tracks";
 import { DIFFICULTIES } from "@/lib/types";
 
@@ -20,7 +25,7 @@ export default async function HomePage() {
   const user = await requireUser();
   const now = new Date();
 
-  const [problems, statusOf, points, wallet, board, history, daily, awards, liveContests, upcoming] = await Promise.all([
+  const [problems, statusOf, points, wallet, board, history, daily, awards, liveContests, upcoming, classes, homework] = await Promise.all([
     db.problem.findMany({
       where: practiceFilter(),
       orderBy: [{ sortOrder: "asc" }],
@@ -35,11 +40,16 @@ export default async function HomePage() {
     awardsFor(user.id),
     db.contest.findMany({ where: { startsAt: { lte: now }, endsAt: { gt: now } }, orderBy: { endsAt: "asc" } }),
     db.contest.findFirst({ where: { startsAt: { gt: now } }, orderBy: { startsAt: "asc" } }),
+    user.classId ? classStandings() : Promise.resolve([]),
+    homeworkFor(user),
   ]);
+  const dueHomework = current(homework, now);
 
   const rank = board.find((row) => row.userId === user.id)?.rank;
   const solvedInPractice = problems.filter((p) => statusOf(p.id) === "solved").length;
-  const earned = awards.filter((a) => a.earned).length;
+  // Secret awards appear once found.
+  const shownAwards = awards.filter((a) => !a.secret || a.earned);
+  const earned = shownAwards.filter((a) => a.earned).length;
   const tomorrow = londonDayStart(shiftDay(londonDay(now), 1)).toISOString();
 
   // Unfinished attempts first, then the easiest untouched challenge of each kind.
@@ -55,6 +65,7 @@ export default async function HomePage() {
   ];
 
   const firstName = user.name.split(" ")[0];
+  const today = specialDay(londonDay(now));
   const hour = Number(dateToLondonInput(now).slice(11, 13));
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
   const days = (n: number) => `${n} day${n === 1 ? "" : "s"}`;
@@ -66,7 +77,7 @@ export default async function HomePage() {
         : `${days(history.streak)} in a row. Solve one today to make it ${history.streak + 1}.`;
 
   // Awards already won, then the three nearest to being won.
-  const nearest = awards
+  const nearest = shownAwards
     .filter((a) => !a.earned)
     .sort((a, b) => b.progress[0] / b.progress[1] - a.progress[0] / a.progress[1])
     .slice(0, 3);
@@ -82,6 +93,7 @@ export default async function HomePage() {
         {greeting}, {firstName}
       </h1>
       <p className="mt-1 text-muted">{nudge}</p>
+      {today && <p className="rise mt-2 text-sm font-medium text-hint">{today}</p>}
 
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,5fr)_minmax(0,4fr)]">
         {daily ? (
@@ -102,7 +114,9 @@ export default async function HomePage() {
               </span>
             </span>
             <span className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-              <span className="btn btn-on-tile">{dailyStatus === "solved" ? "Solved · hint earned" : dailyStatus === "locked" ? "Locked" : dailyStatus === "failing" ? "Carry on · earn a hint" : "Start · earn a hint"}</span>
+              <span className="btn btn-on-tile">
+                {dailyStatus === "solved" ? "Solved · hint earned" : dailyStatus === "locked" ? "Locked" : dailyStatus === "failing" ? "Carry on · earn a hint" : "Start · earn a hint"}
+              </span>
             </span>
           </Link>
         ) : (
@@ -113,7 +127,7 @@ export default async function HomePage() {
           <div>
             <p className="cap">Points</p>
             <p className="figure text-[2.1rem]">{signed(points)}</p>
-            <p className="text-[13px] text-muted">{user.role === "TEACHER" ? "teachers are not ranked" : rank ? `${rank}${ordinal(rank)} of ${board.length}` : "solve one to be ranked"}</p>
+            <p className="text-[13px] text-muted">{user.role === "TEACHER" ? "teachers are not ranked" : rank ? `${ordinal(rank)} of ${board.length}` : "solve one to be ranked"}</p>
           </div>
           <div>
             <p className="cap">Solved</p>
@@ -136,19 +150,39 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <section className="card">
-          <div className="flex items-baseline justify-between">
-            <h2 className="cap">Try next</h2>
-            <Link href="/problems" className={`text-sm font-medium ${link}`}>
-              All challenges
-            </Link>
-          </div>
-          <div className="mt-1">
-            {next.length === 0 ? <p className="py-4 text-muted">You have worked through everything in practice.</p> : <ChallengeList problems={next} statusOf={statusOf} />}
-          </div>
-        </section>
+        <div className="flex flex-col gap-4">
+          {dueHomework.length > 0 && (
+            <section className="card">
+              <div className="flex items-baseline justify-between">
+                <h2 className="cap">Homework</h2>
+                <Link href="/homework" className={`text-sm font-medium ${link}`}>
+                  All homework
+                </Link>
+              </div>
+              <ul className="mt-2 space-y-5">
+                {dueHomework.slice(0, 3).map((set) => (
+                  <li key={set.id}>
+                    <HomeworkTasks set={set} compact />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <section className="card">
+            <div className="flex items-baseline justify-between">
+              <h2 className="cap">Try next</h2>
+              <Link href="/problems" className={`text-sm font-medium ${link}`}>
+                All challenges
+              </Link>
+            </div>
+            <div className="mt-1">{next.length === 0 ? <p className="py-4 text-muted">You have worked through everything in practice.</p> : <ChallengeList problems={next} statusOf={statusOf} />}</div>
+          </section>
+        </div>
 
         <div className="flex flex-col gap-4">
+          {user.classId && classes.length > 1 && <YourClass standings={classes} classId={user.classId} />}
+
           {(liveContests.length > 0 || upcoming) && (
             <section className="card">
               <h2 className="cap">Competitions</h2>
@@ -193,11 +227,11 @@ export default async function HomePage() {
             <div className="flex items-baseline justify-between">
               <h2 className="cap">Awards</h2>
               <Link href="/awards" className={`text-sm font-medium ${link}`}>
-                {earned} of {awards.length} earned
+                {earned} of {shownAwards.length} earned
               </Link>
             </div>
             <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-2">
-              {[...awards.filter((a) => a.earned), ...nearest].slice(0, 6).map((award) => (
+              {[...shownAwards.filter((a) => a.earned), ...nearest].slice(0, 6).map((award) => (
                 <li key={award.id} className="grid">
                   <AwardTile award={award} compact />
                 </li>
@@ -224,10 +258,4 @@ export default async function HomePage() {
       </section>
     </Page>
   );
-}
-
-function ordinal(n: number) {
-  const tens = n % 100;
-  if (tens >= 11 && tens <= 13) return "th";
-  return ["th", "st", "nd", "rd"][n % 10] ?? "th";
 }

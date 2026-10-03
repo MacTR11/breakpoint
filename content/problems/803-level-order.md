@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Breadth-first Tree Traversal", "kind": "CODE", "difficulty": "HARD", "topic": "Trees", "points": 40, "track": "structures", "specRef": "2.3.1", "contest": "algorithms-showdown",
+  "title": "Breadth-first Tree Traversal", "kind": "CODE", "difficulty": "HARD", "topic": "Trees", "points": 50, "track": "structures", "specRef": "2.3.1", "contest": "algorithms-showdown",
   "functionName": "breadth_first",
   "tests": [
     { "args": [[5, 8, 3, 4, 1]], "expected": [5, 3, 8, 1, 4] },

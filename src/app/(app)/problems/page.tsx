@@ -1,5 +1,5 @@
 import { ChallengeList } from "@/components/challenge-list";
-import { FilterRow, Page, PageHeader } from "@/components/ui";
+import { ButtonLink, FilterRow, Page, PageHeader } from "@/components/ui";
 import { db } from "@/lib/db";
 import { difficultyLabel, MAX_PUZZLE_ATTEMPTS, practiceFilter, standings } from "@/lib/problems";
 import { requireUser } from "@/lib/session";
@@ -48,7 +48,11 @@ export default async function ProblemsPage({ searchParams }: PageProps<"/problem
         path={[{ label: "practice" }]}
         title="Practice"
         intro={`Code is marked automatically and can be retried freely. Puzzles give you ${MAX_PUZZLE_ATTEMPTS} attempts, and a wrong answer costs points.`}
-      />
+      >
+        <ButtonLink href="/mock" variant="secondary">
+          Sit a mock paper
+        </ButtonLink>
+      </PageHeader>
 
       <div className="mb-5 space-y-3">
         <div className="flex flex-wrap gap-3">

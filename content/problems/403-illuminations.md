@@ -4,7 +4,7 @@
   "kind": "CODE",
   "difficulty": "MEDIUM",
   "topic": "Lists",
-  "points": 20,
+  "points": 25,
   "track": "lists", "specRef": "2.2.1",
   "contest": "welcome",
   "functionName": "brightest_stretch",

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Treasure map (d): treasure nearby", "kind": "CODE", "difficulty": "HARD", "topic": "2D arrays", "points": 40, "track": "exam", "specRef": "2.2.1", "functionName": "treasure_nearby",
+{"title": "Treasure map (d): treasure nearby", "kind": "CODE", "difficulty": "HARD", "topic": "2D arrays", "points": 30, "track": "exam", "specRef": "2.2.1", "functionName": "treasure_nearby",
   "tests": [
     {"args": [[[".", "T", "#"], [".", ".", "T"], ["#", ".", "."]], 1, 1], "expected": 2},
     {"args": [[[".", "T", "#"], [".", ".", "T"], ["#", ".", "."]], 0, 0], "expected": 1},

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Searching (a): find the last match", "kind": "CODE", "difficulty": "EASY", "topic": "Linear search", "points": 10, "track": "exam", "specRef": "2.3.1", "functionName": "last_position", "banned": [".index(", ".rindex(", "reversed(", "[::-1]"],
+{"title": "Searching (a): find the last match", "kind": "CODE", "difficulty": "EASY", "topic": "Linear search", "points": 20, "track": "exam", "specRef": "2.3.1", "functionName": "last_position", "banned": [".index(", ".rindex(", "reversed(", "[::-1]"],
   "tests": [
     {"args": [[4, 7, 4, 9], 4], "expected": 2},
     {"args": [[4, 7, 4, 9], 5], "expected": -1},

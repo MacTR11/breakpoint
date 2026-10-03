@@ -4,8 +4,10 @@ import { PageHeader } from "@/components/ui";
 import { contestProblemOptions } from "@/lib/contest-options";
 import { db } from "@/lib/db";
 import { dateToLondonInput } from "@/lib/london";
+import { requireTeacher } from "@/lib/session";
 
 export default async function EditContestPage({ params }: PageProps<"/teacher/contests/[id]">) {
+  await requireTeacher();
   const { id } = await params;
   const contest = await db.contest.findUnique({ where: { id }, include: { problems: true } });
   if (!contest) notFound();

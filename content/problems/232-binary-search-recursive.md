@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Recursive Binary Search", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Searching", "points": 20, "track": "searching", "specRef": "2.3.1",
+  "title": "Recursive Binary Search", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Searching", "points": 25, "track": "searching", "specRef": "2.3.1",
   "functionName": "find", "banned": ["while ", "for ", ".index("],
   "tests": [
     { "args": [[1, 3, 5, 7, 9], 7, 0, 4], "expected": 3 },

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Treasure map (c): move the player", "kind": "CODE", "difficulty": "MEDIUM", "topic": "2D arrays and selection", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "move",
+{"title": "Treasure map (c): move the player", "kind": "CODE", "difficulty": "MEDIUM", "topic": "2D arrays and selection", "points": 30, "track": "exam", "specRef": "2.2.1", "functionName": "move",
   "tests": [
     {"args": [[[".", "T", "#"], [".", ".", "T"], ["#", ".", "."]], 1, 1, "N"], "expected": [0, 1]},
     {"args": [[[".", "T", "#"], [".", ".", "T"], ["#", ".", "."]], 1, 1, "E"], "expected": [1, 2]},

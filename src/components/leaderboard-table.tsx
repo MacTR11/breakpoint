@@ -21,6 +21,7 @@ export function LeaderboardTable({ rows, currentUserId, emptyMessage }: { rows: 
               <td className="font-display font-extrabold tabular-nums">{row.rank}</td>
               <td>
                 {row.name}
+                {row.className && <span className="ml-2 text-sm font-normal text-muted">{row.className}</span>}
                 {me && (
                   <span className="tag ml-2" style={{ "--tone": "var(--accent)" } as React.CSSProperties}>
                     You

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Binary tree (c): in-order traversal", "kind": "CODE", "difficulty": "HARD", "topic": "Trees", "points": 40, "track": "exam", "specRef": "1.4.2", "functionName": "in_order",
+{"title": "Binary tree (c): in-order traversal", "kind": "CODE", "difficulty": "HARD", "topic": "Trees", "points": 30, "track": "exam", "specRef": "1.4.2", "functionName": "in_order",
   "tests": [
     {"args": [[[1, 50, 2], [-1, 30, 3], [-1, 70, -1], [-1, 40, -1]], 0], "expected": [30, 40, 50, 70]},
     {"args": [[[-1, 8, -1]], 0], "expected": [8]},

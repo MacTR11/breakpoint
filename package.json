@@ -11,6 +11,8 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "verify": "tsx scripts/verify-problems.ts",
+    "check": "tsx scripts/logic-check.ts",
+    "e2e": "playwright test",
     "setup": "prisma db push && tsx prisma/seed.ts"
   },
   "dependencies": {
@@ -28,6 +30,7 @@
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { deleteProblem, saveProblem } from "@/app/(app)/teacher/actions";
 import { FormErrors, field, hint, label as labelStyle } from "@/components/form-bits";
+import { POINTS, POINTS_PER_MARK } from "@/lib/points";
 import { difficultyLabel } from "@/lib/problems";
 import { COMPONENTS, SUBSECTIONS, componentOf } from "@/lib/spec";
 import { TRACKS } from "@/lib/tracks";
@@ -104,25 +105,31 @@ export function ProblemForm({ values: saved }: { values: ProblemFormValues }) {
           </select>
         </label>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          <label className={labelStyle}>
-            Difficulty
-            <select name="difficulty" defaultValue={values.difficulty} className={field}>
-              {DIFFICULTIES.map((d) => (
-                <option key={d} value={d}>
-                  {difficultyLabel[d]}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className={labelStyle}>
-            Topic
-            <input name="topic" required defaultValue={values.topic} placeholder="e.g. Strings" className={field} />
-          </label>
-          <label className={labelStyle}>
-            Points
-            <input name="points" type="number" min={0} max={1000} required defaultValue={values.points} className={field} />
-          </label>
+        <div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <label className={labelStyle}>
+              Difficulty
+              <select name="difficulty" defaultValue={values.difficulty} className={field}>
+                {DIFFICULTIES.map((d) => (
+                  <option key={d} value={d}>
+                    {difficultyLabel[d]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className={labelStyle}>
+              Topic
+              <input name="topic" required defaultValue={values.topic} placeholder="e.g. Strings" className={field} />
+            </label>
+            <label className={labelStyle}>
+              Points
+              <input name="points" type="number" min={0} max={1000} required defaultValue={values.points} className={field} />
+            </label>
+          </div>
+          <p className="mt-2 text-sm text-muted">
+            The usual points, easy / medium / hard: write code {POINTS.write.EASY} / {POINTS.write.MEDIUM} / {POINTS.write.HARD}, fix the bug {POINTS.fix.EASY} / {POINTS.fix.MEDIUM} /{" "}
+            {POINTS.fix.HARD}, puzzle {POINTS.puzzle.EASY} / {POINTS.puzzle.MEDIUM} / {POINTS.puzzle.HARD}. Exam-style questions are {POINTS_PER_MARK} a mark.
+          </p>
         </div>
 
         <label className={labelStyle}>

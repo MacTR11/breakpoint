@@ -4,7 +4,7 @@
   "kind": "CODE",
   "difficulty": "HARD",
   "topic": "Graphs",
-  "points": 40,
+  "points": 50,
   "track": "algorithms", "specRef": "2.3.1",
   "functionName": "shortest_path",
   "tests": [

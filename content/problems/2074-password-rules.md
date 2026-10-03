@@ -1,5 +1,5 @@
 --- meta
-{"title": "String handling (d): check a password", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Validation", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "strong_password",
+{"title": "String handling (d): check a password", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Validation", "points": 30, "track": "exam", "specRef": "2.2.1", "functionName": "strong_password",
   "tests": [
     {"args": ["Tower2024"], "expected": true},
     {"args": ["tower2024"], "expected": false},

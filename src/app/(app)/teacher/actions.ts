@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { judge } from "@/lib/judge";
 import { londonToDate } from "@/lib/london";
-import { getCurrentUser } from "@/lib/session";
+import { getCurrentUser, SIGNED_OUT, stillTeacher } from "@/lib/session";
 import { SPEC_REFS } from "@/lib/spec";
 import { TRACK_IDS } from "@/lib/tracks";
 import { bannedUse, DIFFICULTIES, type TestCase } from "@/lib/types";
@@ -70,7 +70,7 @@ function parseTestsField(raw: string, errors: string[]): TestCase[] {
 }
 
 export async function saveProblem(_previous: FormState, formData: FormData): Promise<FormState> {
-  await assertTeacher();
+  if (!(await stillTeacher())) return { errors: [SIGNED_OUT], values: typed(formData) };
   const errors: string[] = [];
   const id = text(formData, "id") || null;
   const title = text(formData, "title");
@@ -193,7 +193,7 @@ export async function deleteProblem(formData: FormData) {
 }
 
 export async function saveContest(_previous: FormState, formData: FormData): Promise<FormState> {
-  await assertTeacher();
+  if (!(await stillTeacher())) return { errors: [SIGNED_OUT], values: { ...typed(formData), problemIds: formData.getAll("problemIds").map(String).join(",") } };
   const errors: string[] = [];
   const id = text(formData, "id") || null;
   const title = text(formData, "title");
@@ -215,14 +215,17 @@ export async function saveContest(_previous: FormState, formData: FormData): Pro
   if (errors.length) return { errors, values: { ...typed(formData), problemIds: problemIds.join(",") } };
 
   const data = { title, description: text(formData, "description"), startsAt, endsAt };
-  const problems = { create: problemIds.map((problemId, sortOrder) => ({ problemId, sortOrder })) };
   if (id) {
+    // Problems that stay keep their row, and so when they were put in (homework reads it).
     await db.$transaction([
-      db.contestProblem.deleteMany({ where: { contestId: id } }),
-      db.contest.update({ where: { id }, data: { ...data, problems } }),
+      db.contestProblem.deleteMany({ where: { contestId: id, problemId: { notIn: problemIds } } }),
+      ...problemIds.map((problemId, sortOrder) =>
+        db.contestProblem.upsert({ where: { contestId_problemId: { contestId: id, problemId } }, create: { contestId: id, problemId, sortOrder }, update: { sortOrder } }),
+      ),
+      db.contest.update({ where: { id }, data }),
     ]);
   } else {
-    await db.contest.create({ data: { ...data, problems } });
+    await db.contest.create({ data: { ...data, problems: { create: problemIds.map((problemId, sortOrder) => ({ problemId, sortOrder })) } } });
   }
   revalidatePath("/", "layout");
   redirect("/teacher/contests");

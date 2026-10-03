@@ -1,5 +1,5 @@
 --- meta
-{"title": "Big O: Two Calls Each", "kind": "PUZZLE", "difficulty": "HARD", "topic": "Complexity", "points": 15, "track": "algorithms", "specRef": "2.3.1", "contest": "grand-final", "options": ["O(n)", "O(n²)", "O(log n)", "O(2ⁿ)"], "answer": 3}
+{"title": "Big O: Two Calls Each", "kind": "PUZZLE", "difficulty": "HARD", "topic": "Complexity", "points": 20, "track": "algorithms", "specRef": "2.3.1", "contest": "grand-final", "options": ["O(n)", "O(n²)", "O(log n)", "O(2ⁿ)"], "answer": 3}
 --- description
 ```
 function mystery(n)

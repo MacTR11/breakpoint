@@ -1,5 +1,5 @@
 --- meta
-{"title": "Arrays (a): the range of the readings", "kind": "CODE", "difficulty": "EASY", "topic": "Arrays", "points": 10, "track": "exam", "specRef": "2.2.1", "functionName": "reading_range", "banned": ["max(", "min(", "sorted(", ".sort("],
+{"title": "Arrays (a): the range of the readings", "kind": "CODE", "difficulty": "EASY", "topic": "Arrays", "points": 20, "track": "exam", "specRef": "2.2.1", "functionName": "reading_range", "banned": ["max(", "min(", "sorted(", ".sort("],
   "tests": [
     {"args": [[12, 19, 7, 15]], "expected": 12},
     {"args": [[5]], "expected": 0},
