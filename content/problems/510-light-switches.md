@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Three Switches", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Boolean logic", "points": 10, "track": "basics", "specRef": "1.4.3",
+{ "title": "Three switches", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Boolean logic", "points": 10, "track": "basics", "specRef": "1.4.3",
   "options": ["3", "4", "5", "6"], "answer": 2 }
 --- description
 A lamp is controlled by three switches, **A**, **B** and **C**. Each switch is either on or off. The lamp lights up when this is true:

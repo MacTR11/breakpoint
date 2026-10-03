@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { isQuack, QUACK } from "@/lib/eggs";
 import { consoleInBrowser } from "@/lib/py-runner";
 import type { ConsoleResult } from "@/lib/trace";
 
@@ -36,7 +37,10 @@ export function ConsolePanel({ code, examples, disabled, onBusy }: { code: strin
     // The console starts afresh whenever the code has changed since the last line.
     if (loaded.current !== null && loaded.current !== code) added.push({ kind: "reloaded" });
     loaded.current = code;
-    for (const source of lines) added.push({ kind: "run", source, result: await consoleInBrowser(code, source) });
+    for (const source of lines) {
+      const result: ConsoleResult = isQuack(source) ? { ok: true, result: null, stdout: QUACK, error: null } : await consoleInBrowser(code, source);
+      added.push({ kind: "run", source, result });
+    }
     setEntries((now) => [...now, ...added].slice(-200));
     setHistory((now) => [...now.filter((s) => !lines.includes(s)), ...lines].slice(-50));
     setBrowsing(null);

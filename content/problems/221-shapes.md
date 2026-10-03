@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Shapes and Inheritance", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Inheritance", "points": 25, "track": "oop", "specRef": "1.2.4",
+  "title": "Shapes and inheritance", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Inheritance", "points": 25, "track": "oop", "specRef": "1.2.4",
   "functionName": "Rectangle",
   "tests": [
     { "steps": [["Rectangle", 3, 4], ["area"], ["perimeter"], ["describe"]], "expected": [12, 14, "Rectangle with area 12"] },

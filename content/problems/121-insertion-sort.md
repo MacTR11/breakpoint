@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Write an Insertion Sort", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 25, "track": "sorting", "specRef": "2.3.1",
+  "title": "Write an insertion sort", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 25, "track": "sorting", "specRef": "2.3.1",
   "functionName": "insertion_sort", "banned": ["sorted(", ".sort("],
   "tests": [
     { "args": [[3, 1, 2]], "expected": [1, 2, 3] },

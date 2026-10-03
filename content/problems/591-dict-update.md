@@ -1,5 +1,5 @@
 --- meta
-{"title": "Dictionary Updates", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Dictionaries", "points": 5, "track": "lists", "specRef": "2.2.1", "check": "run", "options": ["2 2", "3 2", "3 3", "2 3"], "answer": 1}
+{"title": "Dictionary updates", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Dictionaries", "points": 5, "track": "lists", "specRef": "2.2.1", "check": "run", "options": ["2 2", "3 2", "3 3", "2 3"], "answer": 1}
 --- description
 ```python
 stock = {"pen": 3, "ink": 1}

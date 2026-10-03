@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Fizz Buzz", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Order of conditions", "points": 20, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "functionName": "fizz_buzz",
+{"title": "Fix: FizzBuzz", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Order of conditions", "points": 20, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "functionName": "fizz_buzz",
   "tests": [
     {"args": [3], "expected": "Fizz"},
     {"args": [15], "expected": "FizzBuzz"},

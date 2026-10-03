@@ -1,5 +1,5 @@
 --- meta
-{"title": "Kth Smallest", "kind": "CODE", "difficulty": "HARD", "topic": "Selection", "points": 50, "track": "sorting", "specRef": "2.3.1", "contest": "sort-it-out", "functionName": "kth_smallest", "banned": ["sorted(", ".sort("],
+{"title": "Kth smallest", "kind": "CODE", "difficulty": "HARD", "topic": "Selection", "points": 50, "track": "sorting", "specRef": "2.3.1", "contest": "sort-it-out", "functionName": "kth_smallest", "banned": ["sorted(", ".sort("],
   "tests": [
     {"args": [[7, 2, 9, 4], 1], "expected": 2},
     {"args": [[7, 2, 9, 4], 3], "expected": 7},

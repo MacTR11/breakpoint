@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { secretWord, setTheme, toast } from "@/lib/eggs";
 import { search, type PaletteItem } from "@/lib/palette";
 
 // Find any page, challenge or competition by typing a few letters (and for the
@@ -111,6 +112,13 @@ export function CommandPalette({ pages }: { pages: { href: string; label: string
                   if (results.length) setActive((now) => (now + (event.key === "ArrowDown" ? 1 : results.length - 1)) % results.length);
                 } else if (event.key === "Enter") {
                   event.preventDefault();
+                  const secret = secretWord(query);
+                  if (secret) {
+                    setOpen(false);
+                    if (secret.theme) setTheme(secret.theme === "dark");
+                    toast(secret.text);
+                    return;
+                  }
                   go(results[active]);
                 } else if (event.key === "Escape") {
                   setOpen(false);

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Count the Calls", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1", "contest": "recursion-rumble", "check": "run", "options": ["4", "5", "8", "9"], "answer": 3}
+{"title": "Count the calls", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1", "contest": "recursion-rumble", "check": "run", "options": ["4", "5", "8", "9"], "answer": 3}
 --- description
 ```python
 calls = 0

@@ -1,5 +1,5 @@
 --- meta
-{ "title": "String Handling", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Strings", "points": 5, "track": "strings", "specRef": "2.2.1",
+{ "title": "String handling", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Strings", "points": 5, "track": "strings", "specRef": "2.2.1",
   "options": ["LGOR9", "GORI8", "gori9", "GORI9"], "answer": 3 }
 --- description
 In OCR Exam Reference Language, `text.substring(start, count)` returns `count` characters of `text` beginning at position `start`, where the first character is at position 0.

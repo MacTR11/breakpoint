@@ -1,5 +1,5 @@
 --- meta
-{"title": "Student Record", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Encapsulation", "points": 25, "track": "oop", "specRef": "1.2.4", "functionName": "Student",
+{"title": "Student record", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Encapsulation", "points": 25, "track": "oop", "specRef": "1.2.4", "functionName": "Student",
   "tests": [
     {"steps": [["Student", "Ada"], ["add_mark", 80], ["add_mark", 60], ["average"], ["grade"]], "expected": [true, true, 70.0, "Distinction"]},
     {"steps": [["Student", "Bo"], ["average"], ["grade"], ["add_mark", 101]], "expected": [0, "No marks", false]},

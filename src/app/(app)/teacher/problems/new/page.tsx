@@ -2,6 +2,8 @@ import { ProblemForm } from "@/components/problem-form";
 import { PageHeader } from "@/components/ui";
 import { requireTeacher } from "@/lib/session";
 
+export const metadata = { title: "New problem" };
+
 export default async function NewProblemPage() {
   await requireTeacher();
   return (

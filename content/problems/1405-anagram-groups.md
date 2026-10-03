@@ -1,5 +1,5 @@
 --- meta
-{"title": "Anagram Groups", "kind": "CODE", "difficulty": "HARD", "topic": "Dictionaries", "points": 50, "track": "lists", "specRef": "2.2.1", "contest": "grand-final", "functionName": "anagram_groups",
+{"title": "Anagram groups", "kind": "CODE", "difficulty": "HARD", "topic": "Dictionaries", "points": 50, "track": "lists", "specRef": "2.2.1", "contest": "grand-final", "functionName": "anagram_groups",
   "tests": [
     {"args": [["tea", "eat", "tan", "ate", "nat", "bat"]], "expected": [["ate", "eat", "tea"], ["bat"], ["nat", "tan"]]},
     {"args": [["a"]], "expected": [["a"]]},

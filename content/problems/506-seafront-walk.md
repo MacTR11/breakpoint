@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Seafront Shortcut", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Graphs", "points": 10, "track": "algorithms", "specRef": "2.3.1",
+{ "title": "Seafront shortcut", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Graphs", "points": 10, "track": "algorithms", "specRef": "2.3.1",
   "options": ["7 minutes", "8 minutes", "9 minutes", "10 minutes"], "answer": 1 }
 --- description
 The table shows how long it takes to walk directly between some places on the seafront. If a pair is not listed, there is no direct path between them.

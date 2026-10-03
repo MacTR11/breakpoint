@@ -1,5 +1,5 @@
 --- meta
-{"title": "What Comes Off?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Stacks", "points": 10, "track": "structures", "specRef": "1.4.2", "contest": "structures-derby", "options": ["3, 4, 2", "1, 2, 3", "3, 2, 1", "3, 4, 1"], "answer": 0}
+{"title": "What comes off?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Stacks", "points": 10, "track": "structures", "specRef": "1.4.2", "contest": "structures-derby", "options": ["3, 4, 2", "1, 2, 3", "3, 2, 1", "3, 4, 1"], "answer": 0}
 --- description
 A stack starts empty. These operations are carried out in order:
 

@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Stock Room", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Class design", "points": 25, "track": "oop", "specRef": "3.3", "contest": "build-it-right",
+  "title": "Stock room", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Class design", "points": 25, "track": "oop", "specRef": "3.3", "contest": "build-it-right",
   "functionName": "Inventory",
   "tests": [
     { "steps": [["Inventory"], ["add", "pen", 10], ["add", "pen", 5], ["count", "pen"], ["count", "ink"]], "expected": [10, 15, 15, 0] },

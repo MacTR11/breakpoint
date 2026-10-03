@@ -1,5 +1,5 @@
 --- meta
-{ "title": "The Looping Tram", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Tracing", "points": 5, "track": "basics", "specRef": "2.2.1",
+{ "title": "The looping tram", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Tracing", "points": 5, "track": "basics", "specRef": "2.2.1",
   "options": ["Stop 6", "Stop 8", "Stop 10", "Stop 12"], "answer": 1 }
 --- description
 A driverless tram starts at **stop 0** and follows this program:

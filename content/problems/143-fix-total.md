@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Running Total", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Logic error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "total", "banned": ["sum("],
+{"title": "Fix: running total", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Logic error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "total", "banned": ["sum("],
   "tests": [
     {"args": [[1, 2, 3]], "expected": 6},
     {"args": [[5]], "expected": 5},

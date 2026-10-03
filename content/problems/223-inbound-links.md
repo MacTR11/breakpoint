@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Counting Inbound Links", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Search engines", "points": 25, "track": "lists", "specRef": "1.3.4",
+  "title": "Counting inbound links", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Search engines", "points": 25, "track": "lists", "specRef": "1.3.4",
   "functionName": "inbound_links",
   "tests": [
     { "args": [{ "A": ["B", "C"], "B": ["C"], "C": [] }], "expected": { "A": 0, "B": 1, "C": 2 } },

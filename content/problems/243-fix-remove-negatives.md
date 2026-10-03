@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: The Vanishing Check", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Changing a list while looping", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "remove_negatives",
+{"title": "Fix: the vanishing check", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Changing a list while looping", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "remove_negatives",
   "tests": [
     {"args": [[1, -2, 3]], "expected": [1, 3]},
     {"args": [[-1, -2, 3]], "expected": [3]},

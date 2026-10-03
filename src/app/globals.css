@@ -1227,6 +1227,68 @@ button {
   pointer-events: none;
 }
 
+/* Typing code on a phone: the editor panel fills the visible area above the
+   keyboard (its top and height are set from the visual viewport), and the
+   page behind it cannot scroll. */
+.typing-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  border-radius: 0;
+}
+html.typing-code,
+html.typing-code body {
+  overflow: hidden;
+}
+/* The Python keys along the bottom of the editor while typing on a phone. */
+.mobile-keys {
+  flex: none;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 6px 8px;
+  padding-left: max(8px, env(safe-area-inset-left));
+  padding-right: max(8px, env(safe-area-inset-right));
+  background: #21252b;
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+  scrollbar-width: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-x;
+}
+.mobile-keys button {
+  flex: none;
+  min-width: 40px;
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 9px;
+  background: rgb(255 255 255 / 0.1);
+  color: #f6f8fa;
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-variant-ligatures: none;
+  cursor: pointer;
+}
+.mobile-keys button:active {
+  background: rgb(255 255 255 / 0.24);
+}
+.mobile-keys button[data-kind="action"] {
+  color: #79c0ff;
+}
+
+/* iPhones zoom the page in when a text box with text under 16px gets the
+   cursor, which throws the whole layout off. On touch screens, every place
+   you can type is at least 16px. */
+@media (pointer: coarse) {
+  .cm-editor,
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 /* The solved pop-up: the one place the page is blurred, so the way on is unmissable. */
 .solved-dialog {
   margin: auto;

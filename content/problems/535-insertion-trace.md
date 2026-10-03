@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Insertion Sort Trace", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 10, "track": "sorting", "specRef": "2.3.1",
+{ "title": "Insertion sort trace", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 10, "track": "sorting", "specRef": "2.3.1",
   "options": ["3 7 9 2 5", "2 3 5 7 9", "3 2 7 5 9", "2 3 7 9 5"], "answer": 3 }
 --- description
 An insertion sort is used to put this list into ascending order:

@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Username Validation", "kind": "CODE", "difficulty": "EASY", "topic": "Validation", "points": 10, "track": "robust", "specRef": "3.3",
+  "title": "Username validation", "kind": "CODE", "difficulty": "EASY", "topic": "Validation", "points": 10, "track": "robust", "specRef": "3.3",
   "functionName": "valid_username",
   "tests": [
     { "args": ["alice"], "expected": true },

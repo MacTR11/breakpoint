@@ -1,5 +1,5 @@
 --- meta
-{"title": "Which Test Finds It?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Choosing test data", "points": 10, "track": "debugging", "specRef": "3.3", "options": ["[3, 9, 4]", "[0, 5, 2]", "[-3, -7, -1]", "[5]"], "answer": 2}
+{"title": "Which test finds it?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Choosing test data", "points": 10, "track": "debugging", "specRef": "3.3", "options": ["[3, 9, 4]", "[0, 5, 2]", "[-3, -7, -1]", "[5]"], "answer": 2}
 --- description
 This function is meant to return the largest number in a list.
 

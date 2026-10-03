@@ -1,48 +1,48 @@
 [
   {
     "slug": "welcome",
-    "title": "Welcome Challenge",
+    "title": "Welcome challenge",
     "description": "A first competition to try the platform: a mix of writing code, fixing a bug and reading code.",
     "live": true
   },
   {
     "slug": "python-sprint",
-    "title": "Python Sprint",
+    "title": "Python sprint",
     "description": "Short, quick problems. Speed and accuracy decide it."
   },
   {
     "slug": "bug-hunt",
-    "title": "Bug Hunt",
+    "title": "Bug hunt",
     "description": "Every program here is broken. Find the bugs and fix them."
   },
   {
     "slug": "sort-it-out",
-    "title": "Sort It Out",
+    "title": "Searching and sorting",
     "description": "Searching and sorting: write them, repair them and trace them."
   },
   {
     "slug": "recursion-rumble",
-    "title": "Recursion Rumble",
+    "title": "Recursion",
     "description": "Functions that call themselves. No loops allowed in places."
   },
   {
     "slug": "structures-derby",
-    "title": "Data Structures Derby",
+    "title": "Data structures",
     "description": "Stacks, queues, linked lists and trees, built and traced."
   },
   {
     "slug": "algorithms-showdown",
-    "title": "Algorithms Showdown",
+    "title": "Algorithms",
     "description": "Searching, traversal, recursion and complexity."
   },
   {
     "slug": "build-it-right",
-    "title": "Build It Right",
+    "title": "Robust programs",
     "description": "Validation, messy input, classes and testing: the skills of a robust program."
   },
   {
     "slug": "grand-final",
-    "title": "Grand Final",
+    "title": "Grand final",
     "description": "The hardest set. A bit of everything."
   }
 ]

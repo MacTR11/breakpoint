@@ -1,5 +1,5 @@
 --- meta
-{"title": "How Deep Does It Go?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1", "check": "run", "options": ["3", "4", "5", "10"], "answer": 1}
+{"title": "How deep does it go?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1", "check": "run", "options": ["3", "4", "5", "10"], "answer": 1}
 --- description
 ```python
 def f(n):

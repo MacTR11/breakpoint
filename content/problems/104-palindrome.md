@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Palindrome Checker",
+  "title": "Palindrome checker",
   "kind": "CODE",
   "difficulty": "EASY",
   "topic": "Strings",

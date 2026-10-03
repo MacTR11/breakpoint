@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { contestState, contestStateLabel } from "@/lib/scoring";
 import { requireTeacher } from "@/lib/session";
 
+export const metadata = { title: "Competitions" };
+
 export default async function TeacherContestsPage() {
   await requireTeacher();
   const contests = await db.contest.findMany({ orderBy: [{ startsAt: "desc" }, { title: "asc" }], include: { _count: { select: { problems: true } } } });
@@ -42,8 +44,8 @@ export default async function TeacherContestsPage() {
                       </Link>
                     </td>
                     <td className="whitespace-nowrap">{contestStateLabel[state]}</td>
-                    <td className="whitespace-nowrap text-muted">{contest.startsAt ? formatDateTime(contest.startsAt) : "—"}</td>
-                    <td className="whitespace-nowrap text-muted">{contest.endsAt ? formatDateTime(contest.endsAt) : "—"}</td>
+                    <td className="whitespace-nowrap text-muted">{contest.startsAt ? formatDateTime(contest.startsAt) : "Not set"}</td>
+                    <td className="whitespace-nowrap text-muted">{contest.endsAt ? formatDateTime(contest.endsAt) : "Not set"}</td>
                     <td className="num">{contest._count.problems}</td>
                     <td>
                       <Link href={`/teacher/contests/${contest.id}`} className={link}>

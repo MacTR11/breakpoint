@@ -1,5 +1,5 @@
 --- meta
-{"title": "Follow the Loop", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Tracing", "points": 5, "track": "basics", "specRef": "2.2.1", "contest": "python-sprint", "check": "run", "options": ["17", "24", "33", "48"], "answer": 2}
+{"title": "Follow the loop", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Tracing", "points": 5, "track": "basics", "specRef": "2.2.1", "contest": "python-sprint", "check": "run", "options": ["17", "24", "33", "48"], "answer": 2}
 --- description
 ```python
 x = 3

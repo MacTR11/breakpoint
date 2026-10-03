@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Count the Vowels",
+  "title": "Count the vowels",
   "kind": "CODE",
   "difficulty": "EASY",
   "topic": "Strings",

@@ -1,5 +1,5 @@
 --- meta
-{ "title": "What Does It Print?", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Tracing", "points": 5, "track": "basics", "specRef": "2.2.1", "contest": "welcome",
+{ "title": "What does it print?", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Tracing", "points": 5, "track": "basics", "specRef": "2.2.1", "contest": "welcome",
   "options": ["6", "9", "15", "25"], "answer": 1 }
 --- description
 ```python

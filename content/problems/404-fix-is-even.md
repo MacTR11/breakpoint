@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Fix: Even Numbers", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Logic error", "points": 10, "track": "debugging", "specRef": "3.3", "contest": "welcome",
+  "title": "Fix: even numbers", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Logic error", "points": 10, "track": "debugging", "specRef": "3.3", "contest": "welcome",
   "functionName": "is_even",
   "tests": [
     { "args": [4], "expected": true },

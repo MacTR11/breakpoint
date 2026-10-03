@@ -1,5 +1,5 @@
 --- meta
-{"title": "The Middle", "kind": "CODE", "difficulty": "EASY", "topic": "Strings", "points": 10, "track": "strings", "specRef": "2.2.1", "contest": "python-sprint", "functionName": "middle",
+{"title": "The middle", "kind": "CODE", "difficulty": "EASY", "topic": "Strings", "points": 10, "track": "strings", "specRef": "2.2.1", "contest": "python-sprint", "functionName": "middle",
   "tests": [
     {"args": ["abc"], "expected": "b"},
     {"args": ["abcd"], "expected": "bc"},

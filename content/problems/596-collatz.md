@@ -1,5 +1,5 @@
 --- meta
-{"title": "Trace Table", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "While loops", "points": 10, "track": "basics", "specRef": "2.2.1", "check": "run", "options": ["6", "7", "8", "9"], "answer": 2}
+{"title": "Trace table", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "While loops", "points": 10, "track": "basics", "specRef": "2.2.1", "check": "run", "options": ["6", "7", "8", "9"], "answer": 2}
 --- description
 ```python
 n = 6

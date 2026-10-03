@@ -1,5 +1,5 @@
 --- meta
-{"title": "Stopping Early", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Bubble sort", "points": 10, "track": "sorting", "specRef": "2.3.1", "options": ["1", "2", "4", "5"], "answer": 1}
+{"title": "Stopping early", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Bubble sort", "points": 10, "track": "sorting", "specRef": "2.3.1", "options": ["1", "2", "4", "5"], "answer": 1}
 --- description
 A bubble sort keeps making passes through the list, and stops after the first pass in which **no swaps** are made.
 

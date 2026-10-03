@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Triangle Area", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Name error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "triangle_area",
+{"title": "Fix: triangle area", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Name error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "triangle_area",
   "tests": [
     {"args": [4, 5], "expected": 10.0},
     {"args": [3, 3], "expected": 4.5},

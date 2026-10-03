@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Score Label", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Type error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "label",
+{"title": "Fix: score label", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Type error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "label",
   "tests": [
     {"args": ["Sam", 7], "expected": "Sam: 7"},
     {"args": ["Jo", 0], "expected": "Jo: 0"},

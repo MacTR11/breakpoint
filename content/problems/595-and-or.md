@@ -1,5 +1,5 @@
 --- meta
-{"title": "And Before Or", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Boolean expressions", "points": 10, "track": "basics", "specRef": "2.2.1", "check": "run", "options": ["True", "False", "5", "An error"], "answer": 0}
+{"title": "And comes before or", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Boolean expressions", "points": 10, "track": "basics", "specRef": "2.2.1", "check": "run", "options": ["True", "False", "5", "An error"], "answer": 0}
 --- description
 ```python
 x = 5

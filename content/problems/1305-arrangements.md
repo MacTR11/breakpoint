@@ -1,5 +1,5 @@
 --- meta
-{"title": "Every Arrangement", "kind": "CODE", "difficulty": "HARD", "topic": "Recursion", "points": 50, "track": "recursion", "specRef": "2.2.1", "contest": "recursion-rumble", "functionName": "arrangements", "banned": ["import"],
+{"title": "Every arrangement", "kind": "CODE", "difficulty": "HARD", "topic": "Recursion", "points": 50, "track": "recursion", "specRef": "2.2.1", "contest": "recursion-rumble", "functionName": "arrangements", "banned": ["import"],
   "tests": [
     {"args": ["ab"], "expected": ["ab", "ba"]},
     {"args": ["a"], "expected": ["a"]},

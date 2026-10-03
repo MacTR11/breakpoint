@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Is It Sorted?", "kind": "CODE", "difficulty": "EASY", "topic": "Lists", "points": 10, "track": "lists", "specRef": "2.2.1", "contest": "algorithms-showdown",
+  "title": "Is it sorted?", "kind": "CODE", "difficulty": "EASY", "topic": "Lists", "points": 10, "track": "lists", "specRef": "2.2.1", "contest": "algorithms-showdown",
   "functionName": "is_sorted", "banned": ["sorted(", ".sort("],
   "tests": [
     { "args": [[1, 2, 3]], "expected": true },

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Splitting in Half", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Merge sort", "points": 10, "track": "sorting", "specRef": "2.3.1", "options": ["2", "4", "8", "16"], "answer": 1}
+{"title": "Splitting in half", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Merge sort", "points": 10, "track": "sorting", "specRef": "2.3.1", "options": ["2", "4", "8", "16"], "answer": 1}
 --- description
 Merge sort splits a list in half, then splits each half in half, and so on until every piece holds a single item.
 

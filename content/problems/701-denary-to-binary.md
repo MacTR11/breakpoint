@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Denary to Binary", "kind": "CODE", "difficulty": "EASY", "topic": "Binary", "points": 10, "track": "bits", "specRef": "1.4.1", "contest": "python-sprint",
+  "title": "Denary to binary", "kind": "CODE", "difficulty": "EASY", "topic": "Binary", "points": 10, "track": "bits", "specRef": "1.4.1", "contest": "python-sprint",
   "functionName": "denary_to_binary", "banned": ["bin(", "format("],
   "tests": [
     { "args": [5, 8], "expected": "00000101" },

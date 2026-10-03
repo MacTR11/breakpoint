@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Choosing Test Data", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Testing", "points": 5, "track": "robust", "specRef": "3.3",
+{ "title": "Choosing test data", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Testing", "points": 5, "track": "robust", "specRef": "3.3",
   "options": ["35 and 50", "0 and 80", "−20 and 200", "\"forty\" and an empty input"], "answer": 1 }
 --- description
 A program accepts exam marks from **0 to 80** inclusive.

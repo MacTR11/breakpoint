@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Balanced Brackets",
+  "title": "Balanced brackets",
   "kind": "CODE",
   "difficulty": "MEDIUM",
   "topic": "Data structures",

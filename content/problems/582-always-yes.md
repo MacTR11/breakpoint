@@ -1,5 +1,5 @@
 --- meta
-{"title": "Always Yes", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Boolean logic", "points": 10, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["Yes", "No", "Nothing", "An error"], "answer": 0}
+{"title": "Always yes", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Boolean logic", "points": 10, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["Yes", "No", "Nothing", "An error"], "answer": 0}
 --- description
 ```python
 answer = "n"

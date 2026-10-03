@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Flatten a Nested List", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 25, "track": "recursion", "specRef": "2.2.1",
+  "title": "Flatten a nested list", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 25, "track": "recursion", "specRef": "2.2.1",
   "functionName": "flatten",
   "tests": [
     { "args": [[1, [2, [3, 4]], 5]], "expected": [1, 2, 3, 4, 5] },

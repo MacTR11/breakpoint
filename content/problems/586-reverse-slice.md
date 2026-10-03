@@ -1,5 +1,5 @@
 --- meta
-{"title": "Slice of a Slice", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Strings", "points": 10, "track": "strings", "specRef": "2.2.1", "check": "run", "options": ["pyt", "noh", "hon", "typ"], "answer": 1}
+{"title": "Slice of a slice", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Strings", "points": 10, "track": "strings", "specRef": "2.2.1", "check": "run", "options": ["pyt", "noh", "hon", "typ"], "answer": 1}
 --- description
 ```python
 word = "python"

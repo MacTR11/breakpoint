@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Write a Bubble Sort", "kind": "CODE", "difficulty": "EASY", "topic": "Sorting", "points": 10, "track": "sorting", "specRef": "2.3.1",
+  "title": "Write a bubble sort", "kind": "CODE", "difficulty": "EASY", "topic": "Sorting", "points": 10, "track": "sorting", "specRef": "2.3.1",
   "functionName": "bubble_sort", "banned": ["sorted(", ".sort("],
   "tests": [
     { "args": [[3, 1, 2]], "expected": [1, 2, 3] },

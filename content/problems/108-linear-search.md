@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Linear Search", "kind": "CODE", "difficulty": "EASY", "topic": "Searching", "points": 10, "track": "searching", "specRef": "2.3.1",
+  "title": "Linear search", "kind": "CODE", "difficulty": "EASY", "topic": "Searching", "points": 10, "track": "searching", "specRef": "2.3.1",
   "functionName": "linear_search", "banned": [".index(", ".find("],
   "tests": [
     { "args": [[4, 8, 15, 16], 15], "expected": 2 },

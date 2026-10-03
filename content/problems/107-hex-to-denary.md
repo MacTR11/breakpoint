@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Hex to Denary", "kind": "CODE", "difficulty": "EASY", "topic": "Hexadecimal", "points": 10, "track": "bits", "specRef": "1.4.1",
+  "title": "Hex to denary", "kind": "CODE", "difficulty": "EASY", "topic": "Hexadecimal", "points": 10, "track": "bits", "specRef": "1.4.1",
   "functionName": "hex_to_denary",
   "tests": [
     { "args": ["FF"], "expected": 255 },

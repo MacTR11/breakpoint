@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Index Out of Range", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Index error", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "differences",
+{"title": "Fix: index out of range", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Index error", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "differences",
   "tests": [
     {"args": [[1, 4, 9]], "expected": [3, 5]},
     {"args": [[5, 5]], "expected": [0]},

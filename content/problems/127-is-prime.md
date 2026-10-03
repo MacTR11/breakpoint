@@ -1,5 +1,5 @@
 --- meta
-{"title": "Prime Numbers", "kind": "CODE", "difficulty": "EASY", "topic": "Loops", "points": 10, "track": "basics", "specRef": "2.2.1", "functionName": "is_prime",
+{"title": "Prime numbers", "kind": "CODE", "difficulty": "EASY", "topic": "Loops", "points": 10, "track": "basics", "specRef": "2.2.1", "functionName": "is_prime",
   "tests": [
     {"args": [7], "expected": true},
     {"args": [8], "expected": false},

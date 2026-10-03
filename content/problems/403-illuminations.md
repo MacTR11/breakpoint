@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Brightest Stretch",
+  "title": "Brightest stretch",
   "kind": "CODE",
   "difficulty": "MEDIUM",
   "topic": "Lists",

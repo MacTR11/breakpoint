@@ -1,5 +1,5 @@
 --- meta
-{"title": "Two-dimensional Lists", "kind": "PUZZLE", "difficulty": "EASY", "topic": "2D arrays", "points": 5, "track": "lists", "specRef": "2.2.1", "check": "run", "options": ["6", "8", "10", "12"], "answer": 2}
+{"title": "Two-dimensional lists", "kind": "PUZZLE", "difficulty": "EASY", "topic": "2D arrays", "points": 5, "track": "lists", "specRef": "2.2.1", "check": "run", "options": ["6", "8", "10", "12"], "answer": 2}
 --- description
 ```python
 grid = [[1, 2, 3],

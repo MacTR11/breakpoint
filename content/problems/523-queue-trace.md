@@ -1,5 +1,5 @@
 --- meta
-{ "title": "At the Front of the Queue", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Queues", "points": 5, "track": "structures", "specRef": "1.4.2",
+{ "title": "At the front of the queue", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Queues", "points": 5, "track": "structures", "specRef": "1.4.2",
   "options": ["C, D, E", "E, D, C", "A, C, E", "B, C, D"], "answer": 0 }
 --- description
 A queue starts empty. These operations are carried out in order:

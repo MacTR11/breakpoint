@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Base Case", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Recursion error", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "power", "banned": ["**", "pow("],
+{"title": "Fix: base case", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Recursion error", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "power", "banned": ["**", "pow("],
   "tests": [
     {"args": [2, 3], "expected": 8},
     {"args": [5, 0], "expected": 1},

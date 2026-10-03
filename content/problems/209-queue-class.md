@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Build a Queue", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Queues", "points": 25, "track": "structures", "specRef": "1.4.2",
+  "title": "Build a queue", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Queues", "points": 25, "track": "structures", "specRef": "1.4.2",
   "functionName": "Queue",
   "tests": [
     { "steps": [["Queue", 3], ["enqueue", "A"], ["enqueue", "B"], ["dequeue"], ["size"], ["is_empty"]], "expected": [true, true, "A", 1, false] },

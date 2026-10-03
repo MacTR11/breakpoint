@@ -1,5 +1,5 @@
 --- meta
-{"title": "What Kind of Error? (1)", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Types of error", "points": 5, "track": "debugging", "specRef": "3.3", "options": ["A syntax error", "A runtime error", "A logic error", "It is not an error"], "answer": 1}
+{"title": "What kind of error? (1)", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Types of error", "points": 5, "track": "debugging", "specRef": "3.3", "options": ["A syntax error", "A runtime error", "A logic error", "It is not an error"], "answer": 1}
 --- description
 A program asks how many people are sharing a £120 bill, then prints each person's share.
 

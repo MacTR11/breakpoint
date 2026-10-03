@@ -1,5 +1,5 @@
 --- meta
-{"title": "The Function That Says Nothing", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Missing return", "points": 5, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["8", "4", "None", "Nothing at all"], "answer": 2}
+{"title": "The function that says nothing", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Missing return", "points": 5, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["8", "4", "None", "Nothing at all"], "answer": 2}
 --- description
 ```python
 def double(n):

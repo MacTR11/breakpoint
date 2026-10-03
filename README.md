@@ -19,7 +19,8 @@ A Python practice and competition platform for A Level Computer Science.
 - **Teacher dashboard**: every student's progress and submitted code, class pages with a topic grid, printable reports, a problem editor, a competition scheduler and a CSV export.
 - **Accounts you control**: one teacher account, and student accounts that you create, singly or by importing a CSV of your class. No Google or email accounts are involved.
 - **Light and dark**: the site follows the device, with a switch in the account menu (the initials in the top bar). On a phone or tablet the main pages are along the bottom of the screen, like an app.
-- **Model answers**: once a student has solved a coding challenge they can compare their code with a model answer. For a fix-the-bug challenge they see what their fix changed, line by line, beside the model fix.
+- **Model answers**: once a student has solved a coding challenge they can compare their code with a model answer.
+- **Coding on a phone**: tapping into the code on a phone (or a tablet held upright) switches to typing mode. The editor fills the part of the screen the keyboard leaves visible, with Run and Done along the top and a row of keys just above the keyboard: indent and outdent, arrows, undo and the symbols Python needs that phone keyboards hide (`:` `(` `)` `[` `]` `=` `_` `#` and more). Long lines wrap, and the editor uses 16px text so iPhones do not zoom the page in.
 - **Search anywhere**: press Ctrl K (⌘K on a Mac), or the search button in the top bar, and type a few letters to jump to any page, challenge or competition. The teacher can also find any student, class or piece of homework.
 
 The name shown on the site is set by `NEXT_PUBLIC_SITE_NAME` in `.env`. The look is described in [DESIGN.md](DESIGN.md).
@@ -98,24 +99,24 @@ Neither setting can stop a student retyping an answer from another screen, and a
 
 ## What is covered
 
-The 245 starter challenges are original, written for this project: 132 write-the-code, 37 fix-the-bug and 76 puzzles. 189 are in Practice and 56 are held in competition packs.
+The 357 starter challenges are original, written for this project: 221 write-the-code, 48 fix-the-bug and 88 puzzles. 301 are in Practice and 56 are held in competition packs.
 
 | Topic | Write | Fix | Puzzles | Includes |
 | --- | --- | --- | --- | --- |
-| First steps | 11 | 3 | | One idea at a time: a return, an `if`, a loop, a list. Worth 5 points each |
-| Exam-style questions | 34 | | | Ten scenarios with parts (a), (b), (c): 2D arrays, stacks and queues in arrays, recursion, classes and inheritance, records from a file, sorts and searches by hand, linked lists and trees in arrays, string handling |
-| Debugging | | 34 | 17 | Syntax, runtime and logic errors; off-by-one; infinite loops; broken searches and sorts; choosing test data that exposes a bug |
-| Sorting | 11 | | 10 | Bubble, insertion, merge and quick sort, each written by hand, plus traces and best and worst cases |
-| Python basics | 9 | | 11 | Selection, loops, arithmetic, tracing |
-| Lists and dictionaries | 15 | | 4 | 1D and 2D lists, records, lookups |
-| Data structures | 9 | | 7 | Stacks, queues, linked lists, binary search trees, hash tables |
-| Strings | 9 | | 5 | Slicing, building, ciphers, run-length encoding |
-| Functions and recursion | 6 | | 8 | Scope, parameter passing, recursive functions |
-| Algorithm challenges | 5 | | 6 | Dijkstra, A*, breadth- and depth-first search, backtracking, Big O |
-| Searching | 5 | | 5 | Linear and binary search, iterative and recursive |
-| Robust programs | 6 | | 2 | Validation, messy file input, test data |
-| Object-oriented programming | 6 | | 1 | Classes, encapsulation, inheritance, polymorphism |
-| Bits and bytes | 6 | | | Binary, hexadecimal, two's complement, bitwise masks, in code |
+| First steps | 15 | 5 | | One idea at a time: a return, an `if`, a loop, a list. Worth 5 points each |
+| Exam-style questions | 72 | | | Twenty-one scenarios with parts (a), (b), (c): a cinema, a treasure map, Connect Four, sports day results, scooter hire, a bus network, pixel images, a car park, a quiz app, a weather station, a ranked-ballot election, a music app and a train timetable among them. They cover 2D arrays, stacks and queues in arrays, recursion, classes and inheritance, records from a file, sorts and searches by hand, linked lists and trees in arrays, string handling |
+| Debugging | | 43 | 17 | Syntax, runtime and logic errors; off-by-one; infinite loops; broken searches and sorts; choosing test data that exposes a bug |
+| Sorting | 12 | | 11 | Bubble, insertion, merge and quick sort, each written by hand, plus traces and best and worst cases |
+| Python basics | 12 | | 13 | Selection, loops, arithmetic, tracing |
+| Lists and dictionaries | 20 | | 5 | 1D and 2D lists, records, lookups |
+| Data structures | 13 | | 8 | Stacks, queues, linked lists, binary search trees, hash tables |
+| Strings | 14 | | 8 | Slicing, building, ciphers, run-length encoding |
+| Functions and recursion | 11 | | 9 | Scope, parameter passing, recursive functions |
+| Algorithm challenges | 9 | | 6 | Dijkstra, A*, breadth- and depth-first search, backtracking, Big O |
+| Searching | 10 | | 5 | Linear and binary search, iterative and recursive |
+| Robust programs | 11 | | 2 | Validation, messy file input, test data |
+| Object-oriented programming | 11 | | 2 | Classes, encapsulation, inheritance, polymorphism |
+| Bits and bytes | 11 | | 2 | Binary, hexadecimal, two's complement, bitwise masks, in code |
 
 Every search and sort named in OCR H446 (linear search, binary search, bubble sort, insertion sort, merge sort, quick sort) has a write-it challenge, a fix-it challenge and at least one tracing puzzle. Each challenge also carries its H446 reference (`specRef`) for your records.
 
@@ -153,7 +154,7 @@ First steps challenges are worth 5 each, and exam-style questions 5 for each mar
 
 ## Competitions
 
-Teacher → Competitions lists the nine packs: Welcome Challenge (live when first set up), Python Sprint, Bug Hunt, Sort It Out, Recursion Rumble, Data Structures Derby, Algorithms Showdown, Build It Right and Grand Final. A pack with no dates is invisible to students; choose **Schedule**, give it start and end times (UK time) and save. Its problems stay hidden until the start, and join Practice automatically once it has finished.
+Teacher → Competitions lists the nine packs: Welcome challenge (live when first set up), Python sprint, Bug hunt, Searching and sorting, Recursion, Data structures, Algorithms, Robust programs and Grand final. A pack with no dates is invisible to students; choose **Schedule**, give it start and end times (UK time) and save. Its problems stay hidden until the start, and join Practice automatically once it has finished.
 
 You can also build a competition from any problems in the bank. The form warns you about problems students have already solved, since those will not score again.
 
@@ -269,8 +270,15 @@ A few things are hidden for students to find. None of them changes a score.
 - On a keyboard, type the Konami code (up, up, down, down, left, right, left, right, B, A): terminal mode, green on black, until it is typed again or the tab is closed.
 - Open the browser's developer console.
 - Visit a page that does not exist.
-- Look under the Home greeting on Ada Lovelace Day, Programmers' Day (the 256th day of the year), pi day and a few other dates.
-- Six secret awards (see `src/lib/awards.ts`).
+- Look under the Home greeting on Ada Lovelace Day, Programmers' Day (the 256th day of the year), pi day, April Fools' Day, Towel Day, the day of the first computer bug and a few other dates.
+- Type `import this`, `from __future__ import braces` or `import __hello__` in the editor and press Run.
+- In the Console tab, call `quack()`.
+- In the search box (Ctrl K), press Enter on `sudo`, `xyzzy`, `hello world`, `42`, `rm -rf`, `coffee`, `ls`, `exit`, `hack`, `help`, `please`, `segfault`, `git push --force`, `dark side` or `light side`.
+- Run code that uses both `spam` and `eggs`, or a `while True:` loop that only says `pass`.
+- Flip between light and dark eight times in five seconds.
+- Switch to another tab and look at this one's title.
+- Open the site between midnight and 5am.
+- Sixteen secret awards (see `src/lib/awards.ts`).
 
 Useful commands: `npm run verify`, `npm run check` (homework states, paste flags, points and marks, the fix diff, palette search and debugger stepping), `python3 scripts/check-puzzles.py`, `npx tsx scripts/judge-smoke.ts` (checks the judge copes with broken and hostile code), `npm run lint`.
 

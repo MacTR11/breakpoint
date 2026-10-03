@@ -1,5 +1,5 @@
 --- meta
-{"title": "One Step Too Far", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Index error", "points": 10, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["It prints 18", "It prints 12", "It stops with an IndexError", "It stops with a SyntaxError"], "answer": 2}
+{"title": "One step too far", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Index error", "points": 10, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["It prints 18", "It prints 12", "It stops with an IndexError", "It stops with a SyntaxError"], "answer": 2}
 --- description
 ```python
 scores = [4, 8, 6]

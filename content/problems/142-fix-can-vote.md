@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Old Enough to Vote", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Boundary error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "can_vote",
+{"title": "Fix: old enough to vote", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Boundary error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "can_vote",
   "tests": [
     {"args": [18], "expected": true},
     {"args": [17], "expected": false},

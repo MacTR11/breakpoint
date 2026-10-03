@@ -8,6 +8,12 @@ const isAdaLovelaceDay = (year: number, month: number, date: number) => month ==
 
 const FIXED: Record<string, string> = {
   "02-20": "Python was first released on this day in 1991.",
+  "02-29": "29 February: the day that finds every bug in date code. Check your leap-year rule.",
+  "04-01": "Today every challenge is marked in Python 2. (It isn't. Happy April Fools' Day.)",
+  "05-25": "Towel Day, for Douglas Adams. Don't panic, and always know where your towel is.",
+  "07-20": "The Moon landing, 1969. Margaret Hamilton's team wrote the guidance software, and it held up.",
+  "09-09": "In 1947 Grace Hopper's team found a moth stuck in a relay: the first actual bug in a computer.",
+  "10-24": "10/24: 1024 bytes in a kibibyte, so it's a good day for powers of two.",
   "03-14": "Happy π day. 3.14159265358979…",
   "06-23": "Alan Turing was born on this day in 1912.",
   "10-31": "Oct 31 == Dec 25, as any programmer will tell you.",

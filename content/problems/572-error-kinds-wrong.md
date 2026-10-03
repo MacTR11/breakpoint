@@ -1,5 +1,5 @@
 --- meta
-{"title": "What Kind of Error? (2)", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Types of error", "points": 5, "track": "debugging", "specRef": "3.3", "options": ["A syntax error", "A runtime error", "A logic error", "A type error"], "answer": 2}
+{"title": "What kind of error? (2)", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Types of error", "points": 5, "track": "debugging", "specRef": "3.3", "options": ["A syntax error", "A runtime error", "A logic error", "A type error"], "answer": 2}
 --- description
 This function should convert an amount in pence to pounds.
 

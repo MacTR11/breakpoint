@@ -1,5 +1,5 @@
 --- meta
-{"title": "Which Line?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Indentation error", "points": 10, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "options": ["Line 2", "Line 4", "Line 5", "Line 6"], "answer": 3}
+{"title": "Which line?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Indentation error", "points": 10, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "options": ["Line 2", "Line 4", "Line 5", "Line 6"], "answer": 3}
 --- description
 This function should count how many numbers in a list are even.
 

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Follow the Search", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Binary search", "points": 10, "track": "searching", "specRef": "2.3.1", "contest": "sort-it-out", "options": ["27, 9, 14", "27, 14", "20, 9, 14", "27, 9, 20, 14"], "answer": 0}
+{"title": "Follow the search", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Binary search", "points": 10, "track": "searching", "specRef": "2.3.1", "contest": "sort-it-out", "options": ["27, 9, 14", "27, 14", "20, 9, 14", "27, 9, 20, 14"], "answer": 0}
 --- description
 A binary search looks for **14** in this sorted list of eleven items. It finds the middle with `mid = (low + high) DIV 2`.
 

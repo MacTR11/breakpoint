@@ -1,5 +1,5 @@
 --- meta
-{"title": "List Methods", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Lists", "points": 10, "track": "lists", "specRef": "2.2.1", "check": "run", "options": ["[3, 9, 1, 2]", "[9, 3, 1, 2]", "[3, 9, 1, 2, 5]", "[3, 1, 9, 2]"], "answer": 0}
+{"title": "List methods", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Lists", "points": 10, "track": "lists", "specRef": "2.2.1", "check": "run", "options": ["[3, 9, 1, 2]", "[9, 3, 1, 2]", "[3, 9, 1, 2, 5]", "[3, 1, 9, 2]"], "answer": 0}
 --- description
 ```python
 items = [3, 1, 2]

@@ -93,7 +93,9 @@ export function Progress({ value, total, color }: { value: number; total: number
   );
 }
 
-const humanise = (label: string) => (/[._]/.test(label) ? label : label.charAt(0).toUpperCase() + label.slice(1).replace(/-/g, " "));
+// A slug such as "course-map" becomes "Course map"; a real title such as
+// "Exam-style questions" or a file name such as "sum_to.py" is left as it is.
+const humanise = (label: string) => (/^[a-z0-9-]+$/.test(label) ? label.charAt(0).toUpperCase() + label.slice(1).replace(/-/g, " ") : label);
 
 /** The way back: links to the pages above this one. */
 export function Path({ parts }: { parts: { label: string; href?: string }[] }) {

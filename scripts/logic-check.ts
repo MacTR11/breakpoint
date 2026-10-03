@@ -208,19 +208,19 @@ check("fix diff: lines out and in, the changed part marked, long runs folded", (
 });
 
 check("command palette: whole words first, then initials, in group order", () => {
-  assert.ok(matchScore("lsrch", "Linear Search") !== null);
-  assert.equal(matchScore("xyz", "Linear Search"), null);
-  assert.ok(matchScore("search", "Linear Search")! > matchScore("srch", "Linear Search")!);
-  assert.ok(matchScore("lin", "Linear Search")! > matchScore("lin", "Spline curves")!);
+  assert.ok(matchScore("lsrch", "Linear search") !== null);
+  assert.equal(matchScore("xyz", "Linear search"), null);
+  assert.ok(matchScore("search", "Linear search")! > matchScore("srch", "Linear search")!);
+  assert.ok(matchScore("lin", "Linear search")! > matchScore("lin", "Spline curves")!);
   const item = (group: PaletteItem["group"], title: string, detail = ""): PaletteItem => ({ group, title, detail, href: `/${title}`, icon: { text: "", color: "" } });
-  const items = [item("Challenges", "Binary search", "Searching"), item("Challenges", "Linear Search", "Searching"), item("Pages", "Leaderboard"), item("Challenges", "Bubble sort", "Sorting")];
+  const items = [item("Challenges", "Binary search", "Searching"), item("Challenges", "Linear search", "Searching"), item("Pages", "Leaderboard"), item("Challenges", "Bubble sort", "Sorting")];
   assert.deepEqual(
     search(items, "linear").map((i) => i.title),
-    ["Linear Search"],
+    ["Linear search"],
   );
   assert.deepEqual(
     search(items, "searching").map((i) => i.title),
-    ["Binary search", "Linear Search"],
+    ["Binary search", "Linear search"],
     "found by their topic",
   );
   const people = [item("Pages", "Leaderboard"), item("Challenges", "Is It a Real Date?"), item("Students", "Ada Lovelace", "alovelace · 12A")];

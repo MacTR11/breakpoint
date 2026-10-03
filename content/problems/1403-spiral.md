@@ -1,5 +1,5 @@
 --- meta
-{"title": "Spiral Order", "kind": "CODE", "difficulty": "HARD", "topic": "2D arrays", "points": 50, "track": "lists", "specRef": "1.4.2", "contest": "grand-final", "functionName": "spiral",
+{"title": "Spiral order", "kind": "CODE", "difficulty": "HARD", "topic": "2D arrays", "points": 50, "track": "lists", "specRef": "1.4.2", "contest": "grand-final", "functionName": "spiral",
   "tests": [
     {"args": [[[1, 2, 3], [4, 5, 6], [7, 8, 9]]], "expected": [1, 2, 3, 6, 9, 8, 7, 4, 5]},
     {"args": [[[1, 2], [3, 4]]], "expected": [1, 2, 4, 3]},

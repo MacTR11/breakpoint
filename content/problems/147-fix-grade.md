@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Syntax Errors", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Syntax errors", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "grade",
+{"title": "Fix: syntax errors", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Syntax errors", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "grade",
   "tests": [
     {"args": [85], "expected": "Distinction"},
     {"args": [55], "expected": "Pass"},

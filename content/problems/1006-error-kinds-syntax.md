@@ -1,5 +1,5 @@
 --- meta
-{"title": "What Kind of Error? (3)", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Types of error", "points": 5, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "options": ["A syntax error", "A runtime error", "A logic error", "A rounding error"], "answer": 0}
+{"title": "What kind of error? (3)", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Types of error", "points": 5, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "options": ["A syntax error", "A runtime error", "A logic error", "A rounding error"], "answer": 0}
 --- description
 ```python
 total = 14

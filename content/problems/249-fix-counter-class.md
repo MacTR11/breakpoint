@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: A Class Without Self", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Object-oriented error", "points": 20, "track": "debugging", "specRef": "1.2.4", "functionName": "Counter",
+{"title": "Fix: a class without self", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Object-oriented error", "points": 20, "track": "debugging", "specRef": "1.2.4", "functionName": "Counter",
   "tests": [
     {"steps": [["Counter", 5], ["increment"], ["increment"]], "expected": [6, 7]},
     {"steps": [["Counter", 0], ["increment"], ["reset"], ["increment"]], "expected": [1, 0, 1]},

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Percentage Check", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Robust validation", "points": 20, "track": "debugging", "specRef": "3.3", "contest": "build-it-right", "functionName": "valid_percentage",
+{"title": "Fix: percentage check", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Robust validation", "points": 20, "track": "debugging", "specRef": "3.3", "contest": "build-it-right", "functionName": "valid_percentage",
   "tests": [
     {"args": ["50"], "expected": true},
     {"args": ["abc"], "expected": false},

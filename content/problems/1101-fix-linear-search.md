@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Linear Search", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Search algorithm", "points": 10, "track": "debugging", "specRef": "2.3.1", "contest": "sort-it-out", "functionName": "linear_search", "banned": [".index("],
+{"title": "Fix: linear search", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Search algorithm", "points": 10, "track": "debugging", "specRef": "2.3.1", "contest": "sort-it-out", "functionName": "linear_search", "banned": [".index("],
   "tests": [
     {"args": [[4, 8, 15], 15], "expected": 2},
     {"args": [[4, 8], 5], "expected": -1},

@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Dijkstra's Shortest Path", "kind": "CODE", "difficulty": "HARD", "topic": "Graphs", "points": 50, "track": "algorithms", "specRef": "2.3.1",
+  "title": "Dijkstra's shortest path", "kind": "CODE", "difficulty": "HARD", "topic": "Graphs", "points": 50, "track": "algorithms", "specRef": "2.3.1",
   "functionName": "shortest_distance",
   "tests": [
     { "args": [{ "A": { "B": 1 }, "B": { "A": 1, "C": 2 }, "C": { "B": 2 } }, "A", "C"], "expected": 3 },

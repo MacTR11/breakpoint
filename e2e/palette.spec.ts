@@ -9,7 +9,7 @@ test("a student finds a challenge with Ctrl K and opens it with Enter", async ({
   const search = page.getByRole("combobox", { name: /Search for/ });
   await expect(search).toBeFocused();
   await search.fill("binary search");
-  await expect(page.getByRole("option").first()).toContainText("Binary Search");
+  await expect(page.getByRole("option").first()).toContainText("Binary search");
   await search.press("Enter");
   await expect(page).toHaveURL(/\/problems\/binary-search$/);
 });

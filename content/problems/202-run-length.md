@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Run-Length Encoding",
+  "title": "Run-length encoding",
   "kind": "CODE",
   "difficulty": "MEDIUM",
   "topic": "Strings",

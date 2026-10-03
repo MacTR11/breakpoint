@@ -1,5 +1,5 @@
 --- meta
-{"title": "What Kind of Triangle?", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Selection", "points": 25, "track": "basics", "specRef": "2.2.1", "functionName": "triangle_type",
+{"title": "What kind of triangle?", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Selection", "points": 25, "track": "basics", "specRef": "2.2.1", "functionName": "triangle_type",
   "tests": [
     {"args": [3, 3, 3], "expected": "equilateral"},
     {"args": [3, 4, 4], "expected": "isosceles"},

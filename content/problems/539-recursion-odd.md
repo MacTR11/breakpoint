@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Recursive Mystery", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1",
+{ "title": "Recursive mystery", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1",
   "options": ["35", "48", "5040", "105"], "answer": 3 }
 --- description
 ```

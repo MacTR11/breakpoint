@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Boundary Values", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Boundary error", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "valid_mark",
+{"title": "Fix: boundary values", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Boundary error", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "valid_mark",
   "tests": [
     {"args": [50], "expected": true},
     {"args": [0], "expected": true},

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Which Items Get Checked?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Binary search", "points": 10, "track": "searching", "specRef": "2.3.1", "options": ["21, 30, 26", "21, 35, 30, 26", "17, 26", "21, 26"], "answer": 0}
+{"title": "Which items get checked?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Binary search", "points": 10, "track": "searching", "specRef": "2.3.1", "options": ["21, 30, 26", "21, 35, 30, 26", "17, 26", "21, 26"], "answer": 0}
 --- description
 A binary search looks for **26** in this sorted list of nine items. It finds the middle with `mid = (low + high) DIV 2`.
 

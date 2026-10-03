@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Bank Account Class", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Encapsulation", "points": 25, "track": "oop", "specRef": "1.2.4",
+  "title": "Bank account class", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Encapsulation", "points": 25, "track": "oop", "specRef": "1.2.4",
   "functionName": "BankAccount",
   "tests": [
     { "steps": [["BankAccount", "Sam", 100], ["deposit", 50], ["get_balance"], ["get_owner"]], "expected": [true, 150, "Sam"] },

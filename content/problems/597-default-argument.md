@@ -1,5 +1,5 @@
 --- meta
-{"title": "Calling Functions", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Functions", "points": 10, "track": "recursion", "specRef": "2.2.1", "check": "run", "options": ["6", "16", "26", "An error"], "answer": 1}
+{"title": "Calling functions", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Functions", "points": 10, "track": "recursion", "specRef": "2.2.1", "check": "run", "options": ["6", "16", "26", "An error"], "answer": 1}
 --- description
 ```python
 def add(a, b=10):

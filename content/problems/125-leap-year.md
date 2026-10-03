@@ -1,5 +1,5 @@
 --- meta
-{"title": "Leap Year", "kind": "CODE", "difficulty": "EASY", "topic": "Selection", "points": 10, "track": "basics", "specRef": "2.2.1", "functionName": "leap_year", "banned": ["import"],
+{"title": "Leap year", "kind": "CODE", "difficulty": "EASY", "topic": "Selection", "points": 10, "track": "basics", "specRef": "2.2.1", "functionName": "leap_year", "banned": ["import"],
   "tests": [
     {"args": [2024], "expected": true},
     {"args": [2023], "expected": false},

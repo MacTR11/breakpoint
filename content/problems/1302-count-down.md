@@ -1,5 +1,5 @@
 --- meta
-{"title": "Count Down", "kind": "CODE", "difficulty": "EASY", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1", "contest": "recursion-rumble", "functionName": "count_down", "banned": ["while ", "for ", "range("],
+{"title": "Count down", "kind": "CODE", "difficulty": "EASY", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1", "contest": "recursion-rumble", "functionName": "count_down", "banned": ["while ", "for ", "range("],
   "tests": [
     {"args": [3], "expected": [3, 2, 1, 0]},
     {"args": [0], "expected": [0]},

@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Two's Complement", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Binary", "points": 25, "track": "bits", "specRef": "1.4.1",
+  "title": "Two's complement", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Binary", "points": 25, "track": "bits", "specRef": "1.4.1",
   "functionName": "twos_complement",
   "tests": [
     { "args": [5, 8], "expected": "00000101" },

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Quick Sort's Bad Day", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Quick sort", "points": 10, "track": "sorting", "specRef": "2.3.1", "options": ["A list that is already in order", "A list in random order", "A list where each pivot happens to be the middle value", "A list of two items"], "answer": 0}
+{"title": "Quick sort's bad day", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Quick sort", "points": 10, "track": "sorting", "specRef": "2.3.1", "options": ["A list that is already in order", "A list in random order", "A list where each pivot happens to be the middle value", "A list of two items"], "answer": 0}
 --- description
 A quick sort always chooses the **first item** as its pivot.
 

@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "PIN Check", "kind": "CODE", "difficulty": "EASY", "topic": "Validation", "points": 10, "track": "robust", "specRef": "3.3", "contest": "build-it-right",
+  "title": "PIN check", "kind": "CODE", "difficulty": "EASY", "topic": "Validation", "points": 10, "track": "robust", "specRef": "3.3", "contest": "build-it-right",
   "functionName": "valid_pin",
   "tests": [
     { "args": ["1234"], "expected": true },

@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Lexical Analysis", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Translators", "points": 25, "track": "strings", "specRef": "1.2.2",
+  "title": "Lexical analysis", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Translators", "points": 25, "track": "strings", "specRef": "1.2.2",
   "functionName": "tokenise",
   "tests": [
     { "args": ["x = 3 + 42"], "expected": ["x", "=", "3", "+", "42"] },

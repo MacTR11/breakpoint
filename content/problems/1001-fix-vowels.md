@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Vowel Counter", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Logic errors", "points": 10, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "functionName": "count_vowels",
+{"title": "Fix: vowel counter", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Logic errors", "points": 10, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "functionName": "count_vowels",
   "tests": [
     {"args": ["banana"], "expected": 3},
     {"args": ["APPLE"], "expected": 2},

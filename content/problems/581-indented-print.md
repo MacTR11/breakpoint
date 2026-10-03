@@ -1,5 +1,5 @@
 --- meta
-{"title": "One Indent Too Many", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Indentation", "points": 5, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["6", "1 3 6", "1 2 3", "0 1 3"], "answer": 1}
+{"title": "One indent too many", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Indentation", "points": 5, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["6", "1 3 6", "1 2 3", "0 1 3"], "answer": 1}
 --- description
 A student wants to add up three numbers and print the total **once**.
 

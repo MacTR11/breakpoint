@@ -1,5 +1,5 @@
 --- meta
-{"title": "Capital Count", "kind": "CODE", "difficulty": "EASY", "topic": "Strings", "points": 10, "track": "strings", "specRef": "2.2.1", "contest": "python-sprint", "functionName": "count_upper",
+{"title": "Capital count", "kind": "CODE", "difficulty": "EASY", "topic": "Strings", "points": 10, "track": "strings", "specRef": "2.2.1", "contest": "python-sprint", "functionName": "count_upper",
   "tests": [
     {"args": ["Hello World"], "expected": 2},
     {"args": ["abc"], "expected": 0},

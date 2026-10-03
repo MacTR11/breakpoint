@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Is It a Real Date?", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Validation", "points": 25, "track": "robust", "specRef": "3.3",
+  "title": "Is it a real date?", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Validation", "points": 25, "track": "robust", "specRef": "3.3",
   "functionName": "valid_date", "banned": ["import"],
   "tests": [
     { "args": [29, 2, 2024], "expected": true },

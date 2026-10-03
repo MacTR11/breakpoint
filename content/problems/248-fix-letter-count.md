@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Key Error", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Dictionary error", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "letter_count",
+{"title": "Fix: key error", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Dictionary error", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "letter_count",
   "tests": [
     {"args": ["aab"], "expected": {"a": 2, "b": 1}},
     {"args": [""], "expected": {}},

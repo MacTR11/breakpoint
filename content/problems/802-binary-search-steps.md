@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Counting Binary Search", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Searching", "points": 25, "track": "searching", "specRef": "2.3.1", "contest": "algorithms-showdown",
+  "title": "Counting binary search", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Searching", "points": 25, "track": "searching", "specRef": "2.3.1", "contest": "algorithms-showdown",
   "functionName": "search_steps",
   "tests": [
     { "args": [[1, 3, 5, 7, 9, 11, 13], 7], "expected": 1 },

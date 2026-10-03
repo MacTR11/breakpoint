@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Post-order Traversal", "kind": "PUZZLE", "difficulty": "HARD", "topic": "Trees", "points": 20, "track": "structures", "specRef": "1.4.2",
+{ "title": "Post-order traversal", "kind": "PUZZLE", "difficulty": "HARD", "topic": "Trees", "points": 20, "track": "structures", "specRef": "1.4.2",
   "options": ["M F C H T P W", "C F H M P T W", "C H F P W T M", "M F T C H P W"], "answer": 2 }
 --- description
 ```

@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Two Sum",
+  "title": "Two sum",
   "kind": "CODE",
   "difficulty": "MEDIUM",
   "topic": "Lists",

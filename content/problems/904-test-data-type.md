@@ -1,5 +1,5 @@
 --- meta
-{ "title": "What Kind of Test Data?", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Testing", "points": 5, "track": "robust", "specRef": "3.3", "contest": "build-it-right",
+{ "title": "What kind of test data?", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Testing", "points": 5, "track": "robust", "specRef": "3.3", "contest": "build-it-right",
   "options": ["Normal data", "Boundary data", "Erroneous data", "It is not useful test data"], "answer": 1 }
 --- description
 A program accepts ages from **11 to 18** inclusive.

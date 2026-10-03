@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Noughts and Crosses", "kind": "CODE", "difficulty": "MEDIUM", "topic": "2D arrays", "points": 25, "track": "lists", "specRef": "1.4.2",
+  "title": "Noughts and crosses", "kind": "CODE", "difficulty": "MEDIUM", "topic": "2D arrays", "points": 25, "track": "lists", "specRef": "1.4.2",
   "functionName": "winner",
   "tests": [
     { "args": [["XXX", "O.O", "..."]], "expected": "X" },

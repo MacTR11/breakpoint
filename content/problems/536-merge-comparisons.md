@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Counting the Merge", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 10, "track": "sorting", "specRef": "2.3.1",
+{ "title": "Counting the merge", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 10, "track": "sorting", "specRef": "2.3.1",
   "options": ["1", "2", "3", "4"], "answer": 2 }
 --- description
 In the final step of a merge sort, these two sorted lists are merged into one:

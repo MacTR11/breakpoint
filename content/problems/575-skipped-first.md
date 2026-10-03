@@ -1,5 +1,5 @@
 --- meta
-{"title": "The Missing Name", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Off-by-one error", "points": 10, "track": "debugging", "specRef": "3.3", "options": ["Change `range(1, len(names))` to `range(len(names))`", "Change `range(1, len(names))` to `range(1, len(names) + 1)`", "Change `names[i]` to `names[i + 1]`", "Change `print` to `return`"], "answer": 0}
+{"title": "The missing name", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Off-by-one error", "points": 10, "track": "debugging", "specRef": "3.3", "options": ["Change `range(1, len(names))` to `range(len(names))`", "Change `range(1, len(names))` to `range(1, len(names) + 1)`", "Change `names[i]` to `names[i + 1]`", "Change `print` to `return`"], "answer": 0}
 --- description
 This program should print all three names, but `Ada` never appears.
 

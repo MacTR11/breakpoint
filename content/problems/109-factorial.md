@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Recursive Factorial", "kind": "CODE", "difficulty": "EASY", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1",
+  "title": "Recursive factorial", "kind": "CODE", "difficulty": "EASY", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1",
   "functionName": "factorial", "banned": ["math.factorial(", "import"],
   "tests": [
     { "args": [5], "expected": 120 },

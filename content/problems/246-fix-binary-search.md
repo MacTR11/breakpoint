@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Binary Search", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Search algorithm", "points": 20, "track": "debugging", "specRef": "2.3.1", "functionName": "binary_search", "banned": [".index("],
+{"title": "Fix: binary search", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Search algorithm", "points": 20, "track": "debugging", "specRef": "2.3.1", "functionName": "binary_search", "banned": [".index("],
   "tests": [
     {"args": [[1, 3, 5, 7, 9], 7], "expected": 3},
     {"args": [[1, 3, 5, 7, 9], 10], "expected": -1},

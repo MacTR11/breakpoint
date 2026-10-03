@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Find the Bug", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Debugging", "points": 10, "track": "debugging", "specRef": "3.3",
+{ "title": "Find the bug", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Debugging", "points": 10, "track": "debugging", "specRef": "3.3",
   "options": ["Line 2", "Line 3", "Line 4", "Line 5"], "answer": 2 }
 --- description
 This function should return the mean of a list of marks.

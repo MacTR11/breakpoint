@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Longest Stretch Without Repeats",
+  "title": "Longest stretch without repeats",
   "kind": "CODE",
   "difficulty": "HARD",
   "topic": "Algorithms",

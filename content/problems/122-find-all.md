@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Find Every Match", "kind": "CODE", "difficulty": "EASY", "topic": "Searching", "points": 10, "track": "searching", "specRef": "2.3.1",
+  "title": "Find every match", "kind": "CODE", "difficulty": "EASY", "topic": "Searching", "points": 10, "track": "searching", "specRef": "2.3.1",
   "functionName": "find_all",
   "tests": [
     { "args": [[1, 2, 1, 3, 1], 1], "expected": [0, 2, 4] },

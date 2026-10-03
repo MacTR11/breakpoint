@@ -5,6 +5,8 @@ import { isPending } from "@/lib/problems";
 import { requireTeacher } from "@/lib/session";
 import { trackTitle } from "@/lib/tracks";
 
+export const metadata = { title: "Problems" };
+
 export default async function TeacherProblemsPage() {
   await requireTeacher();
   const problems = await db.problem.findMany({

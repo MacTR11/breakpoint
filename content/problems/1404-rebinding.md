@@ -1,5 +1,5 @@
 --- meta
-{"title": "Changed or Not?", "kind": "PUZZLE", "difficulty": "HARD", "topic": "References", "points": 20, "track": "lists", "specRef": "2.2.1", "contest": "grand-final", "check": "run", "options": ["[1, 2, 3]", "[1, 2, 3, 4]", "[0, 5]", "[1, 2, 3, 4, 5]"], "answer": 1}
+{"title": "Changed or not?", "kind": "PUZZLE", "difficulty": "HARD", "topic": "References", "points": 20, "track": "lists", "specRef": "2.2.1", "contest": "grand-final", "check": "run", "options": ["[1, 2, 3]", "[1, 2, 3, 4]", "[0, 5]", "[1, 2, 3, 4, 5]"], "answer": 1}
 --- description
 ```python
 def change(items):

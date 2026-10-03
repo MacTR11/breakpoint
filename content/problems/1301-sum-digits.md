@@ -1,5 +1,5 @@
 --- meta
-{"title": "Digit Sum", "kind": "CODE", "difficulty": "EASY", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1", "contest": "recursion-rumble", "functionName": "sum_digits", "banned": ["while ", "for ", "str("],
+{"title": "Digit sum", "kind": "CODE", "difficulty": "EASY", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1", "contest": "recursion-rumble", "functionName": "sum_digits", "banned": ["while ", "for ", "str("],
   "tests": [
     {"args": [123], "expected": 6},
     {"args": [0], "expected": 0},

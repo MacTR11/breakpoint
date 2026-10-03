@@ -1,5 +1,5 @@
 --- meta
-{"title": "Longest Run", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Lists", "points": 25, "track": "lists", "specRef": "2.2.1", "contest": "grand-final", "functionName": "longest_run",
+{"title": "Longest run", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Lists", "points": 25, "track": "lists", "specRef": "2.2.1", "contest": "grand-final", "functionName": "longest_run",
   "tests": [
     {"args": [[1, 1, 2, 2, 2, 3]], "expected": 3},
     {"args": [[5]], "expected": 1},

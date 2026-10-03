@@ -1,5 +1,5 @@
 --- meta
-{"title": "Swap the Ends", "kind": "CODE", "difficulty": "EASY", "topic": "Lists", "points": 10, "track": "lists", "specRef": "2.2.1", "contest": "python-sprint", "functionName": "swap_ends",
+{"title": "Swap the ends", "kind": "CODE", "difficulty": "EASY", "topic": "Lists", "points": 10, "track": "lists", "specRef": "2.2.1", "contest": "python-sprint", "functionName": "swap_ends",
   "tests": [
     {"args": [[1, 2, 3, 4]], "expected": [4, 2, 3, 1]},
     {"args": [[5]], "expected": [5]},

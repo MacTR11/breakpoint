@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Largest Gap",
+  "title": "Largest gap",
   "kind": "CODE",
   "difficulty": "EASY",
   "topic": "Lists",

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Sum to N", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Off-by-one error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "sum_to",
+{"title": "Fix: sum to N", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Off-by-one error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "sum_to",
   "tests": [
     {"args": [5], "expected": 15},
     {"args": [1], "expected": 1},

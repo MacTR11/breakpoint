@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Insertion Sort", "kind": "CODE", "style": "FIX", "difficulty": "HARD", "topic": "Sorting algorithm", "points": 40, "track": "debugging", "specRef": "2.3.1", "functionName": "insertion_sort", "banned": ["sorted(", ".sort("],
+{"title": "Fix: insertion sort", "kind": "CODE", "style": "FIX", "difficulty": "HARD", "topic": "Sorting algorithm", "points": 40, "track": "debugging", "specRef": "2.3.1", "functionName": "insertion_sort", "banned": ["sorted(", ".sort("],
   "tests": [
     {"args": [[3, 1, 2]], "expected": [1, 2, 3]},
     {"args": [[1, 2, 3]], "expected": [1, 2, 3]},

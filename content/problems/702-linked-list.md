@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Build a Linked List", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Linked lists", "points": 25, "track": "structures", "specRef": "1.4.2", "contest": "structures-derby",
+  "title": "Build a linked list", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Linked lists", "points": 25, "track": "structures", "specRef": "1.4.2", "contest": "structures-derby",
   "functionName": "LinkedList",
   "tests": [
     { "steps": [["LinkedList"], ["add", "a"], ["add", "b"], ["to_list"], ["contains", "b"], ["contains", "z"]], "expected": [1, 2, ["a", "b"], true, false] },

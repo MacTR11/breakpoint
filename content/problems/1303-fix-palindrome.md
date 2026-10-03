@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Recursive Palindrome", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Recursion error", "points": 20, "track": "debugging", "specRef": "3.3", "contest": "recursion-rumble", "functionName": "is_palindrome",
+{"title": "Fix: recursive palindrome", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Recursion error", "points": 20, "track": "debugging", "specRef": "3.3", "contest": "recursion-rumble", "functionName": "is_palindrome",
   "tests": [
     {"args": ["racecar"], "expected": true},
     {"args": ["abca"], "expected": false},

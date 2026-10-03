@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Caesar Cipher",
+  "title": "Caesar cipher",
   "kind": "CODE",
   "difficulty": "MEDIUM",
   "topic": "Strings",

@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Big O: What Is It Doing?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Complexity", "points": 10, "track": "searching", "specRef": "2.3.1", "contest": "algorithms-showdown",
+{ "title": "Big O: what is it doing?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Complexity", "points": 10, "track": "searching", "specRef": "2.3.1", "contest": "algorithms-showdown",
   "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"], "answer": 1 }
 --- description
 ```

@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Word Counter", "kind": "CODE", "difficulty": "EASY", "topic": "Dictionaries", "points": 10, "track": "lists", "specRef": "2.2.1",
+  "title": "Word counter", "kind": "CODE", "difficulty": "EASY", "topic": "Dictionaries", "points": 10, "track": "lists", "specRef": "2.2.1",
   "functionName": "word_count",
   "tests": [
     { "args": ["the cat the dog"], "expected": { "the": 2, "cat": 1, "dog": 1 } },

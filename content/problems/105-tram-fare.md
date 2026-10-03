@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Promenade Tram Fare",
+  "title": "Promenade tram fare",
   "kind": "CODE",
   "difficulty": "EASY",
   "topic": "Selection",

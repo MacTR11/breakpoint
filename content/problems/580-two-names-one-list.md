@@ -1,5 +1,5 @@
 --- meta
-{"title": "Two Names, One List", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Aliasing", "points": 10, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["3", "4", "7", "An error"], "answer": 1}
+{"title": "Two names, one list", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Aliasing", "points": 10, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["3", "4", "7", "An error"], "answer": 1}
 --- description
 ```python
 a = [1, 2, 3]

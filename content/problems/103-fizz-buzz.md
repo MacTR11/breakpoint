@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Fizz Buzz",
+  "title": "FizzBuzz",
   "kind": "CODE",
   "difficulty": "EASY",
   "topic": "Loops",

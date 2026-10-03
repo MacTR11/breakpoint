@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Insertion Sort, Pass by Pass", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 25, "track": "sorting", "specRef": "2.3.1",
+  "title": "Insertion sort, pass by pass", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Sorting", "points": 25, "track": "sorting", "specRef": "2.3.1",
   "functionName": "insertion_passes",
   "tests": [
     { "args": [[3, 1, 2]], "expected": [[1, 3, 2], [1, 2, 3]] },

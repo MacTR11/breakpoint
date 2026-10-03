@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Sum of Evens",
+  "title": "Sum of evens",
   "kind": "CODE",
   "difficulty": "EASY",
   "topic": "Lists",

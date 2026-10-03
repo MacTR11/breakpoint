@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Big O: Nested Loops", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Complexity", "points": 10, "track": "algorithms", "specRef": "2.3.1",
+{ "title": "Big O: nested loops", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Complexity", "points": 10, "track": "algorithms", "specRef": "2.3.1",
   "options": ["O(n)", "O(log n)", "O(n²)", "O(2ⁿ)"], "answer": 2 }
 --- description
 ```

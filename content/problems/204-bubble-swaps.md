@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Bubble Sort Swap Counter",
+  "title": "Bubble sort swap counter",
   "kind": "CODE",
   "difficulty": "MEDIUM",
   "topic": "Algorithms",

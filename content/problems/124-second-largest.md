@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Second Largest", "kind": "CODE", "difficulty": "EASY", "topic": "Lists", "points": 10, "track": "lists", "specRef": "2.2.1",
+  "title": "Second largest", "kind": "CODE", "difficulty": "EASY", "topic": "Lists", "points": 10, "track": "lists", "specRef": "2.2.1",
   "functionName": "second_largest", "banned": ["sorted(", ".sort("],
   "tests": [
     { "args": [[3, 9, 4]], "expected": 4 },

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Basket Total", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Dictionary errors", "points": 20, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "functionName": "basket_total",
+{"title": "Fix: basket total", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Dictionary errors", "points": 20, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "functionName": "basket_total",
   "tests": [
     {"args": [{"pen": 2, "pad": 1}, {"pen": 50, "pad": 120}], "expected": 220},
     {"args": [{"pen": 1, "ink": 3}, {"pen": 50}], "expected": 50},

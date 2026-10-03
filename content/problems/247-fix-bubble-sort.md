@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Bubble Sort", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Sorting algorithm", "points": 20, "track": "debugging", "specRef": "2.3.1", "functionName": "bubble_sort", "banned": ["sorted(", ".sort("],
+{"title": "Fix: bubble sort", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Sorting algorithm", "points": 20, "track": "debugging", "specRef": "2.3.1", "functionName": "bubble_sort", "banned": ["sorted(", ".sort("],
   "tests": [
     {"args": [[3, 1, 2]], "expected": [1, 2, 3]},
     {"args": [[1, 2, 3]], "expected": [1, 2, 3]},

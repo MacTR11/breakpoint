@@ -1,5 +1,5 @@
 --- meta
-{"title": "After One Pass", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Bubble sort", "points": 10, "track": "sorting", "specRef": "2.3.1", "contest": "sort-it-out", "options": ["1 4 2 5 8", "1 2 4 5 8", "1 5 4 2 8", "5 1 2 4 8"], "answer": 0}
+{"title": "After one pass", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Bubble sort", "points": 10, "track": "sorting", "specRef": "2.3.1", "contest": "sort-it-out", "options": ["1 4 2 5 8", "1 2 4 5 8", "1 5 4 2 8", "5 1 2 4 8"], "answer": 0}
 --- description
 A bubble sort is used to put this list into ascending order:
 

@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Packet Reassembly", "kind": "CODE", "difficulty": "EASY", "topic": "Networks", "points": 10, "track": "lists", "specRef": "1.3.3",
+  "title": "Packet reassembly", "kind": "CODE", "difficulty": "EASY", "topic": "Networks", "points": 10, "track": "lists", "specRef": "1.3.3",
   "functionName": "reassemble",
   "tests": [
     { "args": [[[2, "lo"], [1, "hel"]]], "expected": "hello" },

@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Divide and Conquer", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Computational methods", "points": 5, "track": "sorting", "specRef": "2.2.2",
+{ "title": "Divide and conquer", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Computational methods", "points": 5, "track": "sorting", "specRef": "2.2.2",
   "options": ["Bubble sort", "Linear search", "Insertion sort", "Merge sort"], "answer": 3 }
 --- description
 A **divide and conquer** algorithm solves a problem by splitting it into smaller versions of the same problem, solving those, and combining the results.

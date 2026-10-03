@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Off by One", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Debugging", "points": 10, "track": "debugging", "specRef": "3.3", "contest": "build-it-right",
+{ "title": "Off by one", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Debugging", "points": 10, "track": "debugging", "specRef": "3.3", "contest": "build-it-right",
   "options": ["Line 2", "Line 3", "Line 4", "Line 5"], "answer": 2 }
 --- description
 This function should count how many marks are passes. A mark **equal to** the pass mark counts as a pass.

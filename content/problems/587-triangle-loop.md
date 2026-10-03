@@ -1,5 +1,5 @@
 --- meta
-{"title": "Counting Iterations", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Nested loops", "points": 10, "track": "basics", "specRef": "2.2.1", "check": "run", "options": ["3", "5", "6", "9"], "answer": 2}
+{"title": "Counting iterations", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Nested loops", "points": 10, "track": "basics", "specRef": "2.2.1", "check": "run", "options": ["3", "5", "6", "9"], "answer": 2}
 --- description
 ```python
 count = 0

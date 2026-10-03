@@ -1,5 +1,5 @@
 --- meta
-{"title": "Hailstone Numbers", "kind": "CODE", "difficulty": "MEDIUM", "topic": "While loops", "points": 25, "track": "basics", "specRef": "2.2.1", "functionName": "collatz_steps",
+{"title": "Hailstone numbers", "kind": "CODE", "difficulty": "MEDIUM", "topic": "While loops", "points": 25, "track": "basics", "specRef": "2.2.1", "functionName": "collatz_steps",
   "tests": [
     {"args": [6], "expected": 8},
     {"args": [1], "expected": 0},

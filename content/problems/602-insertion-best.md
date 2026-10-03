@@ -1,5 +1,5 @@
 --- meta
-{"title": "The Best Case", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Insertion sort", "points": 10, "track": "sorting", "specRef": "2.3.1", "options": ["0", "5", "15", "36"], "answer": 1}
+{"title": "The best case", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Insertion sort", "points": 10, "track": "sorting", "specRef": "2.3.1", "options": ["0", "5", "15", "36"], "answer": 1}
 --- description
 An insertion sort is run on a list of **6** items that happens to be **already sorted**.
 

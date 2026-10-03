@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Halving the Problem", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Searching", "points": 10, "track": "searching", "specRef": "2.3.1",
+{ "title": "Halving the problem", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Searching", "points": 10, "track": "searching", "specRef": "2.3.1",
   "options": ["500", "10", "1000", "100"], "answer": 1 }
 --- description
 A sorted list contains **1000** items.

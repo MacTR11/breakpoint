@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Largest Number", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Initialisation error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "largest", "banned": ["max("],
+{"title": "Fix: largest number", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Initialisation error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "largest", "banned": ["max("],
   "tests": [
     {"args": [[3, 9, 4]], "expected": 9},
     {"args": [[-3, -7, -1]], "expected": -1},

@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Bitwise Masks", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Bitwise operations", "points": 25, "track": "bits", "specRef": "1.4.1",
+  "title": "Bitwise masks", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Bitwise operations", "points": 25, "track": "bits", "specRef": "1.4.1",
   "functionName": "apply_mask",
   "tests": [
     { "args": ["10110110", "00001111", "AND"], "expected": "00000110" },

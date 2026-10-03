@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Binary Addition", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Binary", "points": 25, "track": "bits", "specRef": "1.4.1",
+  "title": "Binary addition", "kind": "CODE", "difficulty": "MEDIUM", "topic": "Binary", "points": 25, "track": "bits", "specRef": "1.4.1",
   "functionName": "binary_add", "banned": ["int(", "bin("],
   "tests": [
     { "args": ["1011", "0110"], "expected": "10001" },

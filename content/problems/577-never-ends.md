@@ -1,5 +1,5 @@
 --- meta
-{"title": "Why Does It Never Stop?", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Infinite loop", "points": 5, "track": "debugging", "specRef": "3.3", "options": ["`count` moves away from 0, so the condition is always true", "`print` cannot be used inside a `while` loop", "The condition should be `count >= 0`", "`count` is never given a starting value"], "answer": 0}
+{"title": "Why does it never stop?", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Infinite loop", "points": 5, "track": "debugging", "specRef": "3.3", "options": ["`count` moves away from 0, so the condition is always true", "`print` cannot be used inside a `while` loop", "The condition should be `count >= 0`", "`count` is never given a starting value"], "answer": 0}
 --- description
 This program is meant to count down from 10 to 1 and then stop.
 

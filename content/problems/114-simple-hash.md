@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "A Simple Hash Function", "kind": "CODE", "difficulty": "EASY", "topic": "Hashing", "points": 10, "track": "strings", "specRef": "1.3.1",
+  "title": "A simple hash function", "kind": "CODE", "difficulty": "EASY", "topic": "Hashing", "points": 10, "track": "strings", "specRef": "1.3.1",
   "functionName": "simple_hash",
   "tests": [
     { "args": ["A", 10], "expected": 5 },

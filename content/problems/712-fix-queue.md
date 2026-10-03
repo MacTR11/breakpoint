@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: The Queue That Jumps", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Queues", "points": 20, "track": "debugging", "specRef": "1.4.2", "contest": "structures-derby", "functionName": "Queue",
+{"title": "Fix: the queue that jumps", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Queues", "points": 20, "track": "debugging", "specRef": "1.4.2", "contest": "structures-derby", "functionName": "Queue",
   "tests": [
     {"steps": [["Queue"], ["enqueue", "a"], ["enqueue", "b"], ["dequeue"], ["dequeue"]], "expected": [1, 2, "a", "b"]},
     {"steps": [["Queue"], ["peek"], ["dequeue"]], "expected": [null, null]},

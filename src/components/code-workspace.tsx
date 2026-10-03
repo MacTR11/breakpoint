@@ -2,20 +2,21 @@
 
 import { python } from "@codemirror/lang-python";
 import { indentUnit } from "@codemirror/language";
-import type { EditorView } from "@codemirror/view";
+import { EditorView } from "@codemirror/view";
 import CodeMirror from "@uiw/react-codemirror";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { submitCode } from "@/app/actions";
 import { ConsolePanel } from "@/components/console-panel";
 import { DebugPanel } from "@/components/debug-panel";
+import { MobileKeys, usePhone, useTypingMode } from "@/components/mobile-keys";
 import { RewardLines } from "@/components/rewards";
 import { SolvedDialog, type Celebration, type SolvedSummary } from "@/components/solved-dialog";
 import { TestResults } from "@/components/test-results";
 import { celebrate } from "@/lib/celebrate";
 import { countRuns, debuggerExtensions, reachLine } from "@/lib/debugger";
 import { readDraft, subscribeToDrafts, writeDraft } from "@/lib/drafts";
-import { ANTIGRAVITY_EVENT, usesAntigravity } from "@/lib/eggs";
+import { ANTIGRAVITY_EVENT, codeEgg, toast, usesAntigravity } from "@/lib/eggs";
 import { runInBrowser, warmUp } from "@/lib/py-runner";
 import type { Rewards } from "@/lib/solve";
 import { bannedUse, type JudgeOutcome, type TestCase } from "@/lib/types";
@@ -119,8 +120,36 @@ export function CodeWorkspace({
   );
   const [breakpoints, setBreakpoints] = useState<number[]>([]);
   const debugging = useMemo(() => debuggerExtensions(setBreakpoints), []);
-  const allExtensions = useMemo(() => [...extensions, ...debugging, ...tracking], [debugging, tracking]);
+  // On a phone, long lines wrap rather than running off the side of the screen.
+  const phone = usePhone();
+  const allExtensions = useMemo(() => [...extensions, ...debugging, ...tracking, ...(phone ? [EditorView.lineWrapping] : [])], [debugging, tracking, phone]);
   const editor = useRef<EditorView | null>(null);
+  // On a phone, while the editor has the cursor: the visible area it fills.
+  const typingFrame = useTypingMode(editor, phone);
+  const typing = typingFrame !== null;
+  const stopTyping = () => editor.current?.contentDOM.blur();
+  const panel = useRef<HTMLElement | null>(null);
+  // Set when Run is pressed in typing mode, which shows the results instead.
+  const ranWhileTyping = useRef(false);
+  const wasTyping = useRef(false);
+
+  // However typing mode ends (Done, the keyboard's own tick, tapping away),
+  // land back on the code, rather than wherever the page had scrolled to.
+  useEffect(() => {
+    if (wasTyping.current && !typing) {
+      if (ranWhileTyping.current) {
+        ranWhileTyping.current = false;
+      } else {
+        const showCode = () => panel.current?.scrollIntoView({ block: "start" });
+        showCode();
+        // Once more after the keyboard has finished closing, which can move the page.
+        const timer = setTimeout(showCode, 350);
+        wasTyping.current = typing;
+        return () => clearTimeout(timer);
+      }
+    }
+    wasTyping.current = typing;
+  }, [typing]);
   const showLine = useCallback((line: number | null) => {
     if (editor.current) reachLine(editor.current, line);
   }, []);
@@ -141,6 +170,8 @@ export function CodeWorkspace({
 
   const run = async () => {
     if (usesAntigravity(code)) window.dispatchEvent(new Event(ANTIGRAVITY_EVENT));
+    const egg = codeEgg(code);
+    if (egg) toast(egg);
     setTab("results");
     setBusy("run");
     setMessage(null);
@@ -206,10 +237,37 @@ export function CodeWorkspace({
         {teacherNotes}
       </section>
 
-      <section className="flex min-h-[36rem] min-w-0 flex-col overflow-hidden rounded-[22px] bg-[#21252b] text-[#f6f8fa] lg:min-h-0">
+      <section
+        ref={panel}
+        className={`flex min-w-0 scroll-mt-16 flex-col overflow-hidden bg-[#21252b] text-[#f6f8fa] ${typing ? "typing-panel" : "min-h-[36rem] rounded-[22px] lg:min-h-0"}`}
+        style={typingFrame ? { top: typingFrame.top, height: typingFrame.height } : undefined}
+      >
         <div className="flex items-end gap-4 px-4 pt-2 font-mono text-[13px]">
-          <span className="rounded-t-[10px] bg-[#282c34] px-4 py-1.5">{fileName}</span>
-          {isFix && <span className="pb-1.5 text-[#e5a50a]">this code has bugs</span>}
+          <span className="truncate rounded-t-[10px] bg-[#282c34] px-4 py-1.5">{fileName}</span>
+          {isFix && !typing && <span className="pb-1.5 text-[#e5a50a]">this code has bugs</span>}
+          {typing && (
+            // While typing on a phone: run the examples, or put the keyboard away.
+            <span className="ml-auto flex items-center gap-2 pb-1.5 font-sans">
+              <button
+                type="button"
+                disabled={busy !== null}
+                onPointerDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  ranWhileTyping.current = true;
+                  stopTyping();
+                  run();
+                  // Bring the results into view once the keyboard has gone.
+                  setTimeout(() => document.getElementById("panel-results")?.scrollIntoView({ block: "center", behavior: "smooth" }), 350);
+                }}
+                className="btn btn-on-dark px-3.5 py-1 text-sm"
+              >
+                Run
+              </button>
+              <button type="button" onPointerDown={(event) => event.preventDefault()} onClick={stopTyping} className="cursor-pointer px-2 py-1 text-[15px] font-semibold text-[#4aa3ff]">
+                Done
+              </button>
+            </span>
+          )}
         </div>
 
         <div className="min-h-0 flex-1 overflow-hidden bg-[#282c34]">
@@ -227,8 +285,9 @@ export function CodeWorkspace({
             basicSetup={{ tabSize: 4, lineNumbers: false, foldGutter: false }}
           />
         </div>
+        {typing && <MobileKeys editor={editor} />}
 
-        <div className="flex flex-wrap items-center gap-3 px-4 py-3">
+        <div className={`flex flex-wrap items-center gap-3 px-4 py-3 ${typing ? "hidden" : ""}`}>
           <button type="button" onClick={run} disabled={busy !== null} className="btn btn-on-dark">
             {busy === "run" ? "Running…" : "Run examples"}
           </button>
@@ -243,7 +302,7 @@ export function CodeWorkspace({
         <div
           role="tablist"
           aria-label="Under the editor"
-          className="flex gap-1 px-4 font-mono text-[13px]"
+          className={`flex gap-1 px-4 font-mono text-[13px] ${typing ? "hidden" : ""}`}
           onKeyDown={(event) => {
             if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
             const next = TABS[(TABS.findIndex(([id]) => id === tab) + (event.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length][0];
@@ -268,7 +327,7 @@ export function CodeWorkspace({
           ))}
         </div>
 
-        <div className={`${tab === "debugger" ? "max-h-[62%]" : "max-h-[45%]"} min-h-28 overflow-y-auto bg-[#282c34] px-4 py-3 font-mono text-[13px] leading-6`}>
+        <div className={`${tab === "debugger" ? "max-h-[62%]" : "max-h-[45%]"} min-h-28 overflow-y-auto bg-[#282c34] px-4 py-3 font-mono text-[13px] leading-6 ${typing ? "hidden" : ""}`}>
           <div id="panel-results" role="tabpanel" aria-labelledby="tab-results" hidden={tab !== "results"} aria-live="polite">
             {message && <p className="text-[#ff7b72]">{message}</p>}
             {pasteNote && <p className="rise text-[#e5a50a]">{pasteNote}</p>}

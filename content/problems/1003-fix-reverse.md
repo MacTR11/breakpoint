@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Reverse a List", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Off-by-one error", "points": 20, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "functionName": "reverse", "banned": [".reverse(", "reversed(", "[::-1]"],
+{"title": "Fix: reverse a list", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Off-by-one error", "points": 20, "track": "debugging", "specRef": "3.3", "contest": "bug-hunt", "functionName": "reverse", "banned": [".reverse(", "reversed(", "[::-1]"],
   "tests": [
     {"args": [[1, 2, 3]], "expected": [3, 2, 1]},
     {"args": [[7]], "expected": [7]},

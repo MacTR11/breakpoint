@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Recursive Trace", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1", "contest": "algorithms-showdown",
+{ "title": "Recursive trace", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Recursion", "points": 10, "track": "recursion", "specRef": "2.2.1", "contest": "algorithms-showdown",
   "options": ["2", "3", "6", "12"], "answer": 2 }
 --- description
 ```

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: The Merge Step", "kind": "CODE", "style": "FIX", "difficulty": "HARD", "topic": "Sorting algorithm", "points": 40, "track": "debugging", "specRef": "2.3.1", "functionName": "merge", "banned": ["sorted(", ".sort("],
+{"title": "Fix: the merge step", "kind": "CODE", "style": "FIX", "difficulty": "HARD", "topic": "Sorting algorithm", "points": 40, "track": "debugging", "specRef": "2.3.1", "functionName": "merge", "banned": ["sorted(", ".sort("],
   "tests": [
     {"args": [[1, 4, 9], [2, 3, 10]], "expected": [1, 2, 3, 4, 9, 10]},
     {"args": [[], [1]], "expected": [1]},

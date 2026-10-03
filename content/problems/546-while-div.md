@@ -1,5 +1,5 @@
 --- meta
-{ "title": "How Many Halvings?", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Iteration", "points": 5, "track": "basics", "specRef": "2.2.1",
+{ "title": "How many halvings?", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Iteration", "points": 5, "track": "basics", "specRef": "2.2.1",
   "options": ["3", "4", "5", "10"], "answer": 1 }
 --- description
 ```

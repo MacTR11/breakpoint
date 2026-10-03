@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Temperature", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Order of operations", "points": 10, "track": "debugging", "specRef": "3.3", "contest": "python-sprint", "functionName": "to_fahrenheit",
+{"title": "Fix: temperature", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Order of operations", "points": 10, "track": "debugging", "specRef": "3.3", "contest": "python-sprint", "functionName": "to_fahrenheit",
   "tests": [
     {"args": [100], "expected": 212.0},
     {"args": [0], "expected": 32.0},

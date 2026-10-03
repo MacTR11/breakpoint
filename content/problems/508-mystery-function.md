@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Mystery Function", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Tracing", "points": 10, "track": "basics", "specRef": "2.2.1",
+{ "title": "Mystery function", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Tracing", "points": 10, "track": "basics", "specRef": "2.2.1",
   "options": ["4", "13", "2704", "4072"], "answer": 1 }
 --- description
 Read this function carefully.

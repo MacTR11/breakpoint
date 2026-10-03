@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: The Loop That Never Ends", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Infinite loop", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "count_digits",
+{"title": "Fix: the loop that never ends", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Infinite loop", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "count_digits",
   "tests": [
     {"args": [7], "expected": 1},
     {"args": [42], "expected": 2},

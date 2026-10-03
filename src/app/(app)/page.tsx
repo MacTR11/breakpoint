@@ -67,7 +67,7 @@ export default async function HomePage() {
   const firstName = user.name.split(" ")[0];
   const today = specialDay(londonDay(now));
   const hour = Number(dateToLondonInput(now).slice(11, 13));
-  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const greeting = hour < 5 ? "Still up" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
   const days = (n: number) => `${n} day${n === 1 ? "" : "s"}`;
   const nudge =
     history.streak === 0

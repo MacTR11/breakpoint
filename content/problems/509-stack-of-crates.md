@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Stack of Crates", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Data structures", "points": 5, "track": "structures", "specRef": "1.4.2",
+{ "title": "Stack of crates", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Data structures", "points": 5, "track": "structures", "specRef": "1.4.2",
   "options": ["A, C, E", "E", "B, D, C", "A, E"], "answer": 3 }
 --- description
 A delivery driver stacks crates one on top of another. **Push** puts a crate on top of the stack. **Pop** takes the top crate off.

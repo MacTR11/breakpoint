@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Merge Two Sorted Lists", "kind": "CODE", "difficulty": "EASY", "topic": "Sorting", "points": 10, "track": "sorting", "specRef": "2.3.1",
+  "title": "Merge two sorted lists", "kind": "CODE", "difficulty": "EASY", "topic": "Sorting", "points": 10, "track": "sorting", "specRef": "2.3.1",
   "functionName": "merge", "banned": ["sorted(", ".sort("],
   "tests": [
     { "args": [[1, 4, 9], [2, 3, 10]], "expected": [1, 2, 3, 4, 9, 10] },

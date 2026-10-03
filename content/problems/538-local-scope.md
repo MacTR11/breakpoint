@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Local or Global?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Scope", "points": 10, "track": "recursion", "specRef": "2.2.1",
+{ "title": "Local or global?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Scope", "points": 10, "track": "recursion", "specRef": "2.2.1",
   "options": ["5 15", "15 15", "5 5", "An error is raised"], "answer": 0 }
 --- description
 ```python

@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Depth-first Search", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Graph traversal", "points": 10, "track": "algorithms", "specRef": "2.3.1",
+{ "title": "Depth-first search", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Graph traversal", "points": 10, "track": "algorithms", "specRef": "2.3.1",
   "options": ["A B D E F C", "A B C D E F", "A B D E C F", "A C F E B D"], "answer": 0 }
 --- description
 A graph has six nodes and these edges, each of which can be followed in either direction:

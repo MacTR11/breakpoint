@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Collision Course", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Hash tables", "points": 10, "track": "structures", "specRef": "1.4.2",
+{ "title": "Collision course", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Hash tables", "points": 10, "track": "structures", "specRef": "1.4.2",
   "options": ["Position 1", "Position 2", "Position 3", "Position 4"], "answer": 3 }
 --- description
 A hash table has 7 positions, numbered 0 to 6, and uses the hash function `key MOD 7`. Collisions are handled by **linear probing**: if a position is taken, try the next one along.

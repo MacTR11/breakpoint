@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Where Does It Go?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Trees", "points": 10, "track": "structures", "specRef": "1.4.2",
+{ "title": "Where does it go?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Trees", "points": 10, "track": "structures", "specRef": "1.4.2",
   "options": ["The left child of 70", "The right child of 60", "The left child of 80", "The right child of 40"], "answer": 1 }
 --- description
 A binary search tree is built by inserting these values in order:

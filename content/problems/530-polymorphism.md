@@ -1,5 +1,5 @@
 --- meta
-{ "title": "Who Speaks?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Object-oriented programming", "points": 10, "track": "oop", "specRef": "1.2.4",
+{ "title": "Who speaks?", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Object-oriented programming", "points": 10, "track": "oop", "specRef": "1.2.4",
   "options": ["...", "Woof", "Nothing is printed", "An error: Puppy has no speak method"], "answer": 1 }
 --- description
 ```

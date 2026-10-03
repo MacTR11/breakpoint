@@ -1,5 +1,5 @@
 --- meta
-{"title": "Building a String", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Strings", "points": 5, "track": "strings", "specRef": "2.2.1", "check": "run", "options": ["abc", "cba", "c", "aaa"], "answer": 1}
+{"title": "Building a string", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Strings", "points": 5, "track": "strings", "specRef": "2.2.1", "check": "run", "options": ["abc", "cba", "c", "aaa"], "answer": 1}
 --- description
 ```python
 result = ""

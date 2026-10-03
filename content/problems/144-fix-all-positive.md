@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: All Positive?", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Logic error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "all_positive",
+{"title": "Fix: all positive?", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Logic error", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "all_positive",
   "tests": [
     {"args": [[1, 2, 3]], "expected": true},
     {"args": [[1, -2, 3]], "expected": false},

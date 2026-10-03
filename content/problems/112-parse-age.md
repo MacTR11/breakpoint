@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Robust Age Input", "kind": "CODE", "difficulty": "EASY", "topic": "Validation", "points": 10, "track": "robust", "specRef": "3.3",
+  "title": "Robust age input", "kind": "CODE", "difficulty": "EASY", "topic": "Validation", "points": 10, "track": "robust", "specRef": "3.3",
   "functionName": "parse_age",
   "tests": [
     { "args": ["42"], "expected": 42 },

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Where Did the Half Go?", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Integer division", "points": 5, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["3", "3.5", "4", "7"], "answer": 0}
+{"title": "Where did the half go?", "kind": "PUZZLE", "difficulty": "EASY", "topic": "Integer division", "points": 5, "track": "debugging", "specRef": "3.3", "check": "run", "options": ["3", "3.5", "4", "7"], "answer": 0}
 --- description
 ```python
 marks = [3, 4]

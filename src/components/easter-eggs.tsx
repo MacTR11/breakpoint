@@ -77,6 +77,28 @@ export function EasterEggs() {
       toast(calm() ? "Gravity works. You will have to take our word for it." : "Gravity works.");
     };
 
+    // Flipping light and dark eight times in five seconds.
+    let flips: number[] = [];
+    const onFlip = (event: MouseEvent) => {
+      if (!(event.target as HTMLElement | null)?.closest('[aria-label="Switch between light and dark"]')) return;
+      const now = Date.now();
+      flips = [...flips.filter((t) => now - t < 5000), now];
+      if (flips.length < 8) return;
+      flips = [];
+      toast("Make up your mind. (They're both lovely.)");
+    };
+
+    // A hidden tab is paused, as a debugger would put it.
+    let title = document.title;
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        title = document.title;
+        document.title = "Paused on a breakpoint";
+      } else if (document.title === "Paused on a breakpoint") {
+        document.title = title;
+      }
+    };
+
     const onAntigravity = () => {
       moveLetters("float");
       toast("import antigravity: you are flying! (Python has had that joke since 2008.)");
@@ -85,11 +107,15 @@ export function EasterEggs() {
 
     window.addEventListener("keydown", onKey);
     document.addEventListener("click", onClick);
+    document.addEventListener("click", onFlip);
+    document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener(ANTIGRAVITY_EVENT, onAntigravity);
     window.addEventListener(TOAST_EVENT, onToast);
     return () => {
       window.removeEventListener("keydown", onKey);
       document.removeEventListener("click", onClick);
+      document.removeEventListener("click", onFlip);
+      document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener(ANTIGRAVITY_EVENT, onAntigravity);
       window.removeEventListener(TOAST_EVENT, onToast);
     };

@@ -1,5 +1,5 @@
 --- meta
-{ "title": "A* Decides", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Path finding", "points": 10, "track": "algorithms", "specRef": "2.3.1",
+{ "title": "A* decides", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Path finding", "points": 10, "track": "algorithms", "specRef": "2.3.1",
   "options": ["Route P", "Route Q", "Route R", "Route S"], "answer": 1 }
 --- description
 The A* algorithm is part-way through finding a route. It has four nodes it could explore next. For each one it knows the cost of getting there so far, and a heuristic estimate of the remaining distance to the goal.

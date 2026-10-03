@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: Quick Sort", "kind": "CODE", "style": "FIX", "difficulty": "HARD", "topic": "Sorting algorithm", "points": 40, "track": "debugging", "specRef": "2.3.1", "contest": "sort-it-out", "functionName": "quick_sort", "banned": ["sorted(", ".sort("],
+{"title": "Fix: quick sort", "kind": "CODE", "style": "FIX", "difficulty": "HARD", "topic": "Sorting algorithm", "points": 40, "track": "debugging", "specRef": "2.3.1", "contest": "sort-it-out", "functionName": "quick_sort", "banned": ["sorted(", ".sort("],
   "tests": [
     {"args": [[3, 1, 2]], "expected": [1, 2, 3]},
     {"args": [[4, 4, 1]], "expected": [1, 4, 4]},

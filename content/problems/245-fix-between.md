@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: And or Or?", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Boolean logic error", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "between",
+{"title": "Fix: and versus or", "kind": "CODE", "style": "FIX", "difficulty": "MEDIUM", "topic": "Boolean logic error", "points": 20, "track": "debugging", "specRef": "3.3", "functionName": "between",
   "tests": [
     {"args": [5, 1, 10], "expected": true},
     {"args": [0, 1, 10], "expected": false},

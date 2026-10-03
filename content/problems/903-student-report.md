@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Marks Report", "kind": "CODE", "difficulty": "HARD", "topic": "Robust file processing", "points": 50, "track": "robust", "specRef": "3.3", "contest": "build-it-right",
+  "title": "Marks report", "kind": "CODE", "difficulty": "HARD", "topic": "Robust file processing", "points": 50, "track": "robust", "specRef": "3.3", "contest": "build-it-right",
   "functionName": "student_report",
   "tests": [
     { "args": [["Ava,70,80", "Ben,50"]], "expected": { "Ava": 75.0, "Ben": 50.0 } },

@@ -1,5 +1,5 @@
 --- meta
-{"title": "Fix: The Mean", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Wrong operator", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "mean",
+{"title": "Fix: the mean", "kind": "CODE", "style": "FIX", "difficulty": "EASY", "topic": "Wrong operator", "points": 10, "track": "debugging", "specRef": "3.3", "functionName": "mean",
   "tests": [
     {"args": [[3, 4]], "expected": 3.5},
     {"args": [[2, 4]], "expected": 3.0},

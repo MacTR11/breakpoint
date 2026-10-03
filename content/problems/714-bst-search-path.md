@@ -1,5 +1,5 @@
 --- meta
-{"title": "Searching a Tree", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Binary search trees", "points": 10, "track": "structures", "specRef": "1.4.2", "contest": "structures-derby", "options": ["50, 30, 40", "50, 70, 60", "50, 30, 20, 40", "50, 40"], "answer": 0}
+{"title": "Searching a tree", "kind": "PUZZLE", "difficulty": "MEDIUM", "topic": "Binary search trees", "points": 10, "track": "structures", "specRef": "1.4.2", "contest": "structures-derby", "options": ["50, 30, 40", "50, 70, 60", "50, 30, 20, 40", "50, 40"], "answer": 0}
 --- description
 This binary search tree is searched for the value **45**, which is not in it.
 

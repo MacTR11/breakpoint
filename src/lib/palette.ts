@@ -21,7 +21,7 @@ const wordStart = (text: string, at: number) => at === 0 || /[^a-z0-9]/.test(tex
 /**
  * How well `text` matches `query`: higher is better, null for no match. The
  * whole query appearing in the text beats every word appearing, which beats
- * the letters appearing in order (so "lsrch" finds "Linear Search"). Matches
+ * the letters appearing in order (so "lsrch" finds "Linear search"). Matches
  * at the start of a word count for more.
  */
 export function matchScore(query: string, text: string): number | null {

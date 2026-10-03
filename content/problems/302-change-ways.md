@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Arcade Change",
+  "title": "Arcade change",
   "kind": "CODE",
   "difficulty": "HARD",
   "topic": "Dynamic programming",

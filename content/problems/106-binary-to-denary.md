@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Binary to Denary",
+  "title": "Binary to denary",
   "kind": "CODE",
   "difficulty": "EASY",
   "topic": "Binary",

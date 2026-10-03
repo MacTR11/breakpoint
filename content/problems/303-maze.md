@@ -1,6 +1,6 @@
 --- meta
 {
-  "title": "Escape the Maze",
+  "title": "Escape the maze",
   "kind": "CODE",
   "difficulty": "HARD",
   "topic": "Graphs",
