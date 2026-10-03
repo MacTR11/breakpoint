@@ -15,4 +15,5 @@ export const STUDENTS = {
   fay: { name: "Fay Ford", username: "fford", password: "e2e-pass-fay", group: "13A" },
   gus: { name: "Gus Grant", username: "ggrant", password: "e2e-pass-gus", group: "13A" },
   hal: { name: "Hal Hughes", username: "hhughes", password: "e2e-pass-hal", group: "13A" },
+  ivy: { name: "Ivy Irwin", username: "iirwin", password: "e2e-pass-ivy", group: "13B" },
 } satisfies Record<string, Account & { name: string; group: string }>;

@@ -169,7 +169,8 @@ export default async function HomePage() {
             </section>
           )}
 
-          <section className="card">
+          {/* The last card in each column grows to fill it, so the two columns end level. */}
+          <section className="card flex-1">
             <div className="flex items-baseline justify-between">
               <h2 className="cap">Try next</h2>
               <Link href="/problems" className={`text-sm font-medium ${link}`}>
@@ -223,7 +224,7 @@ export default async function HomePage() {
             </p>
           </section>
 
-          <section className="card">
+          <section className="card flex-1">
             <div className="flex items-baseline justify-between">
               <h2 className="cap">Awards</h2>
               <Link href="/awards" className={`text-sm font-medium ${link}`}>

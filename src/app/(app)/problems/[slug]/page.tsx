@@ -8,6 +8,7 @@ import { HintPanel } from "@/components/hint-panel";
 import { Markdown } from "@/components/markdown";
 import { PuzzleCard } from "@/components/puzzle-card";
 import { KindIcon, Path, Sheet, TopicName, kindLabel, levelLabel, link } from "@/components/ui";
+import { afterSolve } from "@/lib/after-solve";
 import { db } from "@/lib/db";
 import { hintWallet, parseHints } from "@/lib/hints";
 import { paperUsing } from "@/lib/mock";
@@ -40,6 +41,9 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
     hintWallet(user.id),
   ]);
   const locked = problem.kind === "PUZZLE" && !solve && wrong.length >= MAX_PUZZLE_ATTEMPTS;
+  // The solved pop-up, for a challenge not yet solved (and not inside a mock paper).
+  const celebration =
+    solve || locked || paper ? undefined : { title: problem.title, firstName: user.name.split(" ")[0], after: await afterSolve(user.id, problem, liveContest) };
   const fileName = problem.kind === "CODE" ? `${problem.functionName}.py` : problem.slug;
 
   // Only hints the student has paid for are sent to the browser. Once the
@@ -163,6 +167,7 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
         description={<Markdown>{problem.description}</Markdown>}
         hints={hintPanel}
         teacherNotes={modelAnswer}
+        celebration={celebration}
       />
     );
   }
@@ -187,6 +192,7 @@ export default async function ProblemPage({ params }: PageProps<"/problems/[slug
         solved={solve ? { points: solve.points, answer: problem.answer ?? "", explanation: problem.explanation } : null}
         locked={locked}
         reveal={reveal}
+        celebration={celebration}
       />
       {hintPanel}
     </Sheet>

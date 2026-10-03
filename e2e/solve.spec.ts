@@ -61,4 +61,26 @@ test("a puzzle: a wrong answer costs points, a right second answer earns half", 
   await page.getByRole("button", { name: "Check answer" }).click();
   await expect(page.getByText("Correct.")).toBeVisible();
   await expect(page.getByText("(second attempt)")).toBeVisible();
+
+  // The solved pop-up sends them back to the list rather than leaving them on the page.
+  const solved = page.locator("dialog.solved-dialog");
+  await expect(solved).toBeVisible();
+  await expect(solved).toContainText(`You solved ${p.title}`);
+  await expect(solved).toContainText("2 tries");
+  await solved.getByRole("link", { name: "Back to challenges" }).click();
+  await expect(page).toHaveURL(/\/problems$/);
+});
+
+test("the solved pop-up can be closed to stay on the challenge", async ({ page }) => {
+  await signIn(page, STUDENTS.ivy);
+  await page.goto("/problems/double-it");
+  await typeCode(page, problem("double-it").solution!);
+  await page.getByRole("button", { name: "Submit" }).click();
+  const solved = page.locator("dialog.solved-dialog");
+  await expect(solved).toBeVisible({ timeout: 60_000 });
+  await expect(solved).toContainText("First try");
+  await expect(solved.getByRole("link", { name: /^Next: / })).toBeVisible();
+  await solved.getByRole("button", { name: "Stay on this page" }).click();
+  await expect(solved).toHaveCount(0);
+  await expect(page.locator("#panel-results")).toContainText(/All \d+ tests passed/);
 });

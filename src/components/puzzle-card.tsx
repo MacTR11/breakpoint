@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { submitPuzzle, type PuzzleReveal } from "@/app/actions";
 import { Markdown } from "@/components/markdown";
 import { RewardLines } from "@/components/rewards";
+import { SolvedDialog, type Celebration, type SolvedSummary } from "@/components/solved-dialog";
 import { celebrate } from "@/lib/celebrate";
 import { noRewardsClient } from "@/lib/rewards-none";
 import type { Rewards } from "@/lib/solve";
@@ -24,6 +25,7 @@ export function PuzzleCard({
   solved: initiallySolved,
   locked: initiallyLocked,
   reveal: initialReveal,
+  celebration,
 }: {
   slug: string;
   options: string[];
@@ -35,6 +37,8 @@ export function PuzzleCard({
   solved: Solved | null;
   locked: boolean;
   reveal: PuzzleReveal | null;
+  /** When set, a correct answer opens the solved pop-up. */
+  celebration?: Celebration;
 }) {
   const router = useRouter();
   const [solved, setSolved] = useState(initiallySolved);
@@ -44,6 +48,9 @@ export function PuzzleCard({
   const [wrong, setWrong] = useState(wrongAnswers);
   const [message, setMessage] = useState<string | null>(null);
   const [rewards, setRewards] = useState<Rewards>(noRewardsClient);
+  const [popup, setPopup] = useState<SolvedSummary | null>(null);
+  // Kept from the first render: the refresh after a solve stops the page sending it.
+  const [toCelebrate] = useState(celebration);
   const [pending, startTransition] = useTransition();
   const isChoice = options.length > 0;
   const finished = Boolean(solved) || locked;
@@ -59,6 +66,7 @@ export function PuzzleCard({
       if (result.correct) {
         setSolved({ points: result.points, answer: choice, explanation: result.explanation });
         setRewards(result.rewards);
+        setPopup({ points: result.points, attempts: result.attempts, rewards: result.rewards });
         celebrate();
       } else {
         setWrong((w) => [...w, choice]);
@@ -171,6 +179,7 @@ export function PuzzleCard({
           {message}
         </p>
       )}
+      {toCelebrate && popup && <SolvedDialog celebration={toCelebrate} summary={popup} onClose={() => setPopup(null)} />}
     </section>
   );
 }

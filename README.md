@@ -125,6 +125,10 @@ These are original questions written to match what the programming questions on 
 
 This is a programming platform, not a full revision site: the theory content of Component 01 and the written sections of the programming project are deliberately left out.
 
+## When a challenge is solved
+
+The first time a student solves a challenge, a pop-up appears over the blurred page: a well done, the points earned, how many tries it took, any hints or awards won, and two ways on. **Back to challenges** returns to Practice (or to the competition, during a live one), and **Next** opens the easiest unsolved challenge in the same topic. "Stay on this page" closes it, for reading the mark scheme or model answer. It does not appear during a mock paper.
+
 ## Scoring and hints
 
 Points grow with difficulty, and writing a program from nothing is worth more than repairing one or answering a question:
