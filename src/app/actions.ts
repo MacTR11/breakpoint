@@ -23,7 +23,7 @@ export async function signOutAction() {
 
 export type CodeSubmitResult =
   | { ok: false; message: string }
-  | { ok: true; outcome: JudgeOutcome; newlySolved: boolean; points: number; rewards: Rewards };
+  | { ok: true; outcome: JudgeOutcome; newlySolved: boolean; points: number; attempts: number; rewards: Rewards };
 
 export async function submitCode(slug: string, code: string, telemetry?: Telemetry): Promise<CodeSubmitResult> {
   const user = await getCurrentUser();
@@ -54,10 +54,11 @@ export async function submitCode(slug: string, code: string, telemetry?: Telemet
 
   let newlySolved = false;
   let rewards = noRewards;
+  let attempts = 0;
   if (outcome.status === "ACCEPTED") {
     const existing = await db.solve.findUnique({ where: { userId_problemId: { userId: user.id, problemId: problem.id } } });
     if (!existing) {
-      const attempts = await db.submission.count({ where: { userId: user.id, problemId: problem.id } });
+      attempts = await db.submission.count({ where: { userId: user.id, problemId: problem.id } });
       rewards = await recordSolve(user.id, problem.id, problem.points, attempts);
       newlySolved = true;
       revalidatePath("/", "layout");
@@ -66,14 +67,14 @@ export async function submitCode(slug: string, code: string, telemetry?: Telemet
 
   // Hidden tests report pass/fail only, so their inputs and answers stay secret.
   const results = outcome.results.map((r) => (r.hidden ? { index: r.index, status: r.status, hidden: true, ms: r.ms } : r));
-  return { ok: true, outcome: { ...outcome, results }, newlySolved, points: problem.points, rewards };
+  return { ok: true, outcome: { ...outcome, results }, newlySolved, points: problem.points, attempts, rewards };
 }
 
 export type PuzzleReveal = { answer: string; explanation: string | null };
 
 export type PuzzleSubmitResult =
   | { ok: false; message: string }
-  | { ok: true; correct: true; points: number; explanation: string | null; rewards: Rewards }
+  | { ok: true; correct: true; points: number; attempts: number; explanation: string | null; rewards: Rewards }
   // `reveal` is set once the puzzle is locked, unless a live competition is using it.
   | { ok: true; correct: false; penalty: number; attemptsLeft: number; nextPoints: number; reveal: PuzzleReveal | null };
 
@@ -86,7 +87,7 @@ export async function submitPuzzle(slug: string, answer: string): Promise<Puzzle
 
   const key = { userId_problemId: { userId: user.id, problemId: problem.id } };
   const solved = await db.solve.findUnique({ where: key });
-  if (solved) return { ok: true, correct: true, points: solved.points, explanation: problem.explanation, rewards: noRewards };
+  if (solved) return { ok: true, correct: true, points: solved.points, attempts: solved.attempts, explanation: problem.explanation, rewards: noRewards };
 
   const wrongBefore = await db.submission.count({ where: { userId: user.id, problemId: problem.id, status: "WRONG" } });
   if (wrongBefore >= MAX_PUZZLE_ATTEMPTS) return { ok: false, message: "You have used both attempts on this puzzle." };
@@ -116,7 +117,7 @@ export async function submitPuzzle(slug: string, answer: string): Promise<Puzzle
 
   const points = pointsFor(problem, wrongBefore);
   const rewards = await recordSolve(user.id, problem.id, points, wrongBefore + 1);
-  return { ok: true, correct: true, points, explanation: problem.explanation, rewards };
+  return { ok: true, correct: true, points, attempts: wrongBefore + 1, explanation: problem.explanation, rewards };
 }
 
 export type HintResult = { ok: false; message: string } | { ok: true; hint: string; balance: number };

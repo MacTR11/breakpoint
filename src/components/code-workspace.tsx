@@ -10,6 +10,7 @@ import { submitCode } from "@/app/actions";
 import { ConsolePanel } from "@/components/console-panel";
 import { DebugPanel } from "@/components/debug-panel";
 import { RewardLines } from "@/components/rewards";
+import { SolvedDialog, type Celebration, type SolvedSummary } from "@/components/solved-dialog";
 import { TestResults } from "@/components/test-results";
 import { celebrate } from "@/lib/celebrate";
 import { countRuns, debuggerExtensions, reachLine } from "@/lib/debugger";
@@ -52,6 +53,7 @@ export function CodeWorkspace({
   description,
   hints,
   teacherNotes,
+  celebration,
 }: {
   userId: string;
   slug: string;
@@ -74,6 +76,8 @@ export function CodeWorkspace({
   description: React.ReactNode;
   hints: React.ReactNode;
   teacherNotes: React.ReactNode;
+  /** When set, a first solve opens the solved pop-up. Left out during a mock paper. */
+  celebration?: Celebration;
 }) {
   const router = useRouter();
   // Keyed by user so classmates sharing a computer never see each other's work.
@@ -92,6 +96,9 @@ export function CodeWorkspace({
   const [message, setMessage] = useState<string | null>(null);
   const [solved, setSolved] = useState(initiallySolved);
   const [justSolved, setJustSolved] = useState<Rewards | null>(null);
+  const [popup, setPopup] = useState<SolvedSummary | null>(null);
+  // Kept from the first render: the refresh after a solve stops the page sending it.
+  const [toCelebrate] = useState(celebration);
   const [, startTransition] = useTransition();
 
   // Start fetching Python straight away so the first Run is quick.
@@ -164,6 +171,7 @@ export function CodeWorkspace({
           }
           if (result.newlySolved) {
             setJustSolved(result.rewards);
+            setPopup({ points: result.points, attempts: result.attempts, rewards: result.rewards });
             router.refresh();
           }
         }
@@ -294,6 +302,7 @@ export function CodeWorkspace({
           </div>
         </div>
       </section>
+      {toCelebrate && popup && <SolvedDialog celebration={toCelebrate} summary={popup} onClose={() => setPopup(null)} />}
     </main>
   );
 }
